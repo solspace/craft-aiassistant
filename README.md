@@ -21,7 +21,6 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 ## Upcoming
 
 - [ ] Image processing for Assets fields (generation, preview, and save to Assets)
-- [ ] Additional providers (Anthropic, Mistral, Ollama)
 - [ ] Per-site settings and more granular field rules
 - [ ] Prompt variables and templating helpers
 
