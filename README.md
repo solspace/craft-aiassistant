@@ -14,7 +14,6 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 - [x] Prompt management (built‑in and custom) with integration binding and sort order
 - [x] Integration management for OpenAI, Google Gemini, Antropic and xAI (enable/disable, API keys, model selection)
 - [x] Quick AI Actions dashboard widget (select prompt, editable prompt text, generate, copy)
-- [x] Image prompts hidden in UI dropdowns (kept for future) and not offered in modal/widget
 - [x] Craft-native UI components (lightswitch, notices), event-based widget registration
 - [x] Responsive, larger modal with dynamic body height
 
