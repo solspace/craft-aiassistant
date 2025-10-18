@@ -96,4 +96,4 @@ aiassistant/
 
 ## Support
 
-For issues and feature requests, please contact Solspace.# craft-aiassistant
+For issues and feature requests, please contact Solspace.
