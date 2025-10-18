@@ -1,0 +1,30 @@
+# Composer dependencies
+/vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/project files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Log files
+*.log
+
+# Environment/config
+.env
+.env.*
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Developer documentation (not for customers)
+DEVELOPER.md
+
+# Hidden release script
+release.sh 

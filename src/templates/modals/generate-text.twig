@@ -1,0 +1,117 @@
+{% import '_includes/forms' as forms %}
+
+<div class="modal aiassistant-modal">
+    <div class="header">
+        <h2 id="aiassistant-modal-title" style="margin:0; display:flex; align-items:center; gap:8px;">
+            <span id="aiassistant-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
+            <span id="aiassistant-modal-text">{{ 'AI Assistant'|t('app') }}</span>
+        </h2>
+    </div>
+    
+    <div class="body" style="max-height:60vh; overflow-y:auto; padding:20px 20px 60px 20px;">
+        <!-- Top row: Prompt and Integration selection -->
+        <div style="display:flex; gap:20px; margin-bottom:20px;">
+            <div style="flex:1;">
+                {{ forms.selectField({
+                    id: 'aiassistant-text-prompt',
+                    name: 'aiassistant-text-prompt',
+                    label: 'Prompt'|t('app'),
+                    options: [{ label: 'Loading…'|t('app'), value: '' }],
+                    instructions: 'Choose a prompt to generate text with.'|t('app')
+                }) }}
+            </div>
+            <div style="flex:1;">
+                {{ forms.selectField({
+                    id: 'aiassistant-text-integration',
+                    name: 'aiassistant-text-integration',
+                    label: 'Integration'|t('app'),
+                    options: [{ label: 'Loading…'|t('app'), value: '' }],
+                    instructions: 'Defaulted from the prompt; you can change it.'|t('app')
+                }) }}
+            </div>
+        </div>
+
+        <!-- Prompt text editing - always visible -->
+        <div style="margin-bottom:20px;">
+            {{ forms.textareaField({
+                id: 'aiassistant-text-prompt-text',
+                name: 'aiassistant-text-prompt-text',
+                label: 'Prompt Text'|t('app'),
+                rows: 2,
+                instructions: 'Edit the prompt text as needed. This is what will be sent to the AI. You can modify it to better suit your needs. Select "Custom…" to write your own prompt from scratch.'|t('app')
+            }) }}
+        </div>
+
+        <!-- Input context and Generated text - side by side (always visible) -->
+        <div id="aiassistant-text-comparison" style="display:block;">
+            <div style="display:flex; gap:20px;">
+                <div style="flex:1;">
+                    <div class="field" style="margin-bottom:16px;">
+                        <div class="heading" style="display:flex; align-items:center; gap:12px;">
+                            <div style="display:flex; align-items:center; justify-content:center; width:36px; min-width:36px;">
+                                {{ forms.lightswitch({
+                                    id: 'aiassistant-include-context',
+                                    name: 'aiassistant-include-context',
+                                    on: true
+                                }) }}
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                <span style="font-weight:600;">{{ 'Input Context'|t('app') }}</span>
+                                <span class="light" style="font-size:12px;">{{ 'Current content from the field. Toggle to include it in the generation.'|t('app') }}</span>
+                            </div>
+                        </div>
+                        <div class="input">
+                            <div id="aiassistant-text-input-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex:1;">
+                    <div class="field" style="margin-bottom:16px;">
+                        <div class="heading">
+                            <span style="font-weight:600;">{{ 'Generated Text'|t('app') }}</span>
+                        </div>
+                        <div class="instructions">
+                            <p>{{ 'AI-generated content. Click Insert to replace the current content.'|t('app') }}</p>
+                        </div>
+                        <div class="input">
+                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input context - fallback for plain text (hidden; using comparison layout instead) -->
+        <div id="aiassistant-text-input-fallback" style="display:none;">
+            {{ forms.textareaField({
+                id: 'aiassistant-text-input',
+                name: 'aiassistant-text-input',
+                label: 'Input Context'|t('app'),
+                rows: 3,
+                instructions: 'Optional context to include in generation. Will be appended to the prompt.'|t('app')
+            }) }}
+        </div>
+
+        <!-- Generated text result - fallback for plain text (hidden; using comparison layout instead) -->
+        <div id="aiassistant-text-generated-fallback" style="display:none;">
+            {{ forms.textareaField({
+                id: 'aiassistant-text-generated',
+                name: 'aiassistant-text-generated',
+                label: 'Generated Text'|t('app'),
+                rows: 6,
+                instructions: 'The AI-generated text will appear here.'|t('app'),
+                readonly: true
+            }) }}
+        </div>
+    </div>
+
+    <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+        <div id="aiassistant-text-loading" class="spinner" style="display:none;"></div>
+        <button type="button" class="btn cancel">{{ 'Cancel'|t('app') }}</button>
+        <button type="button" class="btn" id="aiassistant-text-generate">{{ 'Generate'|t('app') }}</button>
+        <button type="button" class="btn submit" id="aiassistant-text-insert" disabled>{{ 'Insert'|t('app') }}</button>
+    </div>
+</div>
+
+
+

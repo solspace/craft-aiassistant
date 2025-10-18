@@ -1,0 +1,238 @@
+{% import "_includes/forms" as forms %}
+
+<div class="aiassistant-widget">
+    <div class="aiassistant-widget-header">
+        <p class="light">{{ "Generate content directly from the dashboard"|t('app') }}</p>
+    </div>
+
+    <div class="aiassistant-widget-content">
+        <form id="aiassistant-quick-form">
+            <div class="field">
+                {{ forms.selectField({
+                    label: "Prompt"|t('app'),
+                    id: 'aiassistant-widget-prompt',
+                    name: 'prompt',
+                    options: [{ label: "Custom...", value: "custom" }]|merge(prompts|filter(prompt => 'image' not in prompt.name|lower)|map(prompt => { 
+                        label: prompt.name, 
+                        value: prompt.id, 
+                        data: { promptText: prompt.promptText|replace('"', '&quot;') } 
+                    })),
+                    instructions: "Choose a prompt to generate content with"|t('app')
+                }) }}
+            </div>
+
+            <div class="field">
+                {{ forms.textareaField({
+                    label: "Prompt Text"|t('app'),
+                    id: 'aiassistant-widget-prompt-text',
+                    name: 'promptText',
+                    rows: 4,
+                    instructions: "Edit the prompt text as needed. This is what will be sent to the AI."|t('app'),
+                    placeholder: "Select a prompt above or write your own custom prompt..."
+                }) }}
+            </div>
+
+            <div class="field">
+                {{ forms.selectField({
+                    label: "Integration"|t('app'),
+                    id: 'aiassistant-widget-integration',
+                    name: 'integration',
+                    options: integrations|map(integration => { label: integration.name, value: integration.handle }),
+                    instructions: "Select the AI service to use"|t('app')
+                }) }}
+            </div>
+
+            <div class="field">
+                {{ forms.textareaField({
+                    label: "Generated Content"|t('app'),
+                    id: 'aiassistant-widget-output',
+                    name: 'output',
+                    rows: 4,
+                    readonly: true,
+                    instructions: "AI-generated content will appear here"|t('app')
+                }) }}
+            </div>
+
+            <div class="aiassistant-widget-actions">
+                <button type="button" id="aiassistant-widget-generate" class="btn submit">
+                    {{ "Generate"|t('app') }}
+                </button>
+                <button type="button" id="aiassistant-widget-copy" class="btn" disabled>
+                    {{ "Copy"|t('app') }}
+                </button>
+                <div id="aiassistant-widget-loading" class="spinner" style="display: none;"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.aiassistant-widget {
+    padding: 0;
+}
+
+.aiassistant-widget-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--hairline-color, #e5e7eb);
+}
+
+.aiassistant-widget-header h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.aiassistant-widget-header .light {
+    margin: 0;
+    font-size: 12px;
+    color: var(--light-text-color, #6b7280);
+}
+
+.aiassistant-widget-content .field {
+    margin-bottom: 15px;
+}
+
+.aiassistant-widget-content .field:last-of-type {
+    margin-bottom: 20px;
+}
+
+.aiassistant-widget-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.aiassistant-widget-actions .btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aiassistant-widget-actions .spinner {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#aiassistant-widget-output {
+    background-color: var(--ui-control-bg, #f9fafb);
+    border-color: var(--hairline-color, #e5e7eb);
+}
+
+#aiassistant-widget-output:focus {
+    border-color: var(--brand-color, #3b82f6);
+    box-shadow: 0 0 0 1px var(--brand-color, #3b82f6);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const generateBtn = document.getElementById('aiassistant-widget-generate');
+    const copyBtn = document.getElementById('aiassistant-widget-copy');
+    const outputField = document.getElementById('aiassistant-widget-output');
+    const loadingSpinner = document.getElementById('aiassistant-widget-loading');
+    const promptSelect = document.getElementById('aiassistant-widget-prompt');
+    const integrationSelect = document.getElementById('aiassistant-widget-integration');
+    const promptTextField = document.getElementById('aiassistant-widget-prompt-text');
+
+    // Prompt selection handler
+    promptSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+        const selectedOption = this.options[this.selectedIndex];
+        
+        if (selectedValue === 'custom') {
+            promptTextField.value = '';
+            promptTextField.placeholder = 'Write your custom prompt here...';
+        } else {
+            const promptText = selectedOption.dataset.prompttext;
+            if (promptText) {
+                promptTextField.value = promptText;
+                promptTextField.placeholder = 'Edit the prompt text as needed...';
+            } else {
+                promptTextField.value = '';
+                promptTextField.placeholder = 'Select a prompt above...';
+            }
+        }
+    });
+
+    // Generate button handler
+    generateBtn.addEventListener('click', async function() {
+        const promptId = promptSelect.value;
+        const integrationHandle = integrationSelect.value;
+        const promptText = promptTextField.value;
+
+        if (!promptId || !integrationHandle) {
+            Craft.cp.displayError('Please select a prompt and integration.');
+            return;
+        }
+
+        if (!promptText.trim()) {
+            Craft.cp.displayError('Please enter or select a prompt text.');
+            return;
+        }
+
+        // Show loading state
+        generateBtn.disabled = true;
+        loadingSpinner.style.display = 'inline-block';
+        outputField.value = '';
+
+        try {
+            // Use the prompt text directly from the textarea
+            const fullPrompt = promptText.trim();
+
+            // Make API call
+            const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-text'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': Craft.csrfTokenValue
+                },
+                body: JSON.stringify({
+                    promptText: fullPrompt,
+                    integration: integrationHandle,
+                    fieldType: 'input'
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const generatedText = result.data || result.content || result.text || '';
+                outputField.value = generatedText;
+                copyBtn.disabled = false;
+                Craft.cp.displayNotice('Content generated successfully!');
+            } else {
+                Craft.cp.displayError(result.message || result.error || 'Generation failed');
+            }
+        } catch (error) {
+            console.error('Generation error:', error);
+            Craft.cp.displayError('Failed to generate content');
+        } finally {
+            generateBtn.disabled = false;
+            loadingSpinner.style.display = 'none';
+        }
+    });
+
+    // Copy button handler
+    copyBtn.addEventListener('click', function() {
+        const text = outputField.value;
+        if (text) {
+            navigator.clipboard.writeText(text).then(function() {
+                Craft.cp.displayNotice('Content copied to clipboard!');
+            }).catch(function() {
+                // Fallback for older browsers
+                outputField.select();
+                document.execCommand('copy');
+                Craft.cp.displayNotice('Content copied to clipboard!');
+            });
+        }
+    });
+
+    // Enable copy button when there's content
+    outputField.addEventListener('input', function() {
+        copyBtn.disabled = !this.value.trim();
+    });
+});
+</script>

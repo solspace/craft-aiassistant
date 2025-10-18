@@ -1,0 +1,109 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% set title = "AI Assistant Settings" %}
+{% set selectedSubnavItem = 'settings' %}
+
+{% block actionButton %}
+    <button type="button" class="btn submit" onclick="document.getElementById('ai-assistant-settings-form').submit()">{{ "Save"|t('app') }}</button>
+{% endblock %}
+
+{% block content %}
+<form method="post" accept-charset="UTF-8" id="ai-assistant-settings-form">
+    {{ csrfInput() }}
+    {{ actionInput('ai-assistant/settings/save') }}
+
+    {# No custom license UI; Craft handles plugin licensing #}
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin: 8px 0 16px;">
+        <div>
+            <h2 style="margin:0;">Enable per Field</h2>
+            <p class="instructions" style="margin:4px 0 0;">Select which fields will show the AI Assistant button.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('app') }}</button>
+            <button type="button" id="disable-all" class="btn">{{ 'Disable all'|t('app') }}</button>
+        </div>
+    </div>
+
+        <table class="data fullwidth">
+            <thead>
+                <tr>
+                    <th>{{ 'Field'|t('app') }}</th>
+                    <th>{{ 'Handle'|t('app') }}</th>
+                    <th>{{ 'Type'|t('app') }}</th>
+                    <th style="text-align:right;">{{ 'Enabled'|t('app') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% set enabledSet = (settings.enabledFieldHandles is defined and settings.enabledFieldHandles is iterable) ? settings.enabledFieldHandles : [] %}
+            {% for f in allFields %}
+                {% set checked = (enabledSet ? (enabledSet[f.handle] ?? (f.handle in enabledSet)) : true) %}
+                <tr>
+                    <td>{{ f.name }}</td>
+                    <td><code>{{ f.handle }}</code></td>
+                    <td><code>{{ f.type }}</code></td>
+                    <td style="width:120px; text-align:right;">
+                        <div style="display:inline-block;">
+                            {{ forms.lightswitchField({
+                                id: 'enabled-' ~ f.handle,
+                                name: 'settings[enabledFieldHandles][' ~ f.handle ~ ']',
+                                on: checked,
+                                small: true,
+                                label: null,
+                            }) }}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    <script>
+        (function(){
+          const form = document.getElementById('ai-assistant-settings-form');
+          const enableAll = document.getElementById('enable-all');
+          const disableAll = document.getElementById('disable-all');
+          function setAll(on){
+            if (!form) return;
+            const hiddenInputs = form.querySelectorAll('input[type="hidden"][name^="settings[enabledFieldHandles]"]');
+            hiddenInputs.forEach(function(hidden){
+              // Try to find the adjacent lightswitch container
+              let ls = hidden.nextElementSibling && hidden.nextElementSibling.classList.contains('lightswitch') ? hidden.nextElementSibling : null;
+              if (!ls) {
+                const td = hidden.closest('td');
+                if (td) ls = td.querySelector('.lightswitch');
+              }
+              if (ls && window.jQuery && jQuery(ls).data('lightswitch')) {
+                const api = jQuery(ls).data('lightswitch');
+                if (on) api.turnOn(); else api.turnOff();
+              } else if (ls) {
+                // Fallback: update UI state and hidden input value
+                ls.classList.toggle('on', !!on);
+                ls.classList.toggle('off', !on);
+                ls.setAttribute('aria-checked', on ? 'true' : 'false');
+                hidden.value = on ? '1' : '';
+              }
+            });
+          }
+          if (enableAll) enableAll.addEventListener('click', function(){ setAll(true); });
+          if (disableAll) disableAll.addEventListener('click', function(){ setAll(false); });
+        })();
+    </script>
+</form>
+
+<script>
+    // Toggle options based on enabled state
+    document.getElementById('enabled').addEventListener('change', function() {
+        var options = document.getElementById('ai-assistant-options');
+        if (this.checked) {
+            options.style.opacity = '1';
+            options.style.pointerEvents = 'auto';
+        } else {
+            options.style.opacity = '0.5';
+            options.style.pointerEvents = 'none';
+        }
+    });
+</script>
+{% endblock %} 

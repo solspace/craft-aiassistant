@@ -1,0 +1,19 @@
+{% extends '_layouts/cp' %}
+{% set title = 'AI Assistant' %}
+
+{% block content %}
+  <div class="pane" style="padding: 18px;">
+    <h2 style="margin-top:0;">Welcome to AI Assistant</h2>
+    <p style="color: var(--gray-600); max-width: 60ch;">
+      Generate, rephrase, translate text, and generate images directly inside Craft. Define your own prompts and connect to your preferred AI providers.
+    </p>
+
+    <div style="display:flex; flex-wrap:wrap; gap:12px; margin:16px 0 6px;">
+      <a class="btn submit" href="{{ url('ai-assistant/prompts') }}">Manage Prompts</a>
+      <a class="btn" href="{{ url('ai-assistant/integrations') }}">Integrations</a>
+      <a class="btn" href="{{ url('ai-assistant/settings') }}">Settings</a>
+    </div>
+  </div>
+{% endblock %}
+
+

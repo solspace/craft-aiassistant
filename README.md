@@ -4,7 +4,6 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 
 - Package: `solspace/craft-aiassistant`
 - Namespace: `Solspace\AIAssistant`
-- Version: `1.0.0`
 
 ## Current functionality
 
@@ -13,7 +12,7 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 - [x] Lightswitch to include/exclude input context in the prompt
 - [x] Correct HTML handling for CKEditor, TinyMCE, and Redactor when inserting back into the field
 - [x] Prompt management (built‑in and custom) with integration binding and sort order
-- [x] Integration management for OpenAI and Google Gemini (enable/disable, API keys, model selection)
+- [x] Integration management for OpenAI, Google Gemini, Antropic and xAI (enable/disable, API keys, model selection)
 - [x] Quick AI Actions dashboard widget (select prompt, editable prompt text, generate, copy)
 - [x] Image prompts hidden in UI dropdowns (kept for future) and not offered in modal/widget
 - [x] Craft-native UI components (lightswitch, notices), event-based widget registration
@@ -39,7 +38,7 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 ### Integrations
 1. Go to **AI Assistant → Integrations**
 2. Click **New Integration**
-3. Choose provider (OpenAI, Gemini), set API key, model, and defaults
+3. Choose provider (OpenAI, Gemini, Antropic, xAI), set API key, model, and defaults
 4. Save and test
 
 ### Field enablement

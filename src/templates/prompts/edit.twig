@@ -1,0 +1,103 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set prompt = prompt ?? { id: null, name: '', promptText: '', type: 'generate', integrationHandle: null, isActive: true, sortOrder: 0, isBuiltIn: false } %}
+{% set integrations = integrations ?? [] %}
+{% set title = prompt.id ? "Edit Prompt" : "New Prompt" %}
+{% set selectedSubnavItem = 'prompts' %}
+
+{% block actionButton %}
+  <div class="btngroup">
+    <a class="btn" href="{{ url('ai-assistant/prompts') }}">Back</a>
+    <button type="button" class="btn submit" onclick="document.getElementById('prompt-form').submit()">Save</button>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" id="prompt-form" accept-charset="UTF-8">
+    {{ csrfInput() }}
+    {{ actionInput('ai-assistant/prompts/save') }}
+    {{ hiddenInput('id', prompt.id) }}
+
+    {# Build integration options for the select field #}
+    {% set integrationOptions = [{ label: 'Use default (Any)', value: '' }] %}
+    {% for i in integrations %}
+      {% set integrationOptions = integrationOptions|merge([{ label: i.name ~ ' (' ~ i.handle ~ ')', value: i.handle }]) %}
+    {% endfor %}
+
+    <div class="field">
+      {{ forms.selectField({
+        label: "Integration"|t('ai-assistant'),
+        instructions: "Choose which Integration to use for this prompt."|t('ai-assistant'),
+        id: 'integrationHandle',
+        name: 'integrationHandle',
+        value: prompt.integrationHandle ?? '',
+        options: integrationOptions,
+        required: false,
+      }) }}
+    </div>
+
+    <div class="field">
+      {{ forms.textField({
+        label: "Prompt Name"|t('ai-assistant'),
+        id: 'name',
+        name: 'name',
+        value: prompt.name,
+        required: true,
+      }) }}
+    </div>
+
+    <div class="field">
+      {{ forms.selectField({
+        label: "Type"|t('ai-assistant'),
+        id: 'type',
+        name: 'type',
+        value: prompt.type,
+        required: true,
+        options: [
+          { label: 'Generate Text', value: 'generate' },
+          { label: 'Rephrase Text', value: 'rephrase' },
+          { label: 'Translate Text', value: 'translate' },
+        ],
+      }) }}
+    </div>
+
+    <div class="field">
+      {{ forms.textareaField({
+        label: "Prompt Text"|t('ai-assistant'),
+        id: 'promptText',
+        name: 'promptText',
+        value: prompt.promptText,
+        rows: 6,
+        required: true,
+      }) }}
+    </div>
+
+    {# Removed AI Model override; integration default will be used #}
+
+    {# Active and Sort Order fields - hidden for now, will be implemented later #}
+    {#
+    <div class="flex" style="gap:16px;">
+      <div class="field" style="flex:1;">
+        {{ forms.lightswitchField({
+          label: "Active"|t('ai-assistant'),
+          id: 'isActive',
+          name: 'isActive',
+          on: prompt.isActive,
+        }) }}
+      </div>
+      <div class="field" style="flex:1;">
+        {{ forms.textField({
+          label: "Sort Order"|t('ai-assistant'),
+          id: 'sortOrder',
+          name: 'sortOrder',
+          type: 'number',
+          value: prompt.sortOrder ?? 0,
+        }) }}
+      </div>
+    </div>
+    #}
+  </form>
+{% endblock %}
+
+

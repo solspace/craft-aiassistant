@@ -1,0 +1,193 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{# Ensure integration variable exists to avoid runtime errors #}
+{% set integration = integration is defined ? integration : {
+    id: null,
+    enabled: true,
+    name: '',
+    handle: '',
+    type: 'openai',
+    apiKey: '',
+    model: '',
+    maxTokens: 2000,
+    temperature: 1.0
+} %}
+
+{% set title = integration.id ? "Edit Integration"|t('app') : "New Integration"|t('app') %}
+{% set selectedSubnavItem = 'integrations' %}
+
+{% block actionButton %}
+    <button type="button" class="btn submit" onclick="document.getElementById('integration-form').submit()">{{ "Save"|t('app') }}</button>
+{% endblock %}
+
+{% block content %}
+    <form method="post" accept-charset="UTF-8" id="integration-form">
+        {{ csrfInput() }}
+        {{ actionInput('ai-assistant/integrations/save') }}
+        {{ hiddenInput('id', integration.id) }}
+
+        <div class="field">
+            {{ forms.lightswitchField({
+                label: "Enabled"|t('app'),
+                instructions: "Enable or disable this integration."|t('app'),
+                id: 'enabled',
+                name: 'enabled',
+                on: integration.enabled,
+            }) }}
+        </div>
+
+        <div class="field">
+            {{ forms.textField({
+                label: "Name"|t('app'),
+                instructions: "A friendly name for this integration."|t('app'),
+                id: 'name',
+                name: 'name',
+                value: integration.name,
+                required: true,
+            }) }}
+        </div>
+
+        {# Handle will be auto-generated from Name if left blank #}
+        <div class="field">
+            {{ forms.textField({
+                label: "Handle"|t('app'),
+                instructions: "Leave blank to auto-generate from the Name."|t('app'),
+                id: 'handle',
+                name: 'handle',
+                value: integration.handle,
+            }) }}
+        </div>
+
+        <div class="field">
+            {{ forms.selectField({
+                label: "Type"|t('app'),
+                instructions: "Choose the AI provider for this integration."|t('app'),
+                id: 'type',
+                name: 'type',
+                value: integration.type,
+                options: [
+                    { label: 'OpenAI', value: 'openai' },
+                    { label: 'Google Gemini', value: 'gemini' },
+                    { label: 'Anthropic Claude', value: 'anthropic' },
+                    { label: 'xAI Grok', value: 'xai' },
+                ],
+                required: true,
+            }) }}
+        </div>
+
+        <div class="field">
+            {{ forms.textField({
+                label: "API Key"|t('app'),
+                instructions: "Enter your API key for this AI provider."|t('app'),
+                id: 'apiKey',
+                name: 'apiKey',
+                value: integration.apiKey,
+                required: true,
+                type: 'password',
+            }) }}
+        </div>
+
+        <div class="field">
+            {{ forms.textField({
+                label: "Model"|t('app'),
+                instructions: "Enter the model identifier to use. A sensible default will be set when you change Type."|t('app'),
+                id: 'model',
+                name: 'model',
+                value: integration.model ?: (integration.type == 'openai' ? 'gpt-4o-mini' : (integration.type == 'gemini' ? 'gemini-1.5-flash' : (integration.type == 'anthropic' ? 'claude-3-5-haiku-latest' : (integration.type == 'xai' ? 'grok-3-mini' : '')))),
+                required: true,
+                placeholder: 'e.g., gpt-4o-mini',
+            }) }}
+        </div>
+
+        <div class="field">
+            {{ forms.textField({
+                label: "Max Tokens"|t('app'),
+                instructions: "Maximum number of tokens to generate."|t('app'),
+                id: 'maxTokens',
+                name: 'maxTokens',
+                value: integration.maxTokens,
+                type: 'number',
+                min: 1,
+                max: 1048576,
+                required: true,
+            }) }}
+        </div>
+
+        <div class="field" id="temperature-field" style="display: none;">
+            {{ forms.textField({
+                label: "Temperature"|t('app'),
+                instructions: "Controls randomness (0.0 = deterministic, 2.0 = very random)."|t('app'),
+                id: 'temperature',
+                name: 'temperature',
+                value: integration.temperature,
+                type: 'number',
+                min: 0.0,
+                max: 2.0,
+                step: 0.1,
+            }) }}
+        </div>
+    </form>
+
+    <script>
+        // Set default model and configure fields when type changes
+        document.getElementById('type').addEventListener('change', function() {
+            updateFieldsForProvider();
+        });
+
+        function updateFieldsForProvider() {
+            const type = document.getElementById('type').value;
+            const modelInput = document.getElementById('model');
+            const maxTokensInput = document.getElementById('maxTokens');
+            const temperatureField = document.getElementById('temperature-field');
+            const temperatureInput = document.getElementById('temperature');
+
+            // Default models for each provider
+            const defaults = {
+                openai: 'gpt-4o-mini',
+                gemini: 'gemini-1.5-flash',
+                anthropic: 'claude-3-5-haiku-latest',
+                xai: 'grok-3-mini',
+            };
+
+            // Max tokens limits for each provider
+            const maxTokensLimits = {
+                openai: 128000,
+                gemini: 1048576,
+                anthropic: 200000,
+                xai: 256000,
+            };
+
+            // Providers that support temperature
+            const temperatureSupported = ['gemini'];
+
+            // Update model
+            const current = (modelInput.value || '').trim();
+            if (!current || Object.values(defaults).includes(current)) {
+                modelInput.value = defaults[type] || '';
+            }
+
+            // Update max tokens limit
+            maxTokensInput.max = maxTokensLimits[type] || 1000000;
+
+            // Show/hide temperature field
+            if (temperatureSupported.includes(type)) {
+                temperatureField.style.display = 'block';
+                temperatureInput.required = true;
+                if (!temperatureInput.value) {
+                    temperatureInput.value = '0.7';
+                }
+            } else {
+                temperatureField.style.display = 'none';
+                temperatureInput.required = false;
+                temperatureInput.value = '';
+            }
+        }
+
+        // Initialize fields on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFieldsForProvider();
+        });
+    </script>
+{% endblock %}
