@@ -17,11 +17,16 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 - [x] Craft-native UI components (lightswitch, notices), event-based widget registration
 - [x] Responsive, larger modal with dynamic body height
 
-## Upcoming
+## Upcoming Features
 
-- [ ] Image processing for Assets fields (generation, preview, and save to Assets)
-- [ ] Per-site settings and more granular field rules
-- [ ] Prompt variables and templating helpers
+- [ ] Image generation for Assets fields
+- [ ] Per-site settings and field rules
+- [ ] Prompt variables and templating
+- [ ] Batch content processing
+- [ ] Analytics dashboard
+- [ ] SEO content assistant
+- [ ] Commerce integration
+- [ ] Multi-language support
 
 ## Installation
 
