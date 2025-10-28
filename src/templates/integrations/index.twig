@@ -4,6 +4,10 @@
 
 {% set title = "AI Integrations" %}
 {% set selectedSubnavItem = 'integrations' %}
+{% set crumbs = [
+  { label: 'AI Assistant', url: url('ai-assistant') },
+  { label: 'Integrations', url: url('ai-assistant/integrations') },
+] %}
 
 {% block actionButton %}
     <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">

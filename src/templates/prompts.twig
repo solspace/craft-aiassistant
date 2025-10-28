@@ -4,6 +4,10 @@
 
 {% set title = "AI Assistant Prompts" %}
 {% set selectedSubnavItem = 'prompts' %}
+{% set crumbs = [
+  { label: 'AI Assistant', url: url('ai-assistant') },
+  { label: 'Prompts', url: url('ai-assistant/prompts') },
+] %}
 
 {% block actionButton %}
     <div class="btngroup">

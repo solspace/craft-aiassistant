@@ -5,6 +5,11 @@
 {% set integrations = integrations ?? [] %}
 {% set title = prompt.id ? "Edit Prompt" : "New Prompt" %}
 {% set selectedSubnavItem = 'prompts' %}
+{% set crumbs = [
+  { label: 'AI Assistant', url: url('ai-assistant') },
+  { label: 'Prompts', url: url('ai-assistant/prompts') },
+  { label: (prompt.id ? 'Edit' : 'New'), url: url('ai-assistant/prompts' ~ (prompt.id ? '/' ~ prompt.id : '/edit')) },
+] %}
 
 {% block actionButton %}
   <div class="btngroup">

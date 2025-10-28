@@ -4,6 +4,10 @@
 
 {% set title = "AI Assistant Settings" %}
 {% set selectedSubnavItem = 'settings' %}
+{% set crumbs = [
+  { label: 'AI Assistant', url: url('ai-assistant') },
+  { label: 'Settings', url: url('ai-assistant/settings') },
+] %}
 
 {% block actionButton %}
     <button type="button" class="btn submit" onclick="document.getElementById('ai-assistant-settings-form').submit()">{{ "Save"|t('app') }}</button>

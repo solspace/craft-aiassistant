@@ -17,6 +17,11 @@
 
 {% set title = integration.id ? "Edit Integration"|t('app') : "New Integration"|t('app') %}
 {% set selectedSubnavItem = 'integrations' %}
+{% set crumbs = [
+  { label: 'AI Assistant', url: url('ai-assistant') },
+  { label: 'Integrations', url: url('ai-assistant/integrations') },
+  { label: (integration.id ? 'Edit' : 'New'), url: url('ai-assistant/integrations' ~ (integration.id ? '/' ~ integration.id : '/edit')) },
+] %}
 
 {% block actionButton %}
     <button type="button" class="btn submit" onclick="document.getElementById('integration-form').submit()">{{ "Save"|t('app') }}</button>
