@@ -98,18 +98,6 @@ class ApiController extends Controller
         }
     }
 
-    public function actionValidateLicense(): Response
-    {
-        $this->requirePostRequest();
-        $this->requireAcceptsJson();
-
-        // No custom license validation; Craft handles plugin licensing
-        return $this->asJson([
-            'success' => true,
-            'valid' => true,
-        ]);
-    }
-
     public function actionGetIntegrations(): Response
     {
         $this->requireAcceptsJson();
