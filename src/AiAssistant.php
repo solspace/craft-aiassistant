@@ -4,6 +4,8 @@ namespace Solspace\AIAssistant;
 
 use craft\base\Plugin;
 use craft\web\View;
+use craft\helpers\UrlHelper;
+use yii\web\Response;
 use yii\base\Event;
 use Solspace\AIAssistant\assets\AiAssistantAsset;
 use Solspace\AIAssistant\models\Settings;
@@ -86,6 +88,14 @@ class AiAssistant extends Plugin
             'ai-assistant/settings',
             ['settings' => $this->getSettings()]
         );
+    }
+
+    /**
+     * Plugins page Settings button opens the CP route
+     */
+    public function getSettingsResponse(): ?Response
+    {
+        return \Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('ai-assistant/settings'));
     }
 
     /**
