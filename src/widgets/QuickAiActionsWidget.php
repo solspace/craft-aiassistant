@@ -11,7 +11,7 @@ class QuickAiActionsWidget extends Widget
 {
     public static function displayName(): string
     {
-        return Craft::t('app', 'AI Assistant Quick Actions');
+        return \Craft::t('app', 'AI Assistant Quick Actions');
     }
 
     public static function icon(): ?string
@@ -31,15 +31,15 @@ class QuickAiActionsWidget extends Widget
 
     public function getBodyHtml(): ?string
     {
-        $view = Craft::$app->getView();
-        
+        $view = \Craft::$app->getView();
+
         // Get available prompts and integrations
         $promptService = AiAssistant::getPromptService();
         $integrationService = AiAssistant::getIntegrationService();
-        
+
         $prompts = $promptService->getAllPrompts();
         $integrations = $integrationService->getEnabledIntegrations();
-        
+
         return $view->renderTemplate('ai-assistant/widgets/quick-ai-actions', [
             'prompts' => $prompts,
             'integrations' => $integrations,

@@ -2,20 +2,22 @@
 
 namespace Solspace\AIAssistant\controllers;
 
+use craft\fieldlayoutelements\CustomField;
 use craft\web\Controller;
+use yii\web\Response;
 
 class SettingsController extends Controller
 {
     private const SUPPORTED_FIELD_TYPES = [
-        'craft\\fields\\PlainText',
-        'craft\\ckeditor\\Field',
-        'craft\\redactor\\Field',
-        'spicyweb\\tinymce\\fields\\TinyMCE',
+        'craft\fields\PlainText',
+        'craft\ckeditor\Field',
+        'craft\redactor\Field',
+        'spicyweb\tinymce\fields\TinyMCE',
     ];
 
     protected array|bool|int $allowAnonymous = false;
 
-    public function actionIndex(): ?\yii\web\Response
+    public function actionIndex(): ?Response
     {
         $plugin = \Craft::$app->plugins->getPlugin('ai-assistant');
         $settings = $plugin->getSettings();
@@ -27,20 +29,20 @@ class SettingsController extends Controller
         $allFields[] = [
             'handle' => 'title',
             'name' => 'Title',
-            'type' => 'craft\\fields\\PlainText',
+            'type' => 'craft\fields\PlainText',
         ];
         foreach ($fieldsService->getAllFields() as $field) {
             try {
                 $type = (new \ReflectionClass($field))->getName();
             } catch (\Throwable $e) {
-                $type = get_class($field);
+                $type = $field::class;
             }
-            if (!in_array($type, self::SUPPORTED_FIELD_TYPES, true)) {
+            if (!\in_array($type, self::SUPPORTED_FIELD_TYPES, true)) {
                 continue;
             }
             $allFields[] = [
-                'handle' => (string)$field->handle,
-                'name' => (string)$field->name,
+                'handle' => (string) $field->handle,
+                'name' => (string) $field->name,
                 'type' => $type,
             ];
         }
@@ -54,22 +56,23 @@ class SettingsController extends Controller
                 }
                 foreach ($layout->getTabs() as $tab) {
                     foreach ($tab->elements as $element) {
-                        if ($element instanceof \craft\fieldlayoutelements\CustomField) {
+                        if ($element instanceof CustomField) {
                             $field = $element->getField();
                             if (!$field) {
                                 continue;
                             }
+
                             try {
                                 $layoutFieldType = (new \ReflectionClass($field))->getName();
                             } catch (\Throwable $e) {
-                                $layoutFieldType = get_class($field);
+                                $layoutFieldType = $field::class;
                             }
-                            if (!in_array($layoutFieldType, self::SUPPORTED_FIELD_TYPES, true)) {
+                            if (!\in_array($layoutFieldType, self::SUPPORTED_FIELD_TYPES, true)) {
                                 continue;
                             }
                             $allFields[] = [
-                                'handle' => (string)$field->handle,
-                                'name' => (string)$field->name,
+                                'handle' => (string) $field->handle,
+                                'name' => (string) $field->name,
                                 'type' => $layoutFieldType,
                             ];
                         }
@@ -79,11 +82,12 @@ class SettingsController extends Controller
         }
 
         $seenHandles = [];
-        $allFields = array_values(array_filter($allFields, function($f) use (&$seenHandles) {
+        $allFields = array_values(array_filter($allFields, function ($f) use (&$seenHandles) {
             if (isset($seenHandles[$f['handle']])) {
                 return false;
             }
             $seenHandles[$f['handle']] = true;
+
             return true;
         }));
 
@@ -94,37 +98,39 @@ class SettingsController extends Controller
         ]);
     }
 
-    public function actionSave(): ?\yii\web\Response
+    public function actionSave(): ?Response
     {
         $this->requirePostRequest();
-        
+
         $plugin = \Craft::$app->plugins->getPlugin('ai-assistant');
         $settings = $plugin->getSettings();
-        
+
         // Get the form data
         $enabledFieldHandles = $this->request->getBodyParam('settings.enabledFieldHandles', []);
-        
+
         // Process the enabledFieldHandles data - only keep checked fields
         $processedHandles = [];
-        if (is_array($enabledFieldHandles)) {
+        if (\is_array($enabledFieldHandles)) {
             foreach ($enabledFieldHandles as $handle => $value) {
-                if ($value === '1' || $value === 1 || $value === true) {
+                if ('1' === $value || 1 === $value || true === $value) {
                     $processedHandles[] = $handle;
                 }
             }
         }
-        
+
         // Update settings
         $settings->enabledFieldHandles = $processedHandles;
         // no per-instance storage
-        
+
         // Save the plugin settings
         if (!\Craft::$app->plugins->savePluginSettings($plugin, $settings->toArray())) {
             \Craft::$app->session->setError('Couldn\'t save settings.');
+
             return $this->redirectToPostedUrl();
         }
-        
+
         \Craft::$app->session->setNotice('Settings saved.');
+
         return $this->redirectToPostedUrl();
     }
-} 
+}

@@ -30,15 +30,16 @@ class AnthropicIntegration extends BaseAiIntegration
                     'messages' => [
                         [
                             'role' => 'user',
-                            'content' => 'Hello'
-                        ]
-                    ]
+                            'content' => 'Hello',
+                        ],
+                    ],
                 ],
             ]);
-            
-            return $response->getStatusCode() === 200;
+
+            return 200 === $response->getStatusCode();
         } catch (\Exception $e) {
-            $this->log('Connection check failed: ' . $e->getMessage());
+            $this->log('Connection check failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -57,12 +58,12 @@ class AnthropicIntegration extends BaseAiIntegration
             // Determine system instructions based on field type
             $fieldType = $options['fieldType'] ?? 'input';
             $systemInstructions = $this->getSystemInstructions($fieldType);
-            
+
             $messages = [];
             if ($systemInstructions) {
                 $messages[] = [
                     'role' => 'user',
-                    'content' => $systemInstructions . "\n\n" . $prompt,
+                    'content' => $systemInstructions."\n\n".$prompt,
                 ];
             } else {
                 $messages[] = [
@@ -91,10 +92,11 @@ class AnthropicIntegration extends BaseAiIntegration
                 'model' => $data['model'] ?? $this->getModel(),
             ];
         } catch (RequestException $e) {
-            $this->log('Anthropic API Error: ' . $e->getMessage());
+            $this->log('Anthropic API Error: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => 'Anthropic API Error: ' . $e->getMessage(),
+                'error' => 'Anthropic API Error: '.$e->getMessage(),
             ];
         }
     }
@@ -117,6 +119,7 @@ class AnthropicIntegration extends BaseAiIntegration
     public function processTranslateRequest(string $text, string $targetLanguage, array $options = []): array
     {
         $prompt = "Translate the following text to {$targetLanguage}:\n\n{$text}";
+
         return $this->processTextRequest($prompt, $options);
     }
 }

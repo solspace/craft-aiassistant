@@ -2,7 +2,6 @@
 
 namespace Solspace\AIAssistant\migrations;
 
-use Craft;
 use craft\db\Migration;
 
 /**
@@ -10,9 +9,6 @@ use craft\db\Migration;
  */
 class Install extends Migration
 {
-    /**
-     * @inheritdoc
-     */
     public function safeUp(): bool
     {
         // Create integrations table
@@ -63,13 +59,11 @@ class Install extends Migration
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function safeDown(): bool
     {
         $this->dropTableIfExists('{{%aiassistant_prompts}}');
         $this->dropTableIfExists('{{%aiassistant_integrations}}');
+
         return true;
     }
 }

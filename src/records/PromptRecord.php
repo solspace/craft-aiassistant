@@ -36,4 +36,4 @@ class PromptRecord extends ActiveRecord
             'sortOrder' => 'Sort Order',
         ];
     }
-} 
+}

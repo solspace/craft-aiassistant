@@ -2,62 +2,61 @@
 
 namespace Solspace\AIAssistant;
 
+use craft\base\Field;
 use craft\base\Plugin;
-use craft\web\View;
+use craft\events\DefineFieldHtmlEvent;
+use craft\events\RegisterComponentTypesEvent;
 use craft\helpers\UrlHelper;
-use yii\web\Response;
-use yii\base\Event;
+use craft\services\Dashboard;
+use craft\web\View;
 use Solspace\AIAssistant\assets\AiAssistantAsset;
 use Solspace\AIAssistant\models\Settings;
-use craft\base\Element;
-use Solspace\AIAssistant\services\PromptService;
 use Solspace\AIAssistant\services\IntegrationService;
+use Solspace\AIAssistant\services\PromptService;
 use Solspace\AIAssistant\services\ServiceProvider;
-use craft\base\Field;
-use craft\events\DefineFieldHtmlEvent;
 use Solspace\AIAssistant\widgets\QuickAiActionsWidget;
-use craft\events\RegisterComponentTypesEvent;
-use craft\services\Dashboard;
+use yii\base\Event;
+use yii\web\Response;
 
 class AiAssistant extends Plugin
 {
     /**
-     * Plugin instance
+     * Plugin instance.
      */
     public static ?AiAssistant $plugin = null;
 
     /**
-     * Whether the plugin has CP settings
+     * Whether the plugin has CP settings.
      */
     public bool $hasCpSettings = true;
 
     /**
-     * Plugin schema version
+     * Plugin schema version.
      */
     public string $schemaVersion = '1.0.0';
 
     /**
-     * Whether the plugin has a CP section
+     * Whether the plugin has a CP section.
      */
     public bool $hasCpSection = true;
 
     /**
-     * Service provider instance
+     * Service provider instance.
      */
     public ServiceProvider $serviceProvider;
 
     /**
-     * Integration service instance
+     * Integration service instance.
      */
     public IntegrationService $integrationService;
 
     /**
-     * Prompt service instance
+     * Prompt service instance.
      */
     public PromptService $promptService;
 
     /**
-     * Initialize the plugin
+     * Initialize the plugin.
      */
     public function init(): void
     {
@@ -72,26 +71,7 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Create the settings model
-     */
-    protected function createSettingsModel(): Settings
-    {
-        return new Settings();
-    }
-
-    /**
-     * Get the settings HTML
-     */
-    protected function settingsHtml(): string
-    {
-        return \Craft::$app->getView()->renderTemplate(
-            'ai-assistant/settings',
-            ['settings' => $this->getSettings()]
-        );
-    }
-
-    /**
-     * Plugins page Settings button opens the CP route
+     * Plugins page Settings button opens the CP route.
      */
     public function getSettingsResponse(): ?Response
     {
@@ -99,15 +79,15 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Get the CP navigation item
+     * Get the CP navigation item.
      */
     public function getCpNavItem(): ?array
     {
         $nav = parent::getCpNavItem();
         $nav['label'] = 'AI Assistant';
         $nav['url'] = 'ai-assistant';
-        $nav['icon'] = dirname(__DIR__) . '/icon.svg';
-        
+        $nav['icon'] = \dirname(__DIR__).'/icon.svg';
+
         $nav['subnav'] = [
             'prompts' => [
                 'label' => 'Prompts',
@@ -122,12 +102,47 @@ class AiAssistant extends Plugin
                 'url' => 'ai-assistant/settings',
             ],
         ];
-        
+
         return $nav;
     }
 
     /**
-     * Initialize services
+     * Get the IntegrationService instance.
+     */
+    public static function getIntegrationService(): IntegrationService
+    {
+        return self::$plugin->integrationService;
+    }
+
+    /**
+     * Get the PromptService instance.
+     */
+    public static function getPromptService(): PromptService
+    {
+        return self::$plugin->promptService;
+    }
+
+    /**
+     * Create the settings model.
+     */
+    protected function createSettingsModel(): Settings
+    {
+        return new Settings();
+    }
+
+    /**
+     * Get the settings HTML.
+     */
+    protected function settingsHtml(): string
+    {
+        return \Craft::$app->getView()->renderTemplate(
+            'ai-assistant/settings',
+            ['settings' => $this->getSettings()]
+        );
+    }
+
+    /**
+     * Initialize services.
      */
     private function initializeServices(): void
     {
@@ -137,23 +152,7 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Get the IntegrationService instance
-     */
-    public static function getIntegrationService(): IntegrationService
-    {
-        return self::$plugin->integrationService;
-    }
-
-    /**
-     * Get the PromptService instance
-     */
-    public static function getPromptService(): PromptService
-    {
-        return self::$plugin->promptService;
-    }
-
-    /**
-     * Register plugin routes
+     * Register plugin routes.
      */
     private function registerRoutes(): void
     {
@@ -167,13 +166,13 @@ class AiAssistant extends Plugin
             'ai-assistant/prompts' => 'ai-assistant/prompts/index',
             'ai-assistant/prompts/new' => 'ai-assistant/prompts/edit',
             'ai-assistant/prompts/edit' => 'ai-assistant/prompts/edit',
-            'ai-assistant/prompts/<id:\\d+>' => 'ai-assistant/prompts/edit',
+            'ai-assistant/prompts/<id:\d+>' => 'ai-assistant/prompts/edit',
             'ai-assistant/integrations' => 'ai-assistant/integrations/index',
             'ai-assistant/integrations/new' => 'ai-assistant/integrations/edit',
-            'ai-assistant/integrations/<id:\\d+>' => 'ai-assistant/integrations/edit',
+            'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
             'ai-assistant/settings' => 'ai-assistant/settings/index',
             'ai-assistant/settings/save' => 'ai-assistant/settings/save',
-            
+
             // API endpoints
             'ai-assistant/api/integrations' => 'ai-assistant/api/get-integrations',
             'ai-assistant/api/prompts' => 'ai-assistant/api/get-prompts',
@@ -181,7 +180,7 @@ class AiAssistant extends Plugin
             'ai-assistant/api/generate-image' => 'ai-assistant/api/generate-image',
             'ai-assistant/api/save-image-to-assets' => 'ai-assistant/api/save-image-to-assets',
             'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
-            
+
             // UI endpoints
             'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
         ];
@@ -190,7 +189,7 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Attach event listeners
+     * Attach event listeners.
      */
     private function attachEventListeners(): void
     {
@@ -198,7 +197,7 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Attach field injection listener for server-side field detection
+     * Attach field injection listener for server-side field detection.
      */
     private function attachFieldInjectionListener(): void
     {
@@ -212,32 +211,32 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Inject AI Assistant field tag into enabled fields
+     * Inject AI Assistant field tag into enabled fields.
      */
     private function injectAiAssistantFieldTag(DefineFieldHtmlEvent $event): void
     {
         $settings = $this->getSettings();
         $enabledFieldHandles = $settings->enabledFieldHandles ?? [];
-        
+
         $fieldHandle = $event->sender->handle;
-        if (!in_array($fieldHandle, $enabledFieldHandles)) {
-            return;
-        }
-        
-        $supportedTypes = [
-            'craft\\fields\\PlainText',
-            'craft\\ckeditor\\Field',
-            'craft\\redactor\\Field',
-            'spicyweb\\tinymce\\fields\\TinyMCE',
-            'craft\\fields\\Assets',
-        ];
-        
-        $fieldType = (new \ReflectionClass($event->sender))->getName();
-        if (!in_array($fieldType, $supportedTypes)) {
+        if (!\in_array($fieldHandle, $enabledFieldHandles)) {
             return;
         }
 
-        $fieldTag = sprintf(
+        $supportedTypes = [
+            'craft\fields\PlainText',
+            'craft\ckeditor\Field',
+            'craft\redactor\Field',
+            'spicyweb\tinymce\fields\TinyMCE',
+            'craft\fields\Assets',
+        ];
+
+        $fieldType = (new \ReflectionClass($event->sender))->getName();
+        if (!\in_array($fieldType, $supportedTypes)) {
+            return;
+        }
+
+        $fieldTag = \sprintf(
             '<div class="ai-assistant-field" data-field-handle="%s" data-field-type="%s" data-element="%s" data-not-scanned></div>',
             htmlspecialchars($fieldHandle),
             htmlspecialchars($fieldType),
@@ -248,7 +247,7 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Register asset bundles and initialize JavaScript
+     * Register asset bundles and initialize JavaScript.
      */
     private function registerAssetBundles(): void
     {
@@ -267,7 +266,7 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Register the main asset bundle
+     * Register the main asset bundle.
      */
     private function registerAssetBundle(): void
     {
@@ -275,13 +274,13 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Initialize JavaScript with settings and icon
+     * Initialize JavaScript with settings and icon.
      */
     private function initializeJavaScript(): void
     {
         $settings = $this->getSettings();
-        $iconPath = dirname(__DIR__) . '/icon.svg';
-        
+        $iconPath = \dirname(__DIR__).'/icon.svg';
+
         $this->serviceProvider->initializeJavaScript(
             $settings->toArray(),
             $iconPath
@@ -289,14 +288,14 @@ class AiAssistant extends Plugin
     }
 
     /**
-     * Register custom widgets
+     * Register custom widgets.
      */
     private function registerWidgets(): void
     {
         Event::on(
             Dashboard::class,
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
-            function(RegisterComponentTypesEvent $event) {
+            function (RegisterComponentTypesEvent $event) {
                 $event->types[] = QuickAiActionsWidget::class;
             }
         );

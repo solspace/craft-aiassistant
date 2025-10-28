@@ -3,14 +3,13 @@
 namespace Solspace\AIAssistant\services;
 
 use craft\base\Component;
-use Solspace\AIAssistant\Integrations\AiIntegrationInterface;
-use Solspace\AIAssistant\Integrations\OpenAI\OpenAIIntegration;
+use GuzzleHttp\Client;
 use Solspace\AIAssistant\Integrations\Anthropic\AnthropicIntegration;
 use Solspace\AIAssistant\Integrations\Gemini\GeminiIntegration;
+use Solspace\AIAssistant\Integrations\OpenAI\OpenAIIntegration;
 use Solspace\AIAssistant\Integrations\xAI\xAIIntegration;
 use Solspace\AIAssistant\models\Integration;
 use Solspace\AIAssistant\records\IntegrationRecord;
-use GuzzleHttp\Client;
 
 class IntegrationService extends Component
 {
@@ -24,13 +23,15 @@ class IntegrationService extends Component
     public function getAllIntegrations(): array
     {
         $records = IntegrationRecord::find()
-            ->orderBy(['name' => SORT_ASC])
-            ->all();
+            ->orderBy(['name' => \SORT_ASC])
+            ->all()
+        ;
 
         $integrations = [];
         foreach ($records as $record) {
             $integrations[] = $this->recordToModel($record);
         }
+
         return $integrations;
     }
 
@@ -38,25 +39,29 @@ class IntegrationService extends Component
     {
         $records = IntegrationRecord::find()
             ->where(['enabled' => true])
-            ->orderBy(['name' => SORT_ASC])
-            ->all();
+            ->orderBy(['name' => \SORT_ASC])
+            ->all()
+        ;
 
         $integrations = [];
         foreach ($records as $record) {
             $integrations[] = $this->recordToModel($record);
         }
+
         return $integrations;
     }
 
     public function getIntegrationById(int $id): ?Integration
     {
         $record = IntegrationRecord::findOne($id);
+
         return $record ? $this->recordToModel($record) : null;
     }
 
     public function getIntegrationByHandle(string $handle): ?Integration
     {
         $record = IntegrationRecord::findOne(['handle' => $handle]);
+
         return $record ? $this->recordToModel($record) : null;
     }
 
@@ -89,6 +94,7 @@ class IntegrationService extends Component
     public function deleteIntegration(int $id): bool
     {
         $record = IntegrationRecord::findOne($id);
+
         return $record ? $record->delete() : false;
     }
 
@@ -103,7 +109,7 @@ class IntegrationService extends Component
         if (!$integrationClass) {
             return [
                 'success' => false,
-                'error' => 'Unknown integration type: ' . $integration->type,
+                'error' => 'Unknown integration type: '.$integration->type,
             ];
         }
 
@@ -130,7 +136,7 @@ class IntegrationService extends Component
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'error' => 'Test failed: ' . $e->getMessage(),
+                'error' => 'Test failed: '.$e->getMessage(),
             ];
         }
     }
@@ -141,14 +147,14 @@ class IntegrationService extends Component
         if (!$integration) {
             return [
                 'success' => false,
-                'error' => 'Integration not found: ' . $integrationHandle . '. Please create an integration first.',
+                'error' => 'Integration not found: '.$integrationHandle.'. Please create an integration first.',
             ];
         }
-        
+
         if (!$integration->enabled) {
             return [
                 'success' => false,
-                'error' => 'Integration is disabled: ' . $integrationHandle,
+                'error' => 'Integration is disabled: '.$integrationHandle,
             ];
         }
 
@@ -156,7 +162,7 @@ class IntegrationService extends Component
         if (!$integrationClass) {
             return [
                 'success' => false,
-                'error' => 'Unknown integration type: ' . $integration->type,
+                'error' => 'Unknown integration type: '.$integration->type,
             ];
         }
 
@@ -176,21 +182,25 @@ class IntegrationService extends Component
             switch ($type) {
                 case 'text':
                     return $aiIntegration->processTextRequest($prompt, $options);
+
                 case 'image':
                     return $aiIntegration->processImageRequest($prompt, $options);
+
                 case 'translate':
                     $targetLanguage = $options['targetLanguage'] ?? 'English';
+
                     return $aiIntegration->processTranslateRequest($prompt, $targetLanguage, $options);
+
                 default:
                     return [
                         'success' => false,
-                        'error' => 'Unknown request type: ' . $type,
+                        'error' => 'Unknown request type: '.$type,
                     ];
             }
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'error' => 'Request failed: ' . $e->getMessage(),
+                'error' => 'Request failed: '.$e->getMessage(),
             ];
         }
     }
@@ -199,7 +209,7 @@ class IntegrationService extends Component
     {
         $models = [];
         foreach ($this->getEnabledIntegrations() as $integration) {
-            if ($type === 'image') {
+            if ('image' === $type) {
                 $modelOptions = $integration->getImageModelOptions();
             } else {
                 $modelOptions = $integration->getModelOptions();
@@ -233,7 +243,7 @@ class IntegrationService extends Component
 
         if ($record->metadata) {
             $metadata = json_decode($record->metadata, true);
-            if (is_array($metadata)) {
+            if (\is_array($metadata)) {
                 $integration->apiKey = $metadata['apiKey'] ?? '';
                 $integration->model = $metadata['model'] ?? '';
                 $integration->maxTokens = $metadata['maxTokens'] ?? 1000;

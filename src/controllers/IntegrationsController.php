@@ -4,14 +4,15 @@ namespace Solspace\AIAssistant\controllers;
 
 use craft\helpers\StringHelper;
 use craft\web\Controller;
-use Solspace\AIAssistant\models\Integration;
 use Solspace\AIAssistant\AiAssistant;
+use Solspace\AIAssistant\models\Integration;
+use yii\web\Response;
 
 class IntegrationsController extends Controller
 {
     protected array|bool|int $allowAnonymous = false;
 
-    public function actionIndex(): \yii\web\Response
+    public function actionIndex(): Response
     {
         $integrationService = AiAssistant::getIntegrationService();
         $integrations = $integrationService->getAllIntegrations();
@@ -21,7 +22,7 @@ class IntegrationsController extends Controller
         ]);
     }
 
-    public function actionEdit(int $id = null): \yii\web\Response
+    public function actionEdit(?int $id = null): Response
     {
         $integration = null;
         if ($id) {
@@ -38,7 +39,7 @@ class IntegrationsController extends Controller
         ]);
     }
 
-    public function actionSave(): \yii\web\Response
+    public function actionSave(): Response
     {
         $this->requirePostRequest();
 
@@ -46,12 +47,12 @@ class IntegrationsController extends Controller
         $integration = new Integration();
 
         $rawId = $request->getBodyParam('id');
-        $integration->id = $rawId !== null && $rawId !== '' ? (int) $rawId : null;
-        $integration->enabled = (bool)$request->getBodyParam('enabled');
+        $integration->id = null !== $rawId && '' !== $rawId ? (int) $rawId : null;
+        $integration->enabled = (bool) $request->getBodyParam('enabled');
 
         $name = (string) $request->getBodyParam('name');
         $handle = (string) $request->getBodyParam('handle');
-        if ($handle === '' && $name !== '') {
+        if ('' === $handle && '' !== $name) {
             $handle = StringHelper::toKebabCase($name);
         }
 
@@ -61,11 +62,11 @@ class IntegrationsController extends Controller
         $integration->class = $this->getClassForType($integration->type);
         $integration->apiKey = (string) $request->getBodyParam('apiKey');
         $integration->model = (string) $request->getBodyParam('model');
-        $integration->maxTokens = (int)$request->getBodyParam('maxTokens');
+        $integration->maxTokens = (int) $request->getBodyParam('maxTokens');
         $integration->temperature = (string) $request->getBodyParam('temperature');
 
         // If model is empty, apply sensible defaults per provider
-        if ($integration->model === '') {
+        if ('' === $integration->model) {
             $defaults = [
                 'openai' => 'gpt-4o-mini',
                 'gemini' => 'gemini-1.5-flash',
@@ -75,56 +76,59 @@ class IntegrationsController extends Controller
 
         if (!$integration->validate()) {
             \Craft::$app->getSession()->setError('Couldn\'t save integration.');
+
             return $this->redirectToPostedUrl();
         }
 
         $integrationService = AiAssistant::getIntegrationService();
         if ($integrationService->saveIntegration($integration)) {
             \Craft::$app->getSession()->setNotice('Integration saved.');
+
             return $this->redirect('ai-assistant/integrations');
         }
 
         \Craft::$app->getSession()->setError('Couldn\'t save integration.');
+
         return $this->redirectToPostedUrl();
     }
 
-    public function actionTest(): \yii\web\Response
+    public function actionTest(): Response
     {
         $id = $this->request->getBodyParam('id');
-        
+
         if (!$id) {
             return $this->asJson([
                 'success' => false,
-                'message' => 'Integration ID is required.'
+                'message' => 'Integration ID is required.',
             ]);
         }
-        
+
         $integrationService = AiAssistant::getIntegrationService();
         $integration = $integrationService->getIntegrationById($id);
 
         if (!$integration) {
             return $this->asJson([
                 'success' => false,
-                'message' => 'Integration not found.'
+                'message' => 'Integration not found.',
             ]);
         }
 
         try {
             $testResult = $integrationService->testIntegration($integration);
-            
+
             return $this->asJson([
                 'success' => $testResult['success'],
-                'message' => $testResult['message'] ?? ($testResult['success'] ? 'Connection successful!' : 'Connection failed.')
+                'message' => $testResult['message'] ?? ($testResult['success'] ? 'Connection successful!' : 'Connection failed.'),
             ]);
         } catch (\Exception $e) {
             return $this->asJson([
                 'success' => false,
-                'message' => 'Integration test failed: ' . $e->getMessage()
+                'message' => 'Integration test failed: '.$e->getMessage(),
             ]);
         }
     }
 
-    public function actionDelete(): \yii\web\Response
+    public function actionDelete(): Response
     {
         $this->requirePostRequest();
 
@@ -143,13 +147,14 @@ class IntegrationsController extends Controller
         return $this->redirect('ai-assistant/integrations');
     }
 
-    public function actionTestConnection(): \yii\web\Response
+    public function actionTestConnection(): Response
     {
         $this->requireAcceptsJson();
+
         return $this->asJson(['success' => true, 'message' => 'OK']);
     }
 
-    public function actionGetModels(): \yii\web\Response
+    public function actionGetModels(): Response
     {
         $this->requireAcceptsJson();
 
@@ -161,7 +166,7 @@ class IntegrationsController extends Controller
         $integration->type = $integrationType;
 
         $models = [];
-        if ($type === 'image') {
+        if ('image' === $type) {
             $models = $integration->getImageModelOptions();
         } else {
             $models = $integration->getModelOptions();
@@ -176,10 +181,10 @@ class IntegrationsController extends Controller
     private function getClassForType(string $type): string
     {
         $classes = [
-            'openai' => 'Solspace\\AIAssistant\\Integrations\\OpenAI\\OpenAIIntegration',
-            'gemini' => 'Solspace\\AIAssistant\\Integrations\\Gemini\\GeminiIntegration',
-            'anthropic' => 'Solspace\\AIAssistant\\Integrations\\Anthropic\\AnthropicIntegration',
-            'xai' => 'Solspace\\AIAssistant\\Integrations\\xAI\\xAIIntegration',
+            'openai' => 'Solspace\AIAssistant\Integrations\OpenAI\OpenAIIntegration',
+            'gemini' => 'Solspace\AIAssistant\Integrations\Gemini\GeminiIntegration',
+            'anthropic' => 'Solspace\AIAssistant\Integrations\Anthropic\AnthropicIntegration',
+            'xai' => 'Solspace\AIAssistant\Integrations\xAI\xAIIntegration',
         ];
 
         return $classes[$type] ?? '';

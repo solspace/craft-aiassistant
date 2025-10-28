@@ -6,7 +6,7 @@ use craft\base\Model;
 
 class Prompt extends Model
 {
-    public $id = null;
+    public $id;
     public string $name = '';
     public string $promptText = '';
     public string $type = 'generate';
@@ -61,4 +61,4 @@ class Prompt extends Model
             'gpt-4-turbo' => 'GPT-4 Turbo',
         ];
     }
-} 
+}

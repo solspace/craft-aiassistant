@@ -25,9 +25,10 @@ class GeminiIntegration extends BaseAiIntegration
             ]);
             $data = json_decode((string) $response->getBody(), true);
 
-            return isset($data['models']) && is_array($data['models']);
+            return isset($data['models']) && \is_array($data['models']);
         } catch (\Exception $e) {
-            $this->log('Connection check failed: ' . $e->getMessage());
+            $this->log('Connection check failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -40,7 +41,7 @@ class GeminiIntegration extends BaseAiIntegration
             // Determine system instructions based on field type
             $fieldType = $options['fieldType'] ?? 'input';
             $systemInstructions = $this->getSystemInstructions($fieldType);
-            
+
             $contents = [];
             if ($systemInstructions) {
                 $contents[] = [
@@ -77,7 +78,7 @@ class GeminiIntegration extends BaseAiIntegration
                 ],
             ];
 
-            $response = $client->post($this->getEndpoint('/models/' . ($options['model'] ?? $this->getModel()) . ':generateContent'), [
+            $response = $client->post($this->getEndpoint('/models/'.($options['model'] ?? $this->getModel()).':generateContent'), [
                 'query' => [
                     'key' => $this->getApiKey(),
                 ],
@@ -93,10 +94,11 @@ class GeminiIntegration extends BaseAiIntegration
                 'model' => $data['model'] ?? $this->getModel(),
             ];
         } catch (RequestException $e) {
-            $this->log('Gemini API Error: ' . $e->getMessage());
+            $this->log('Gemini API Error: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => 'Gemini API Error: ' . $e->getMessage(),
+                'error' => 'Gemini API Error: '.$e->getMessage(),
             ];
         }
     }
@@ -122,7 +124,7 @@ class GeminiIntegration extends BaseAiIntegration
                 ],
             ];
 
-            $response = $client->post($this->getEndpoint('/models/' . ($options['model'] ?? 'gemini-pro-vision') . ':generateContent'), [
+            $response = $client->post($this->getEndpoint('/models/'.($options['model'] ?? 'gemini-pro-vision').':generateContent'), [
                 'query' => [
                     'key' => $this->getApiKey(),
                 ],
@@ -138,10 +140,11 @@ class GeminiIntegration extends BaseAiIntegration
                 'model' => $data['model'] ?? 'gemini-pro-vision',
             ];
         } catch (RequestException $e) {
-            $this->log('Gemini API Error: ' . $e->getMessage());
+            $this->log('Gemini API Error: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => 'Gemini API Error: ' . $e->getMessage(),
+                'error' => 'Gemini API Error: '.$e->getMessage(),
             ];
         }
     }
@@ -164,6 +167,7 @@ class GeminiIntegration extends BaseAiIntegration
     public function processTranslateRequest(string $text, string $targetLanguage, array $options = []): array
     {
         $prompt = "Translate the following text to {$targetLanguage}:\n\n{$text}";
+
         return $this->processTextRequest($prompt, $options);
     }
 }

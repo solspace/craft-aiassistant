@@ -3,14 +3,15 @@
 namespace Solspace\AIAssistant\controllers;
 
 use craft\web\Controller;
-use Solspace\AIAssistant\models\Prompt;
 use Solspace\AIAssistant\AiAssistant;
+use Solspace\AIAssistant\models\Prompt;
+use yii\web\Response;
 
 class PromptsController extends Controller
 {
     protected array|bool|int $allowAnonymous = false;
 
-    public function actionIndex(): ?\yii\web\Response
+    public function actionIndex(): ?Response
     {
         $promptService = AiAssistant::getPromptService();
         $prompts = $promptService->getAllPrompts();
@@ -20,21 +21,21 @@ class PromptsController extends Controller
         ]);
     }
 
-    public function actionEdit($id = null): ?\yii\web\Response
+    public function actionEdit($id = null): ?Response
     {
         // Accept both route param and query param for id (supports built-ins like builtin_*)
-        $id = $id ?? (string) $this->request->getQueryParam('id');
+        $id ??= (string) $this->request->getQueryParam('id');
 
         $prompt = null;
         if ($id) {
             $promptService = AiAssistant::getPromptService();
-            
+
             // Check if it's a built-in prompt
             if (str_starts_with($id, 'builtin_')) {
                 $builtInPrompts = $promptService->getBuiltInPrompts();
                 $promptName = str_replace('_', ' ', substr($id, 8));
                 $promptName = ucwords($promptName);
-                
+
                 foreach ($builtInPrompts as $promptData) {
                     if ($promptData['name'] === $promptName) {
                         $prompt = new Prompt();
@@ -46,12 +47,13 @@ class PromptsController extends Controller
                         $prompt->isActive = true;
                         $prompt->sortOrder = $promptData['sortOrder'];
                         $prompt->isBuiltIn = true;
+
                         break;
                     }
                 }
             } else {
                 // Numeric ids only for DB prompts
-                $numericId = ctype_digit((string)$id) ? (int) $id : null;
+                $numericId = ctype_digit((string) $id) ? (int) $id : null;
                 $prompt = $numericId ? $promptService->getPromptById($numericId) : null;
             }
         }
@@ -71,20 +73,20 @@ class PromptsController extends Controller
         ]);
     }
 
-    public function actionSave(): \yii\web\Response
+    public function actionSave(): Response
     {
         $this->requirePostRequest();
-        
+
         $promptService = AiAssistant::getPromptService();
 
         $id = $this->request->getBodyParam('id');
 
         // If it's a built-in prompt, create a new custom prompt instead
-        if ($id && is_string($id) && str_starts_with($id, 'builtin_')) {
+        if ($id && \is_string($id) && str_starts_with($id, 'builtin_')) {
             $prompt = new Prompt();
             $prompt->isBuiltIn = false;
         } else {
-            $numericId = ctype_digit((string)$id) ? (int) $id : null;
+            $numericId = ctype_digit((string) $id) ? (int) $id : null;
             $prompt = $numericId ? $promptService->getPromptById($numericId) : new Prompt();
         }
 
@@ -92,7 +94,7 @@ class PromptsController extends Controller
         $prompt->promptText = (string) $this->request->getBodyParam('promptText');
         $prompt->type = (string) $this->request->getBodyParam('type');
         $integrationHandle = (string) $this->request->getBodyParam('integrationHandle');
-        $prompt->integrationHandle = $integrationHandle !== '' ? $integrationHandle : null;
+        $prompt->integrationHandle = '' !== $integrationHandle ? $integrationHandle : null;
         $prompt->isActive = (bool) $this->request->getBodyParam('isActive', true);
         $prompt->sortOrder = (int) $this->request->getBodyParam('sortOrder', 0);
 
@@ -100,7 +102,7 @@ class PromptsController extends Controller
         $existingPrompt = $promptService->getPromptByName($prompt->name);
         if ($existingPrompt && $existingPrompt->id != $prompt->id) {
             $this->setFailFlash('A prompt with this name already exists.');
-            
+
             $integrationService = AiAssistant::getIntegrationService();
             $integrations = $integrationService->getEnabledIntegrations();
 
@@ -125,6 +127,7 @@ class PromptsController extends Controller
 
         if ($promptService->savePrompt($prompt)) {
             $this->setSuccessFlash('Prompt saved successfully.');
+
             return $this->redirect('ai-assistant/prompts');
         }
 
@@ -139,12 +142,12 @@ class PromptsController extends Controller
         ]);
     }
 
-    public function actionDelete(): \yii\web\Response
+    public function actionDelete(): Response
     {
         $this->requirePostRequest();
-        
+
         $id = $this->request->getBodyParam('id');
-        
+
         if ($id) {
             $promptService = AiAssistant::getPromptService();
             if ($promptService->deletePrompt($id)) {
@@ -156,4 +159,4 @@ class PromptsController extends Controller
 
         return $this->redirect('ai-assistant/prompts');
     }
-} 
+}

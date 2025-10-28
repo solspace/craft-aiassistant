@@ -2,7 +2,6 @@
 
 namespace Solspace\AIAssistant\services\helpers;
 
-use Craft;
 use craft\web\View;
 use yii\base\Component;
 
@@ -10,7 +9,7 @@ class JavaScriptHelper extends Component
 {
     public function initializeJavaScript(array $settings, string $iconPath): void
     {
-        $view = Craft::$app->getView();
+        $view = \Craft::$app->getView();
 
         $this->registerSettings($view, $settings);
         $this->registerIcon($view, $iconPath);
@@ -18,7 +17,7 @@ class JavaScriptHelper extends Component
 
     private function registerSettings(View $view, array $settings): void
     {
-        $jsSettings = "window.aiAssistantSettings = " . json_encode($settings, JSON_THROW_ON_ERROR) . ";";
+        $jsSettings = 'window.aiAssistantSettings = '.json_encode($settings, \JSON_THROW_ON_ERROR).';';
         $view->registerJs($jsSettings, View::POS_HEAD);
     }
 
@@ -26,8 +25,8 @@ class JavaScriptHelper extends Component
     {
         $iconSvg = $this->loadIconSvg($iconPath);
         $iconSvg = $this->minifySvg($iconSvg);
-        
-        $iconVarJs = 'window.aiAssistantIconSvg = ' . json_encode($iconSvg, JSON_THROW_ON_ERROR) . ';';
+
+        $iconVarJs = 'window.aiAssistantIconSvg = '.json_encode($iconSvg, \JSON_THROW_ON_ERROR).';';
         $view->registerJs($iconVarJs, View::POS_HEAD);
     }
 
@@ -38,7 +37,7 @@ class JavaScriptHelper extends Component
         }
 
         $content = file_get_contents($iconPath);
-        if ($content === false) {
+        if (false === $content) {
             throw new \Exception("Could not read icon file: {$iconPath}");
         }
 
@@ -48,8 +47,7 @@ class JavaScriptHelper extends Component
     private function minifySvg(string $svgContent): string
     {
         $svgContent = preg_replace('/\s+/', ' ', $svgContent);
-        $svgContent = trim($svgContent);
-        
-        return $svgContent;
+
+        return trim($svgContent);
     }
 }

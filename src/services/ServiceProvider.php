@@ -2,8 +2,8 @@
 
 namespace Solspace\AIAssistant\services;
 
-use yii\base\Component;
 use Solspace\AIAssistant\services\helpers\JavaScriptHelper;
+use yii\base\Component;
 
 class ServiceProvider extends Component
 {
@@ -15,13 +15,13 @@ class ServiceProvider extends Component
         $this->initializeHelpers();
     }
 
-    private function initializeHelpers(): void
-    {
-        $this->javaScriptHelper = new JavaScriptHelper();
-    }
-
     public function initializeJavaScript(array $settings, string $iconPath): void
     {
         $this->javaScriptHelper->initializeJavaScript($settings, $iconPath);
+    }
+
+    private function initializeHelpers(): void
+    {
+        $this->javaScriptHelper = new JavaScriptHelper();
     }
 }

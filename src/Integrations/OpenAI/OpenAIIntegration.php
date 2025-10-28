@@ -20,14 +20,15 @@ class OpenAIIntegration extends BaseAiIntegration
         try {
             $response = $client->get($this->getEndpoint('/models'), [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->getApiKey(),
+                    'Authorization' => 'Bearer '.$this->getApiKey(),
                 ],
             ]);
             $data = json_decode((string) $response->getBody(), true);
 
-            return isset($data['data']) && is_array($data['data']);
+            return isset($data['data']) && \is_array($data['data']);
         } catch (\Exception $e) {
-            $this->log('Connection check failed: ' . $e->getMessage());
+            $this->log('Connection check failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -37,7 +38,7 @@ class OpenAIIntegration extends BaseAiIntegration
         try {
             $client = new Client([
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->getApiKey(),
+                    'Authorization' => 'Bearer '.$this->getApiKey(),
                     'Content-Type' => 'application/json',
                 ],
             ]);
@@ -45,7 +46,7 @@ class OpenAIIntegration extends BaseAiIntegration
             // Determine system instructions based on field type
             $fieldType = $options['fieldType'] ?? 'input';
             $systemInstructions = $this->getSystemInstructions($fieldType);
-            
+
             $messages = [];
             if ($systemInstructions) {
                 $messages[] = [
@@ -78,10 +79,11 @@ class OpenAIIntegration extends BaseAiIntegration
                 'model' => $data['model'] ?? $this->getModel(),
             ];
         } catch (RequestException $e) {
-            $this->log('OpenAI API Error: ' . $e->getMessage());
+            $this->log('OpenAI API Error: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => 'OpenAI API Error: ' . $e->getMessage(),
+                'error' => 'OpenAI API Error: '.$e->getMessage(),
             ];
         }
     }
@@ -91,7 +93,7 @@ class OpenAIIntegration extends BaseAiIntegration
         try {
             $client = new Client([
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->getApiKey(),
+                    'Authorization' => 'Bearer '.$this->getApiKey(),
                     'Content-Type' => 'application/json',
                 ],
             ]);
@@ -118,10 +120,11 @@ class OpenAIIntegration extends BaseAiIntegration
                 'model' => $data['data'][0]['model'] ?? 'dall-e-3',
             ];
         } catch (RequestException $e) {
-            $this->log('OpenAI Image API Error: ' . $e->getMessage());
+            $this->log('OpenAI Image API Error: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => 'OpenAI Image API Error: ' . $e->getMessage(),
+                'error' => 'OpenAI Image API Error: '.$e->getMessage(),
             ];
         }
     }
@@ -135,6 +138,7 @@ class OpenAIIntegration extends BaseAiIntegration
     public function processTranslateRequest(string $text, string $targetLanguage, array $options = []): array
     {
         $prompt = "Translate the following text to {$targetLanguage}:\n\n{$text}";
+
         return $this->processTextRequest($prompt, $options);
     }
 }

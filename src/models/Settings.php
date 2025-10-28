@@ -24,7 +24,7 @@ class Settings extends Model
 
     public function isFieldEnabled(string $handle): bool
     {
-        return in_array($handle, $this->enabledFieldHandles, true);
+        return \in_array($handle, $this->enabledFieldHandles, true);
     }
 
     public function enableField(string $handle): void
@@ -37,7 +37,7 @@ class Settings extends Model
     public function disableField(string $handle): void
     {
         $key = array_search($handle, $this->enabledFieldHandles, true);
-        if ($key !== false) {
+        if (false !== $key) {
             unset($this->enabledFieldHandles[$key]);
             $this->enabledFieldHandles = array_values($this->enabledFieldHandles);
         }
@@ -45,7 +45,7 @@ class Settings extends Model
 
     public function getEnabledFieldCount(): int
     {
-        return count($this->enabledFieldHandles);
+        return \count($this->enabledFieldHandles);
     }
 
     public function hasEnabledFields(): bool

@@ -11,12 +11,12 @@ class PromptService extends Component
     public function getAllPrompts(): array
     {
         $prompts = [];
-        
+
         // Add built-in prompts first
         $builtInPrompts = $this->getBuiltInPrompts();
         foreach ($builtInPrompts as $promptData) {
             $prompt = new Prompt();
-            $prompt->id = 'builtin_' . strtolower(str_replace(' ', '_', $promptData['name']));
+            $prompt->id = 'builtin_'.strtolower(str_replace(' ', '_', $promptData['name']));
             $prompt->name = $promptData['name'];
             $prompt->promptText = $promptData['promptText'];
             $prompt->type = $promptData['type'];
@@ -26,13 +26,13 @@ class PromptService extends Component
             $prompt->isBuiltIn = true;
             $prompts[] = $prompt;
         }
-        
+
         // Add user-created prompts
         $records = PromptRecord::find()
             ->where(['isActive' => true])
-            ->orderBy(['sortOrder' => SORT_ASC, 'name' => SORT_ASC])
-            ->all();
-
+            ->orderBy(['sortOrder' => \SORT_ASC, 'name' => \SORT_ASC])
+            ->all()
+        ;
 
         foreach ($records as $record) {
             $prompt = $this->recordToModel($record);
@@ -47,8 +47,9 @@ class PromptService extends Component
     {
         $records = PromptRecord::find()
             ->where(['isActive' => true, 'type' => $type])
-            ->orderBy(['sortOrder' => SORT_ASC, 'name' => SORT_ASC])
-            ->all();
+            ->orderBy(['sortOrder' => \SORT_ASC, 'name' => \SORT_ASC])
+            ->all()
+        ;
 
         $prompts = [];
         foreach ($records as $record) {
@@ -61,12 +62,14 @@ class PromptService extends Component
     public function getPromptById(int $id): ?Prompt
     {
         $record = PromptRecord::findOne($id);
+
         return $record ? $this->recordToModel($record) : null;
     }
 
     public function getPromptByName(string $name): ?Prompt
     {
         $record = PromptRecord::findOne(['name' => $name]);
+
         return $record ? $this->recordToModel($record) : null;
     }
 
@@ -94,6 +97,7 @@ class PromptService extends Component
     public function deletePrompt(int $id): bool
     {
         $record = PromptRecord::findOne($id);
+
         return $record ? $record->delete() : false;
     }
 
@@ -141,4 +145,4 @@ class PromptService extends Component
 
         return $prompt;
     }
-} 
+}

@@ -5,12 +5,13 @@ namespace Solspace\AIAssistant\controllers;
 use craft\web\Controller;
 use Solspace\AIAssistant\AiAssistant;
 use Solspace\AIAssistant\services\PromptService;
+use yii\web\Response;
 
 class ApiController extends Controller
 {
     protected array|bool|int $allowAnonymous = false;
 
-    public function actionGenerateText(): \yii\web\Response
+    public function actionGenerateText(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -32,12 +33,12 @@ class ApiController extends Controller
         } catch (\Exception $e) {
             return $this->asJson([
                 'success' => false,
-                'error' => 'Generation failed: ' . $e->getMessage()
+                'error' => 'Generation failed: '.$e->getMessage(),
             ]);
         }
     }
 
-    public function actionGenerateImage(): \yii\web\Response
+    public function actionGenerateImage(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -56,15 +57,15 @@ class ApiController extends Controller
         return $this->asJson($result);
     }
 
-    public function actionGetPrompts(): \yii\web\Response
+    public function actionGetPrompts(): Response
     {
         $this->requireAcceptsJson();
 
         try {
             $type = $this->request->getQueryParam('type');
-            
+
             $promptService = new PromptService();
-            
+
             if ($type) {
                 $prompts = $promptService->getPromptsByType($type);
             } else {
@@ -83,7 +84,7 @@ class ApiController extends Controller
                     'isBuiltIn' => $prompt->isBuiltIn ?? false,
                 ];
             }
-            
+
             return $this->asJson([
                 'success' => true,
                 'prompts' => $processedPrompts,
@@ -91,13 +92,13 @@ class ApiController extends Controller
         } catch (\Exception $e) {
             return $this->asJson([
                 'success' => false,
-                'error' => 'Failed to load prompts: ' . $e->getMessage(),
+                'error' => 'Failed to load prompts: '.$e->getMessage(),
                 'prompts' => [],
             ]);
         }
     }
 
-    public function actionValidateLicense(): \yii\web\Response
+    public function actionValidateLicense(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -109,7 +110,7 @@ class ApiController extends Controller
         ]);
     }
 
-    public function actionGetIntegrations(): \yii\web\Response
+    public function actionGetIntegrations(): Response
     {
         $this->requireAcceptsJson();
 
@@ -134,9 +135,9 @@ class ApiController extends Controller
         } catch (\Exception $e) {
             return $this->asJson([
                 'success' => false,
-                'error' => 'Failed to load integrations: ' . $e->getMessage(),
+                'error' => 'Failed to load integrations: '.$e->getMessage(),
                 'integrations' => [],
             ]);
         }
     }
-} 
+}

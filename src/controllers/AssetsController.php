@@ -2,15 +2,16 @@
 
 namespace Solspace\AIAssistant\controllers;
 
-use craft\web\Controller;
 use craft\elements\Asset;
+use craft\web\Controller;
 use Solspace\AIAssistant\AiAssistant;
+use yii\web\Response;
 
 class AssetsController extends Controller
 {
     protected array|bool|int $allowAnonymous = false;
 
-    public function actionGenerateAlt(): \yii\web\Response
+    public function actionGenerateAlt(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -32,7 +33,7 @@ class AssetsController extends Controller
 
         $integrationHandleToUse = '';
         if ($promptId) {
-            $altPrompt = $promptService->getPromptById((int)$promptId);
+            $altPrompt = $promptService->getPromptById((int) $promptId);
             if (!$altPrompt || empty($altPrompt->integrationHandle)) {
                 return $this->asJson(['success' => false, 'error' => 'Selected prompt not found or has no integration']);
             }
@@ -45,17 +46,17 @@ class AssetsController extends Controller
                 $integrationHandleToUse = $enabled[0]->handle;
             }
         }
-        if ($integrationHandleToUse === '') {
+        if ('' === $integrationHandleToUse) {
             return $this->asJson(['success' => false, 'error' => 'No enabled integration found']);
         }
 
-        $context = trim(($asset->title ?: '') . ' ' . ($asset->filename ?: ''));
+        $context = trim(($asset->title ?: '').' '.($asset->filename ?: ''));
         $baseInstruction = $altPrompt && $altPrompt->promptText ? $altPrompt->promptText : 'Generate concise, descriptive, human-friendly alt text for this image.';
         $instruction = $baseInstruction;
-        if ($custom !== '') {
-            $instruction = trim($custom) . "\n" . $instruction;
+        if ('' !== $custom) {
+            $instruction = trim($custom)."\n".$instruction;
         }
-        $fullPrompt = $instruction . "\nContext: " . $context . "\nRequirements: 8–14 words, no trailing period, no quotes.";
+        $fullPrompt = $instruction."\nContext: ".$context."\nRequirements: 8–14 words, no trailing period, no quotes.";
 
         $aiResult = $integrationService->processRequest($integrationHandleToUse, 'text', $fullPrompt, []);
 
@@ -63,8 +64,8 @@ class AssetsController extends Controller
             return $this->asJson($aiResult);
         }
 
-        $alt = trim((string)($aiResult['content'] ?? ''));
-        if ($alt === '') {
+        $alt = trim((string) ($aiResult['content'] ?? ''));
+        if ('' === $alt) {
             return $this->asJson(['success' => false, 'error' => 'Empty result from AI']);
         }
 
@@ -93,7 +94,7 @@ class AssetsController extends Controller
         return $this->asJson($result);
     }
 
-    public function actionSaveAlt(): \yii\web\Response
+    public function actionSaveAlt(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -108,7 +109,7 @@ class AssetsController extends Controller
             return $this->asJson(['success' => false, 'error' => 'Asset not found']);
         }
         $alt = trim($alt);
-        if ($alt === '') {
+        if ('' === $alt) {
             return $this->asJson(['success' => false, 'error' => 'Alt text cannot be empty']);
         }
 
@@ -119,11 +120,11 @@ class AssetsController extends Controller
             foreach ($fieldLayout->getCustomFields() as $field) {
                 $handle = $field->handle ?? '';
                 $name = method_exists($field, 'name') ? ($field->name ?? '') : '';
-                $haystack = strtolower($handle . ' ' . $name);
-                if (strpos($haystack, 'alt') !== false) {
+                $haystack = strtolower($handle.' '.$name);
+                if (str_contains($haystack, 'alt')) {
                     if (!$overwrite) {
                         $existing = $asset->getFieldValue($handle);
-                        if (is_string($existing)) {
+                        if (\is_string($existing)) {
                             $existing = trim($existing);
                         }
                         if (!empty($existing)) {
@@ -137,13 +138,14 @@ class AssetsController extends Controller
                     }
                     $asset->setFieldValue($handle, $alt);
                     $savedTo = $handle;
+
                     break;
                 }
             }
         }
 
         // Fallback: update the title if no suitable field was found
-        if ($savedTo === null) {
+        if (null === $savedTo) {
             if (!$overwrite && !empty($asset->title)) {
                 return $this->asJson([
                     'success' => true,
@@ -168,5 +170,3 @@ class AssetsController extends Controller
         ]);
     }
 }
-
-

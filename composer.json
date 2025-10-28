@@ -32,5 +32,15 @@
         "developerUrl": "https://solspace.com/",
         "documentationUrl": "https://docs.solspace.com/",
         "changelogUrl": "https://docs.solspace.com/changelog/"
+    },
+    "scripts": {
+        "fix": "vendor/bin/php-cs-fixer fix --diff --config=./.php-cs-fixer.dist.php",
+        "fix:dry-run": "vendor/bin/php-cs-fixer fix --dry-run --diff --config=./.php-cs-fixer.dist.php"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }

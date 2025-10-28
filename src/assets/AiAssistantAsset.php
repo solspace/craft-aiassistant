@@ -9,14 +9,14 @@ class AiAssistantAsset extends AssetBundle
 {
     public function init(): void
     {
-        $this->sourcePath = __DIR__ . '/../assets';
+        $this->sourcePath = __DIR__.'/../assets';
         $this->depends = [CpAsset::class];
         $this->js = [
             'js/ai-assistant-modal.js',
-            'js/ai-assistant.js'
+            'js/ai-assistant.js',
         ];
         $this->css = ['css/ai-assistant.css'];
-        
+
         parent::init();
     }
 }

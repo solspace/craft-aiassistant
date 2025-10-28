@@ -3,7 +3,6 @@
 namespace Solspace\AIAssistant\Integrations;
 
 use craft\helpers\App;
-use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
 abstract class BaseAiIntegration implements AiIntegrationInterface
@@ -36,6 +35,7 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
     public function setId(int $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -92,7 +92,7 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
         return "{$root}/{$endpoint}";
     }
 
-    protected function getProcessedValue(mixed $value): null|bool|string
+    protected function getProcessedValue(mixed $value): bool|string|null
     {
         return App::parseEnv($value);
     }
@@ -110,7 +110,7 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
             case 'ckeditor':
             case 'tinymce':
                 return 'You generate content for rich text editors. Respond only with the content value, without quotes, code blocks, explanations, or additional formatting. Use proper HTML tags for formatting (e.g., <h1>, <h2>, <h3> for headers, <p> for paragraphs, <strong> for bold, <em> for italic, <ul><li> for lists, <a href=""> for links). If the text contains HTML tags, preserve them exactly as provided.';
-            
+
             case 'input':
             case 'textarea':
             default:
