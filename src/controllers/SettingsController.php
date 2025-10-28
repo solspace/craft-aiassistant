@@ -6,6 +6,13 @@ use craft\web\Controller;
 
 class SettingsController extends Controller
 {
+    private const SUPPORTED_FIELD_TYPES = [
+        'craft\\fields\\PlainText',
+        'craft\\ckeditor\\Field',
+        'craft\\redactor\\Field',
+        'spicyweb\\tinymce\\fields\\TinyMCE',
+    ];
+
     protected array|bool|int $allowAnonymous = false;
 
     public function actionIndex(): ?\yii\web\Response
@@ -14,6 +21,7 @@ class SettingsController extends Controller
         $settings = $plugin->getSettings();
 
         $fieldsService = \Craft::$app->getFields();
+        $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
         $allFields = [];
         // Add Title pseudo field
         $allFields[] = [
@@ -27,14 +35,7 @@ class SettingsController extends Controller
             } catch (\Throwable $e) {
                 $type = get_class($field);
             }
-            // Supported field classes (expand as needed)
-            $supported = [
-                'craft\\fields\\PlainText',
-                'craft\\ckeditor\\Field',
-                'craft\\redactor\\Field',
-                'spicyweb\\tinymce\\fields\\TinyMCE',
-            ];
-            if (!in_array($type, $supported, true)) {
+            if (!in_array($type, self::SUPPORTED_FIELD_TYPES, true)) {
                 continue;
             }
             $allFields[] = [
@@ -43,6 +44,48 @@ class SettingsController extends Controller
                 'type' => $type,
             ];
         }
+
+        $_sections = $isCraft5 ? \Craft::$app->entries->getAllSections() : \Craft::$app->sections->getAllSections();
+        foreach ($_sections as $section) {
+            foreach ($section->getEntryTypes() as $entryType) {
+                $layout = $entryType->getFieldLayout();
+                if (!$layout) {
+                    continue;
+                }
+                foreach ($layout->getTabs() as $tab) {
+                    foreach ($tab->elements as $element) {
+                        if ($element instanceof \craft\fieldlayoutelements\CustomField) {
+                            $field = $element->getField();
+                            if (!$field) {
+                                continue;
+                            }
+                            try {
+                                $layoutFieldType = (new \ReflectionClass($field))->getName();
+                            } catch (\Throwable $e) {
+                                $layoutFieldType = get_class($field);
+                            }
+                            if (!in_array($layoutFieldType, self::SUPPORTED_FIELD_TYPES, true)) {
+                                continue;
+                            }
+                            $allFields[] = [
+                                'handle' => (string)$field->handle,
+                                'name' => (string)$field->name,
+                                'type' => $layoutFieldType,
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        $seenHandles = [];
+        $allFields = array_values(array_filter($allFields, function($f) use (&$seenHandles) {
+            if (isset($seenHandles[$f['handle']])) {
+                return false;
+            }
+            $seenHandles[$f['handle']] = true;
+            return true;
+        }));
 
         return $this->renderTemplate('ai-assistant/settings', [
             'settings' => $settings,
@@ -73,6 +116,7 @@ class SettingsController extends Controller
         
         // Update settings
         $settings->enabledFieldHandles = $processedHandles;
+        // no per-instance storage
         
         // Save the plugin settings
         if (!\Craft::$app->plugins->savePluginSettings($plugin, $settings->toArray())) {
