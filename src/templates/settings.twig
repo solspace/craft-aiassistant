@@ -39,7 +39,7 @@
             <tbody>
             {% set enabledSet = (settings.enabledFieldHandles is defined and settings.enabledFieldHandles is iterable) ? settings.enabledFieldHandles : [] %}
             {% for f in allFields %}
-                {% set checked = (enabledSet ? (enabledSet[f.handle] ?? (f.handle in enabledSet)) : true) %}
+                {% set checked = (enabledSet ? (enabledSet[f.handle] ?? (f.handle in enabledSet)) : false) %}
                 <tr>
                     <td>{{ f.name }}</td>
                     <td><code>{{ f.handle }}</code></td>
