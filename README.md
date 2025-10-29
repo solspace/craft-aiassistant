@@ -111,8 +111,9 @@ aiassistant/
 │   ├── services/               # Business logic + helpers
 │   ├── Integrations/           # Providers (OpenAI, Gemini, …)
 │   ├── templates/              # Twig (modal, widget, CP screens)
-│   └── AiAssistant.php         # Main plugin class
-├── icon.svg
+│   ├── AiAssistant.php         # Main plugin class
+│   ├── icon-mask.svg
+│   └── icon.svg
 └── composer.json
 ```
 
