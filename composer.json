@@ -1,8 +1,8 @@
 {
     "name": "solspace/craft-aiassistant",
-    "description": "AI-powered text and image generation for Craft CMS with custom prompts and multi-model support.",
+    "description": "Generate smarter text with AI using custom prompts and support for multiple models.",
+    "version": "1.0.0-beta.1",
     "type": "craft-plugin",
-    "license": "proprietary",
     "authors": [
         {
             "name": "Solspace",
@@ -11,10 +11,9 @@
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "version": "1.0.0",
     "require": {
         "craftcms/cms": "^4.0.0|^5.0.0",
-        "php": ">=8.0",
+        "php": "^8.0.2|^8.2.0",
         "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {
@@ -29,9 +28,9 @@
         "hasCpSettings": true,
         "hasCpSection": true,
         "developer": "Solspace",
-        "developerUrl": "https://solspace.com/",
-        "documentationUrl": "https://docs.solspace.com/",
-        "changelogUrl": "https://docs.solspace.com/changelog/"
+        "developerUrl": "https://docs.solspace.com/",
+        "documentationUrl": "https://docs.solspace.com/craft/ai-assistant/v1/",
+        "changelogUrl": "https://docs.solspace.com/craft/ai-assistant/v1/setup/changelog/"
     },
     "scripts": {
         "fix": "vendor/bin/php-cs-fixer fix --diff --config=./.php-cs-fixer.dist.php",
