@@ -12,6 +12,7 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 - [x] Lightswitch to include/exclude input context in the prompt
 - [x] Correct HTML handling for CKEditor, TinyMCE, and Redactor when inserting back into the field
 - [x] Prompt management (built‑in and custom) with integration binding and sort order
+- [x] Field‑specific prompts per field with automatic modal preselection
 - [x] Integration management for OpenAI, Google Gemini, Antropic and xAI (enable/disable, API keys, model selection)
 - [x] Quick AI Actions dashboard widget (select prompt, editable prompt text, generate, copy)
 - [x] Craft-native UI components (lightswitch, notices), event-based widget registration
@@ -53,6 +54,24 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 1. Go to **AI Assistant → Prompts**
 2. Create custom prompts or view built‑in prompts
 3. Optionally bind a prompt to a specific integration
+
+### Field‑specific prompts
+
+You can preselect a prompt for each enabled field so the Generate modal opens with the right context:
+
+1. Go to **AI Assistant → Settings**
+2. In the “Field Prompts” table, choose a prompt per field (or keep “Any”)
+3. Save Settings
+
+Behavior on entry edit pages:
+- When you click the inline AI button, the modal will auto‑select the field’s prompt.
+- This works for Craft fields (Plain Text, CKEditor, Redactor, TinyMCE, Assets) and for the built‑in Title field (handle `title`).
+- For Title specifically, the modal reads the selection from plugin settings, so it’s honored even though Title isn’t a custom Craft field.
+
+Notes:
+- Choosing “Any” means the modal won’t preselect a specific prompt.
+- If a prompt is bound to a particular integration, that integration is used automatically; otherwise the selected integration is used.
+- Changes you make to the selected prompt inside an entry are not saved back to Settings; edit the mapping in **AI Assistant → Settings**.
 
 ## Usage
 
