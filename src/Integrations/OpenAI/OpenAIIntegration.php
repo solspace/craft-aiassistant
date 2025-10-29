@@ -59,12 +59,23 @@ class OpenAIIntegration extends BaseAiIntegration
                 'content' => $prompt,
             ];
 
+            $model = $options['model'] ?? $this->getModel();
             $payload = [
-                'model' => $options['model'] ?? $this->getModel(),
+                'model' => $model,
                 'messages' => $messages,
-                'max_tokens' => $options['max_tokens'] ?? $this->getMaxTokens(),
-                'temperature' => $options['temperature'] ?? $this->getTemperature(),
             ];
+
+            // Only include max_tokens if explicitly set (>0); some models reject it
+            $configuredMax = $options['max_tokens'] ?? $this->getMaxTokens();
+            if (is_numeric($configuredMax) && (int) $configuredMax > 0) {
+                $payload['max_tokens'] = (int) $configuredMax;
+            }
+
+            // Temperature: include if present (non-null)
+            $temperature = $options['temperature'] ?? $this->getTemperature();
+            if (null !== $temperature) {
+                $payload['temperature'] = $temperature;
+            }
 
             $response = $client->post($this->getEndpoint('/chat/completions'), [
                 'json' => $payload,

@@ -28,7 +28,8 @@ class Integration extends Model
         return [
             [['handle', 'name', 'type', 'class'], 'required'],
             [['enabled'], 'boolean'],
-            [['maxTokens'], 'integer', 'min' => 1, 'max' => 4000],
+            // Allow 0 to mean "unspecified/optional" so we can omit for models that don't support it
+            [['maxTokens'], 'integer', 'min' => 0, 'max' => 4000000],
             [['temperature'], 'number', 'min' => 0.0, 'max' => 2.0],
             [['id'], 'integer'],
             [['apiKey', 'model', 'metadata'], 'string'],

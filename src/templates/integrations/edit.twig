@@ -110,14 +110,15 @@
         <div class="field">
             {{ forms.textField({
                 label: "Max Tokens"|t('app'),
-                instructions: "Maximum number of tokens to generate."|t('app'),
+                instructions: "(Optional) For supported models, this limits response length. Leave blank or 0 to use provider default. Some models (e.g., reasoning models) ignore Max Tokens."|t('app'),
                 id: 'maxTokens',
                 name: 'maxTokens',
                 value: integration.maxTokens,
                 type: 'number',
-                min: 1,
+                min: 0,
                 max: 1048576,
-                required: true,
+                required: false,
+                placeholder: '0 = provider default'
             }) }}
         </div>
 
