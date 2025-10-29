@@ -279,6 +279,12 @@
             return;
         }
 
+        // Ensure no background element retains focus before opening modal
+        try {
+            const active = document.activeElement;
+            if (active && typeof active.blur === 'function') active.blur();
+        } catch (e) { /* noop */ }
+
         const url = Craft.getCpUrl('ai-assistant/ui/prompt-edit-modal');
         fetch(url, { credentials: 'same-origin' })
             .then((res) => {
@@ -310,7 +316,19 @@
             }
         }
 
-        const $modal = $(html);
+        // Build a clean modal element (avoid passing text nodes/collections to Garnish.Modal)
+        // Ensure no background element retains focus before building modal
+        try {
+            const active = document.activeElement;
+            if (active && typeof active.blur === 'function') active.blur();
+        } catch (e) { /* noop */ }
+
+        const $raw = $(typeof html === 'string' ? html.trim() : html);
+        const $modal = $raw.filter('.ai-assistant-prompt-modal').add($raw.find('.ai-assistant-prompt-modal')).first();
+        if (!$modal || !$modal.length) {
+            Craft.cp.displayError('Failed to render prompt modal.');
+            return;
+        }
         $modal.appendTo(document.body);
         const modalInstance = new Garnish.Modal($modal, { onHide: () => $modal.remove() });
         $modal.data('modal', modalInstance);
@@ -318,6 +336,20 @@
 
         // Initialize internal module state + UI
         _initPromptModalUI($modal, modalInstance, fieldHandle);
+
+        // After modal shows, move focus into the first focusable element inside
+        try {
+            if (typeof modalInstance.on === 'function') {
+                modalInstance.on('show', function() {
+                    setTimeout(() => {
+                        try {
+                            const $first = $modal.find('input, textarea, select, button').filter(':visible:enabled').first();
+                            if ($first && $first.length) $first.trigger('focus');
+                        } catch (e) { /* ignore */ }
+                    }, 50);
+                });
+            }
+        } catch (e) { /* noop */ }
     }
 
     /**

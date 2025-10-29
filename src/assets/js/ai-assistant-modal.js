@@ -220,7 +220,10 @@
     }
 
     function createModal(modalHtml) {
-        const modal = new Garnish.Modal(modalHtml, MODAL_CONFIG.options);
+        // Ensure we pass a concrete element, not a raw string or collection with text nodes
+        const $el = $(typeof modalHtml === 'string' ? modalHtml.trim() : modalHtml);
+        const $modalEl = $el.filter('.modal').add($el.find('.modal')).first();
+        const modal = new Garnish.Modal($modalEl.length ? $modalEl : $el, MODAL_CONFIG.options);
 
         // Set up modal cleanup
         modal.on('hide', function() {
@@ -578,7 +581,7 @@
                     const fieldHandle = getFieldHandle(field);
                     let fieldSpecificPromptId = '';
                     
-                    // First try to get from the field tag data attribute (available on entry edit pages)
+                    // First try to get from the field tag data attribute (available on entry edit pages for Craft fields)
                     const fieldTag = field.querySelector('.ai-assistant-field');
                     if (fieldTag && fieldTag.dataset.fieldPrompt) {
                         fieldSpecificPromptId = fieldTag.dataset.fieldPrompt;
@@ -589,6 +592,14 @@
                         const $hiddenInput = $(document).find(`input[name="settings[fieldPrompts][${fieldHandle}]"]`);
                         if ($hiddenInput.length && $hiddenInput.val()) {
                             fieldSpecificPromptId = $hiddenInput.val();
+                        }
+                    }
+
+                    // Final fallback: Use global settings injected into the page
+                    if (!fieldSpecificPromptId && fieldHandle && window.aiAssistantSettings && window.aiAssistantSettings.fieldPrompts) {
+                        const fromSettings = window.aiAssistantSettings.fieldPrompts[fieldHandle];
+                        if (fromSettings) {
+                            fieldSpecificPromptId = fromSettings;
                         }
                     }
 
