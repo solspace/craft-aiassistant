@@ -12,7 +12,7 @@
 {% block actionButton %}
     <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">
         <span data-icon="plus"></span>
-        {{ "New Integration"|t('app') }}
+        {{ "New Integration"|t('aiassistant') }}
     </a>
 {% endblock %}
 
@@ -23,10 +23,10 @@
                 <thead>
                     <tr>
                         <th>{{ "Name"|t('app') }}</th>
-                        <th>{{ "Type"|t('app') }}</th>
-                        <th>{{ "Model"|t('app') }}</th>
-                        <th>{{ "Test Connection"|t('app') }}</th>
-                        <th>{{ "Actions"|t('app') }}</th>
+                        <th>{{ "Type"|t('aiassistant') }}</th>
+                        <th>{{ "Model"|t('aiassistant') }}</th>
+                        <th>{{ "Test Connection"|t('aiassistant') }}</th>
+                        <th>{{ "Actions"|t('aiassistant') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +53,7 @@
                                         {{ csrfInput() }}
                                         {{ actionInput('ai-assistant/integrations/delete') }}
                                         {{ hiddenInput('id', integration.id) }}
-                                        <button type="submit" class="btn small" onclick="return confirm('{{ 'Are you sure you want to delete this integration?'|t('app') }}')" title="Delete">
+                                        <button type="submit" class="btn small" onclick="return confirm('{{ 'Are you sure you want to delete this integration?'|t('aiassistant') }}')" title="Delete">
                                             <span data-icon="trash"></span>
                                         </button>
                                     </form>
@@ -65,10 +65,10 @@
             </table>
         {% else %}
             <div class="empty-state">
-                <h2>{{ "No integrations yet"|t('app') }}</h2>
-                <p>{{ "Get started by adding your first AI integration."|t('app') }}</p>
+                <h2>{{ "No integrations yet"|t('aiassistant') }}</h2>
+                <p>{{ "Get started by adding your first AI integration."|t('aiassistant') }}</p>
                 <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">
-                    {{ "Add Integration"|t('app') }}
+                    {{ "Add Integration"|t('aiassistant') }}
                 </a>
             </div>
         {% endif %}

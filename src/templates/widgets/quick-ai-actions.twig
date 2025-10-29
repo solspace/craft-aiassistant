@@ -2,14 +2,14 @@
 
 <div class="aiassistant-widget">
     <div class="aiassistant-widget-header">
-        <p class="light">{{ "Generate content directly from the dashboard"|t('app') }}</p>
+        <p class="light">{{ "Generate content directly from the dashboard"|t('aiassistant') }}</p>
     </div>
 
     <div class="aiassistant-widget-content">
         <form id="aiassistant-quick-form">
             <div class="field">
                 {{ forms.selectField({
-                    label: "Prompt"|t('app'),
+                    label: "Prompt"|t('aiassistant'),
                     id: 'aiassistant-widget-prompt',
                     name: 'prompt',
                     options: [{ label: "Custom...", value: "custom" }]|merge(prompts|filter(prompt => 'image' not in prompt.name|lower)|map(prompt => { 
@@ -17,48 +17,48 @@
                         value: prompt.id, 
                         data: { promptText: prompt.promptText|replace('"', '&quot;') } 
                     })),
-                    instructions: "Choose a prompt to generate content with"|t('app')
+                    instructions: "Choose a prompt to generate content with"|t('aiassistant')
                 }) }}
             </div>
 
             <div class="field">
                 {{ forms.textareaField({
-                    label: "Prompt Text"|t('app'),
+                    label: "Prompt Text"|t('aiassistant'),
                     id: 'aiassistant-widget-prompt-text',
                     name: 'promptText',
                     rows: 4,
-                    instructions: "Edit the prompt text as needed. This is what will be sent to the AI."|t('app'),
+                    instructions: "Edit the prompt text as needed. This is what will be sent to the AI."|t('aiassistant'),
                     placeholder: "Select a prompt above or write your own custom prompt..."
                 }) }}
             </div>
 
             <div class="field">
                 {{ forms.selectField({
-                    label: "Integration"|t('app'),
+                    label: "Integration"|t('aiassistant'),
                     id: 'aiassistant-widget-integration',
                     name: 'integration',
                     options: integrations|map(integration => { label: integration.name, value: integration.handle }),
-                    instructions: "Select the AI service to use"|t('app')
+                    instructions: "Select the AI service to use"|t('aiassistant')
                 }) }}
             </div>
 
             <div class="field">
                 {{ forms.textareaField({
-                    label: "Generated Content"|t('app'),
+                    label: "Generated Content"|t('aiassistant'),
                     id: 'aiassistant-widget-output',
                     name: 'output',
                     rows: 4,
                     readonly: true,
-                    instructions: "AI-generated content will appear here"|t('app')
+                    instructions: "AI-generated content will appear here"|t('aiassistant')
                 }) }}
             </div>
 
             <div class="aiassistant-widget-actions">
                 <button type="button" id="aiassistant-widget-generate" class="btn submit">
-                    {{ "Generate"|t('app') }}
+                    {{ "Generate"|t('aiassistant') }}
                 </button>
                 <button type="button" id="aiassistant-widget-copy" class="btn" disabled>
-                    {{ "Copy"|t('app') }}
+                    {{ "Copy"|t('aiassistant') }}
                 </button>
                 <div id="aiassistant-widget-loading" class="spinner" style="display: none;"></div>
             </div>
