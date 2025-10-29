@@ -91,7 +91,13 @@ class PromptService extends Component
         $record->isActive = $prompt->isActive;
         $record->sortOrder = $prompt->sortOrder;
 
-        return $record->save();
+        $saved = $record->save();
+
+        if ($saved && !$prompt->id) {
+            $prompt->id = $record->id;
+        }
+
+        return $saved;
     }
 
     public function deletePrompt(int $id): bool

@@ -1,0 +1,137 @@
+{% import "_includes/forms" as forms %}
+{% set prompts = prompts ?? [] %}
+
+<div class="modal ai-assistant-prompt-modal">
+    <div class="header">
+        <h2 style="margin:0; display:flex; align-items:center; gap:8px;">
+            <span id="aiassistant-prompt-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
+            <span id="aiassistant-prompt-modal-text">{{ 'Manage Prompts'|t('app') }}</span>
+        </h2>
+    </div>
+    
+    <div class="body" style="max-height:70vh; overflow-y:auto; padding:20px 20px 80px 20px;">
+        <!-- Select Existing Prompt Section -->
+        <div id="prompt-select-mode">
+            <div style="margin-bottom:20px;">
+                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Select Prompt'|t('app') }}</h3>
+                
+                {% set promptOptions = [{ label: 'Any'|t('app'), value: '' }] %}
+                {% for p in prompts %}
+                    {% set promptOptions = promptOptions|merge([{ label: p.name ~ ' (' ~ (p.type|title) ~ ')', value: p.id, data: { type: p.type } }]) %}
+                {% endfor %}
+                {{ forms.selectField({
+                    id: 'prompt-existing-select',
+                    name: 'prompt-existing-select',
+                    options: promptOptions,
+                    instructions: 'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.'|t('app')
+                }) }}
+            </div>
+            
+            <!-- Prompt Details Section (shown when prompt is selected) -->
+            <div id="prompt-details-section" style="display:none; margin-bottom:24px; padding:16px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:6px;">
+                <div style="margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <span id="prompt-details-name" style="font-weight:600; font-size:14px;"></span>
+                        <span id="prompt-details-type" class="ai-assistant-type-badge" style="font-size:10px;"></span>
+                    </div>
+                    <div id="prompt-details-integration" style="font-size:12px; color:#6b7280; margin-bottom:8px;"></div>
+                </div>
+                <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e5e7eb;">
+                    <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:6px;">{{ 'Prompt Text'|t('app') }}</div>
+                    <div id="prompt-details-text" style="font-size:12px; color:#4b5563; line-height:1.5; white-space:pre-wrap; max-height:120px; overflow-y:auto;"></div>
+                </div>
+            </div>
+            
+            <div style="margin-top:24px; padding-top:24px;">
+                {{ 'or'|t('app') }} <button type="button" id="show-create-prompt-form" class="btn">{{ 'Create New Prompt'|t('app') }}</button>
+            </div>
+        </div>
+        
+        <!-- Create New Prompt Form Section -->
+        <div id="prompt-create-mode" style="display:none;">
+            <div style="margin-bottom:20px;">
+                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Create New Prompt'|t('app') }}</h3>
+                <p class="instructions" style="margin:4px 0 16px 0;">{{ 'Create a new custom prompt for AI text generation.'|t('app') }}</p>
+            </div>
+            
+            <form method="post" id="prompt-edit-form" onsubmit="return window.AiAssistant && window.AiAssistant.savePromptFromModal ? window.AiAssistant.savePromptFromModal(event) : false;">
+                {{ csrfInput() }}
+                {{ actionInput('ai-assistant/api/save-prompt') }}
+                
+                <div style="margin-bottom:20px;">
+                    {{ forms.textField({
+                        label: 'Name'|t('app'),
+                        id: 'modal-name',
+                        name: 'name',
+                        required: true,
+                        instructions: 'Give your prompt a descriptive name.'|t('app')
+                    }) }}
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    {{ forms.selectField({
+                        label: 'Type'|t('app'),
+                        id: 'modal-type',
+                        name: 'type',
+                        value: 'generate',
+                        options: [
+                            { label: 'Generate'|t('app'), value: 'generate' },
+                            { label: 'Rephrase'|t('app'), value: 'rephrase' },
+                            { label: 'Translate'|t('app'), value: 'translate' }
+                        ],
+                        instructions: 'Select the type of prompt.'|t('app')
+                    }) }}
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    {{ forms.selectField({
+                        label: 'Integration'|t('app'),
+                        id: 'modal-integration',
+                        name: 'integrationHandle',
+                        options: [],
+                        instructions: 'Select the AI integration to use.'|t('app')
+                    }) }}
+                </div>
+                
+                <div style="margin-bottom:60px;">
+                    {{ forms.textareaField({
+                        label: 'Prompt Text'|t('app'),
+                        id: 'modal-promptText',
+                        name: 'promptText',
+                        rows: 5,
+                        required: true,
+                        instructions: 'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.'|t('app')
+                    }) }}
+                </div>
+            </form>
+            
+            <div style="margin-top:24px; padding-top:24px; border-top:1px solid #e5e7eb;">
+                <button type="button" id="show-select-prompt" class="btn">{{ 'Select Existing Prompt'|t('app') }}</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+        <button type="button" class="btn cancel" data-close-modal>{{ 'Cancel'|t('app') }}</button>
+        <button type="button" id="save-selected-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
+        <button type="submit" form="prompt-edit-form" id="save-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
+    </div>
+</div>
+
+<style>
+/* Badge styling for prompt details */
+.ai-assistant-prompt-modal .ai-assistant-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ai-assistant-prompt-modal .ai-assistant-type-generate { background:#e6f4ff; color:#1a73e8; }
+.ai-assistant-prompt-modal .ai-assistant-type-rephrase { background:#f3e8ff; color:#7b1fa2; }
+.ai-assistant-prompt-modal .ai-assistant-type-translate { background:#e6f7ee; color:#2e7d32; }
+.ai-assistant-prompt-modal .ai-assistant-type-image { background:#fff4e5; color:#b26a00; }
+</style>
+

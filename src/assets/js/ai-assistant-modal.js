@@ -209,7 +209,8 @@
     }
 
     function injectModalIcon(modalElement) {
-        const $iconContainer = $(modalElement).find('#aiassistant-modal-icon');
+        // Handle both generate-text modal and prompt-edit modal icons
+        const $iconContainer = $(modalElement).find('#aiassistant-modal-icon, #aiassistant-prompt-modal-icon');
         if ($iconContainer.length && window.aiAssistantIconSvg) {
             // Replace the text content with the SVG icon
             $iconContainer.html(window.aiAssistantIconSvg);
@@ -573,6 +574,24 @@
 
                     // elements available
 
+                    // Get field handle and field-specific prompt ID
+                    const fieldHandle = getFieldHandle(field);
+                    let fieldSpecificPromptId = '';
+                    
+                    // First try to get from the field tag data attribute (available on entry edit pages)
+                    const fieldTag = field.querySelector('.ai-assistant-field');
+                    if (fieldTag && fieldTag.dataset.fieldPrompt) {
+                        fieldSpecificPromptId = fieldTag.dataset.fieldPrompt;
+                    }
+                    
+                    // Fallback: Check settings page hidden input if field tag doesn't have it
+                    if (!fieldSpecificPromptId && fieldHandle) {
+                        const $hiddenInput = $(document).find(`input[name="settings[fieldPrompts][${fieldHandle}]"]`);
+                        if ($hiddenInput.length && $hiddenInput.val()) {
+                            fieldSpecificPromptId = $hiddenInput.val();
+                        }
+                    }
+
                     // Load data and set up handlers
                     Promise.all([
                         loadIntegrations($integrationSelect),
@@ -585,8 +604,13 @@
                                 try { new Garnish.LightSwitch($lsContainer); } catch (e) { /* noop */ }
                             }
                         }
-                        // Select first prompt by default
-                        if (prompts && prompts.length > 0) {
+                        
+                        // Select field-specific prompt if available, otherwise select first prompt
+                        if (fieldSpecificPromptId && $promptSelect.find(`option[value="${fieldSpecificPromptId}"]`).length > 0) {
+                            // Field-specific prompt found, select it
+                            $promptSelect.val(fieldSpecificPromptId).trigger('change');
+                        } else if (prompts && prompts.length > 0) {
+                            // No field-specific prompt, select first prompt by default
                             const firstPrompt = prompts[0];
                             $promptSelect.val(firstPrompt.id).trigger('change');
                         }

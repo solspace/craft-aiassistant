@@ -37,6 +37,7 @@
                     <th>{{ 'Field'|t('app') }}</th>
                     <th>{{ 'Handle'|t('app') }}</th>
                     <th>{{ 'Type'|t('app') }}</th>
+                    <th>{{ 'Field Specific Prompt'|t('app') }}</th>
                     <th style="text-align:right;">{{ 'Enabled'|t('app') }}</th>
                 </tr>
             </thead>
@@ -48,6 +49,21 @@
                     <td>{{ f.name }}</td>
                     <td><code>{{ f.handle }}</code></td>
                     <td><code>{{ f.type }}</code></td>
+                    <td>
+                        {% set selectedId = settings.fieldPrompts[f.handle] ?? '' %}
+                        {% set selectedPrompt = (allPrompts|filter(p => p.id == selectedId)|first) %}
+                        <div class="ai-prompts-chip">
+                            {% if selectedPrompt %}
+                                <span class="ai-assistant-type-badge ai-assistant-type-{{ selectedPrompt.type }}">{{ selectedPrompt.name }}</span>
+                            {% else %}
+                                <span class="ai-assistant-type-badge ai-assistant-type-any">{{ 'Any'|t('app') }}</span>
+                            {% endif %}
+                            <button type="button" class="btn small" title="{{ 'Edit'|t('app') }}" onclick="window.AiAssistant && window.AiAssistant.openPromptPicker && window.AiAssistant.openPromptPicker('{{ f.handle }}')">
+                                <span data-icon="edit"></span>
+                            </button>
+                        </div>
+                        <input type="hidden" name="settings[fieldPrompts][{{ f.handle }}]" value="{{ selectedId }}" data-prompt-value="{{ f.handle }}" />
+                    </td>
                     <td style="width:120px; text-align:right;">
                         <div style="display:inline-block;">
                             {{ forms.lightswitchField({
@@ -93,21 +109,70 @@
           }
           if (enableAll) enableAll.addEventListener('click', function(){ setAll(true); });
           if (disableAll) disableAll.addEventListener('click', function(){ setAll(false); });
+
+          // Light selectize-like UX for multi-selects (search + tags)
+          document.querySelectorAll('[data-prompt-select]').forEach(function(select){
+            try {
+              if (window.$ && $.fn.selectize) {
+                $(select).selectize({
+                  plugins: ['remove_button'],
+                  placeholder: '{{ "Select prompts"|t('app') }}',
+                  dropdownParent: 'body',
+                  allowEmptyOption: true,
+                  closeAfterSelect: false,
+                });
+              }
+            } catch(e) {}
+          });
         })();
     </script>
 </form>
 
-<script>
-    // Toggle options based on enabled state
-    document.getElementById('enabled').addEventListener('change', function() {
-        var options = document.getElementById('ai-assistant-options');
-        if (this.checked) {
-            options.style.opacity = '1';
-            options.style.pointerEvents = 'auto';
-        } else {
-            options.style.opacity = '0.5';
-            options.style.pointerEvents = 'none';
-        }
-    });
-</script>
+<style>
+.ai-prompts-cell{display:flex;gap:8px;align-items:center}
+.ai-prompts-cell .ai-prompts-select{min-width:260px;}
+.ai-prompts-cell .hint{color:var(--gray-600);font-size:12px}
+.ai-prompts-chip{display:flex;gap:8px;align-items:center}
+
+/* Match the prompts page badge styling */
+.ai-assistant-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ai-assistant-type-generate { background:#e6f4ff; color:#1a73e8; }
+.ai-assistant-type-rephrase { background:#f3e8ff; color:#7b1fa2; }
+.ai-assistant-type-translate { background:#e6f7ee; color:#2e7d32; }
+.ai-assistant-type-image { background:#fff4e5; color:#b26a00; }
+.ai-assistant-type-any { background:#f3f4f6; color:#374151; }
+
+/* Match the prompts page edit button styling */
+.ai-prompts-chip .btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    min-width: 32px !important;
+    height: 32px !important;
+}
+
+.ai-prompts-chip .btn span[data-icon] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 !important;
+}
+
+.ai-prompts-chip .btn span[data-icon] svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+}
+</style>
 {% endblock %} 

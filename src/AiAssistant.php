@@ -180,9 +180,11 @@ class AiAssistant extends Plugin
             'ai-assistant/api/generate-image' => 'ai-assistant/api/generate-image',
             'ai-assistant/api/save-image-to-assets' => 'ai-assistant/api/save-image-to-assets',
             'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
+            'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
 
             // UI endpoints
             'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
+            'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
         ];
 
         \Craft::$app->getUrlManager()->addRules($routes);
@@ -236,11 +238,16 @@ class AiAssistant extends Plugin
             return;
         }
 
+        // Get field-specific prompt ID if set
+        $fieldPrompts = $settings->fieldPrompts ?? [];
+        $fieldSpecificPromptId = $fieldPrompts[$fieldHandle] ?? '';
+
         $fieldTag = \sprintf(
-            '<div class="ai-assistant-field" data-field-handle="%s" data-field-type="%s" data-element="%s" data-not-scanned></div>',
+            '<div class="ai-assistant-field" data-field-handle="%s" data-field-type="%s" data-element="%s" data-field-prompt="%s" data-not-scanned></div>',
             htmlspecialchars($fieldHandle),
             htmlspecialchars($fieldType),
-            htmlspecialchars($event->element->id)
+            htmlspecialchars($event->element->id),
+            htmlspecialchars($fieldSpecificPromptId)
         );
 
         $event->html .= $fieldTag;

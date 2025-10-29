@@ -4,6 +4,7 @@ namespace Solspace\AIAssistant\controllers;
 
 use craft\fieldlayoutelements\CustomField;
 use craft\web\Controller;
+use Solspace\AIAssistant\AiAssistant;
 use yii\web\Response;
 
 class SettingsController extends Controller
@@ -91,10 +92,22 @@ class SettingsController extends Controller
             return true;
         }));
 
+        // Get all prompts for the prompt picker
+        $promptService = AiAssistant::getPromptService();
+        $prompts = $promptService->getAllPrompts();
+        $allPrompts = array_map(function ($prompt) {
+            return [
+                'id' => (string) $prompt->id, // Convert to string for consistent comparison in Twig
+                'name' => $prompt->name,
+                'type' => $prompt->type,
+            ];
+        }, $prompts);
+
         return $this->renderTemplate('ai-assistant/settings', [
             'settings' => $settings,
             'plugin' => $plugin,
             'allFields' => $allFields,
+            'allPrompts' => $allPrompts,
         ]);
     }
 
@@ -107,6 +120,7 @@ class SettingsController extends Controller
 
         // Get the form data
         $enabledFieldHandles = $this->request->getBodyParam('settings.enabledFieldHandles', []);
+        $fieldPrompts = $this->request->getBodyParam('settings.fieldPrompts', []);
 
         // Process the enabledFieldHandles data - only keep checked fields
         $processedHandles = [];
@@ -118,8 +132,19 @@ class SettingsController extends Controller
             }
         }
 
+        // Process fieldPrompts - filter out empty values
+        $processedFieldPrompts = [];
+        if (\is_array($fieldPrompts)) {
+            foreach ($fieldPrompts as $handle => $promptId) {
+                if (!empty($promptId)) {
+                    $processedFieldPrompts[$handle] = (string) $promptId;
+                }
+            }
+        }
+
         // Update settings
         $settings->enabledFieldHandles = $processedHandles;
+        $settings->fieldPrompts = $processedFieldPrompts;
         // no per-instance storage
 
         // Save the plugin settings

@@ -8,10 +8,13 @@ class Settings extends Model
 {
     public array $enabledFieldHandles = [];
 
+    public array $fieldPrompts = [];
+
     public function rules(): array
     {
         return [
             [['enabledFieldHandles'], 'each', 'rule' => ['string']],
+            [['fieldPrompts'], 'each', 'rule' => ['string']],
         ];
     }
 
