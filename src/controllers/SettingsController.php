@@ -6,6 +6,7 @@ use craft\errors\FieldNotFoundException;
 use craft\fieldlayoutelements\CustomField;
 use craft\web\Controller;
 use Solspace\AIAssistant\AiAssistant;
+use Solspace\AIAssistant\models\Prompt;
 use yii\web\Response;
 
 class SettingsController extends Controller
@@ -181,5 +182,45 @@ class SettingsController extends Controller
         \Craft::$app->session->setNotice('Settings saved.');
 
         return $this->redirectToPostedUrl();
+    }
+
+    public function actionSavePrompt(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        try {
+            $request = \Craft::$app->getRequest();
+            $promptService = AiAssistant::getPromptService();
+
+            $prompt = new Prompt();
+            $prompt->name = (string) $request->getBodyParam('name', '');
+            $prompt->promptText = (string) $request->getBodyParam('promptText', '');
+            $prompt->type = (string) $request->getBodyParam('type', 'generate');
+            $integrationHandle = (string) $request->getBodyParam('integrationHandle', '');
+            $prompt->integrationHandle = '' !== $integrationHandle ? $integrationHandle : null;
+            $prompt->isActive = true;
+            $prompt->sortOrder = 0;
+
+            if (!$prompt->validate()) {
+                return $this->asJson(['success' => false, 'error' => 'Validation failed']);
+            }
+
+            if (!$promptService->savePrompt($prompt)) {
+                return $this->asJson(['success' => false, 'error' => 'Save failed']);
+            }
+
+            return $this->asJson([
+                'success' => true,
+                'prompt' => [
+                    'id' => $prompt->id,
+                    'name' => $prompt->name,
+                    'type' => $prompt->type,
+                    'integrationHandle' => $prompt->integrationHandle,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            return $this->asJson(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 }

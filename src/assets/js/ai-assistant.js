@@ -316,12 +316,10 @@
             }
         }
 
-        // Build a clean modal element (avoid passing text nodes/collections to Garnish.Modal)
-        // Ensure no background element retains focus before building modal
         try {
             const active = document.activeElement;
             if (active && typeof active.blur === 'function') active.blur();
-        } catch (e) { /* noop */ }
+        } catch (e) {}
 
         const $raw = $(typeof html === 'string' ? html.trim() : html);
         const $modal = $raw.filter('.ai-assistant-prompt-modal').add($raw.find('.ai-assistant-prompt-modal')).first();
@@ -334,10 +332,8 @@
         $modal.data('modal', modalInstance);
         $modal.data('fieldHandle', fieldHandle);
 
-        // Initialize internal module state + UI
         _initPromptModalUI($modal, modalInstance, fieldHandle);
 
-        // After modal shows, move focus into the first focusable element inside
         try {
             if (typeof modalInstance.on === 'function') {
                 modalInstance.on('show', function() {
@@ -345,11 +341,11 @@
                         try {
                             const $first = $modal.find('input, textarea, select, button').filter(':visible:enabled').first();
                             if ($first && $first.length) $first.trigger('focus');
-                        } catch (e) { /* ignore */ }
+                        } catch (e) {}
                     }, 50);
                 });
             }
-        } catch (e) { /* noop */ }
+        } catch (e) {}
     }
 
     /**
@@ -385,11 +381,8 @@
         // If there is already a selected prompt, show save button and details
         if (currentPromptId && $selectExisting.length && $selectExisting.find(`option[value="${currentPromptId}"]`).length) {
             $saveSelectedBtn.show();
-            // Set the select dropdown value to the current prompt
-            // Use small delay so modal finishes rendering and Craft UI is initialized
             setTimeout(() => {
                 $selectExisting.val(currentPromptId).trigger('change');
-                // The change handler will automatically load the details
             }, 100);
         }
 
@@ -446,7 +439,14 @@
         });
 
         // Save new prompt form handler (delegated submit)
-        $modal.on('submit', '#ai-assistant-create-prompt-form', (e) => {
+        $modal.on('submit', '#prompt-edit-form', (e) => {
+            e.preventDefault();
+            _savePromptFromModal(e, $modal, modalInstance);
+            return false;
+        });
+
+        // Explicit click handler for Save & Use button to avoid native form submission routing
+        $modal.on('click', '#save-prompt-btn', (e) => {
             e.preventDefault();
             _savePromptFromModal(e, $modal, modalInstance);
             return false;
@@ -558,14 +558,21 @@
             return false;
         }
 
-        Craft.postActionRequest('ai-assistant/api/save-prompt', {
-            name, type, promptText, integrationHandle
-        }, (response) => {
+        fetch(Craft.getCpUrl('ai-assistant/settings/save-prompt'), {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': Craft.csrfTokenValue
+            },
+            body: JSON.stringify({ name, type, promptText, integrationHandle })
+        })
+        .then((res) => res.json())
+        .then((response) => {
             if (response && response.success && response.prompt) {
                 const p = response.prompt;
                 const promptId = String(p.id);
 
-                // Apply selection to field BEFORE closing modal (ensures DOM presence)
                 applyPromptSelection(fieldHandle, promptId, p.name, p.type);
 
                 if (modalInstance) modalInstance.hide();
@@ -580,6 +587,9 @@
             } else {
                 Craft.cp.displayError(response?.error || 'Save failed');
             }
+        })
+        .catch(() => {
+            Craft.cp.displayError('Save failed');
         });
 
         return false;
