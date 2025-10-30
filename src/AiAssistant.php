@@ -177,6 +177,7 @@ class AiAssistant extends Plugin
             'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
             'ai-assistant/settings' => 'ai-assistant/settings/index',
             'ai-assistant/settings/save' => 'ai-assistant/settings/save',
+            'ai-assistant/settings/save-prompt' => 'ai-assistant/settings/save-prompt',
 
             // API endpoints
             'ai-assistant/api/integrations' => 'ai-assistant/api/get-integrations',

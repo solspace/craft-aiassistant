@@ -54,7 +54,7 @@
                 <p class="instructions" style="margin:4px 0 16px 0;">{{ 'Create a new custom prompt for AI text generation.'|t('aiassistant') }}</p>
             </div>
             
-            <form method="post" id="prompt-edit-form" onsubmit="return window.AiAssistant && window.AiAssistant.savePromptFromModal ? window.AiAssistant.savePromptFromModal(event) : false;">
+            <form method="post" id="prompt-edit-form">
                 {{ csrfInput() }}
                 {{ actionInput('ai-assistant/api/save-prompt') }}
                 
@@ -112,9 +112,9 @@
     </div>
 
     <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-        <button type="button" class="btn cancel" data-close-modal>{{ 'Cancel'|t('aiassistant') }}</button>
-        <button type="button" id="save-selected-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('aiassistant') }}</button>
-        <button type="submit" form="prompt-edit-form" id="save-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('aiassistant') }}</button>
+        <button type="button" class="btn cancel" data-close-modal>{{ 'Cancel'|t('app') }}</button>
+        <button type="button" id="save-selected-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
+        <button type="button" id="save-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
     </div>
 </div>
 
