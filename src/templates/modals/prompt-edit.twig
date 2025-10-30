@@ -5,7 +5,7 @@
     <div class="header">
         <h2 style="margin:0; display:flex; align-items:center; gap:8px;">
             <span id="aiassistant-prompt-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
-            <span id="aiassistant-prompt-modal-text">{{ 'Manage Prompts'|t('app') }}</span>
+            <span id="aiassistant-prompt-modal-text">{{ 'Manage Prompts'|t('aiassistant') }}</span>
         </h2>
     </div>
     
@@ -13,9 +13,9 @@
         <!-- Select Existing Prompt Section -->
         <div id="prompt-select-mode">
             <div style="margin-bottom:20px;">
-                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Select Prompt'|t('app') }}</h3>
+                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Select Prompt'|t('aiassistant') }}</h3>
                 
-                {% set promptOptions = [{ label: 'Any'|t('app'), value: '' }] %}
+                {% set promptOptions = [{ label: 'Any'|t('aiassistant'), value: '' }] %}
                 {% for p in prompts %}
                     {% set promptOptions = promptOptions|merge([{ label: p.name ~ ' (' ~ (p.type|title) ~ ')', value: p.id, data: { type: p.type } }]) %}
                 {% endfor %}
@@ -23,7 +23,7 @@
                     id: 'prompt-existing-select',
                     name: 'prompt-existing-select',
                     options: promptOptions,
-                    instructions: 'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.'|t('app')
+                    instructions: 'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.'|t('aiassistant')
                 }) }}
             </div>
             
@@ -37,21 +37,21 @@
                     <div id="prompt-details-integration" style="font-size:12px; color:#6b7280; margin-bottom:8px;"></div>
                 </div>
                 <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e5e7eb;">
-                    <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:6px;">{{ 'Prompt Text'|t('app') }}</div>
+                    <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:6px;">{{ 'Prompt Text'|t('aiassistant') }}</div>
                     <div id="prompt-details-text" style="font-size:12px; color:#4b5563; line-height:1.5; white-space:pre-wrap; max-height:120px; overflow-y:auto;"></div>
                 </div>
             </div>
             
             <div style="margin-top:24px; padding-top:24px;">
-                {{ 'or'|t('app') }} <button type="button" id="show-create-prompt-form" class="btn">{{ 'Create New Prompt'|t('app') }}</button>
+                {{ 'or'|t('aiassistant') }} <button type="button" id="show-create-prompt-form" class="btn">{{ 'Create New Prompt'|t('aiassistant') }}</button>
             </div>
         </div>
         
         <!-- Create New Prompt Form Section -->
         <div id="prompt-create-mode" style="display:none;">
             <div style="margin-bottom:20px;">
-                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Create New Prompt'|t('app') }}</h3>
-                <p class="instructions" style="margin:4px 0 16px 0;">{{ 'Create a new custom prompt for AI text generation.'|t('app') }}</p>
+                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Create New Prompt'|t('aiassistant') }}</h3>
+                <p class="instructions" style="margin:4px 0 16px 0;">{{ 'Create a new custom prompt for AI text generation.'|t('aiassistant') }}</p>
             </div>
             
             <form method="post" id="prompt-edit-form">
@@ -64,49 +64,49 @@
                         id: 'modal-name',
                         name: 'name',
                         required: true,
-                        instructions: 'Give your prompt a descriptive name.'|t('app')
+                        instructions: 'Give your prompt a descriptive name.'|t('aiassistant')
                     }) }}
                 </div>
                 
                 <div style="margin-bottom:20px;">
                     {{ forms.selectField({
-                        label: 'Type'|t('app'),
+                        label: 'Type'|t('aiassistant'),
                         id: 'modal-type',
                         name: 'type',
                         value: 'generate',
                         options: [
-                            { label: 'Generate'|t('app'), value: 'generate' },
-                            { label: 'Rephrase'|t('app'), value: 'rephrase' },
-                            { label: 'Translate'|t('app'), value: 'translate' }
+                            { label: 'Generate'|t('aiassistant'), value: 'generate' },
+                            { label: 'Rephrase'|t('aiassistant'), value: 'rephrase' },
+                            { label: 'Translate'|t('aiassistant'), value: 'translate' }
                         ],
-                        instructions: 'Select the type of prompt.'|t('app')
+                        instructions: 'Select the type of prompt.'|t('aiassistant')
                     }) }}
                 </div>
                 
                 <div style="margin-bottom:20px;">
                     {{ forms.selectField({
-                        label: 'Integration'|t('app'),
+                        label: 'Integration'|t('aiassistant'),
                         id: 'modal-integration',
                         name: 'integrationHandle',
                         options: [],
-                        instructions: 'Select the AI integration to use.'|t('app')
+                        instructions: 'Select the AI integration to use.'|t('aiassistant')
                     }) }}
                 </div>
                 
                 <div style="margin-bottom:60px;">
                     {{ forms.textareaField({
-                        label: 'Prompt Text'|t('app'),
+                        label: 'Prompt Text'|t('aiassistant'),
                         id: 'modal-promptText',
                         name: 'promptText',
                         rows: 5,
                         required: true,
-                        instructions: 'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.'|t('app')
+                        instructions: 'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.'|t('aiassistant')
                     }) }}
                 </div>
             </form>
             
             <div style="margin-top:24px; padding-top:24px; border-top:1px solid #e5e7eb;">
-                <button type="button" id="show-select-prompt" class="btn">{{ 'Select Existing Prompt'|t('app') }}</button>
+                <button type="button" id="show-select-prompt" class="btn">{{ 'Select Existing Prompt'|t('aiassistant') }}</button>
             </div>
         </div>
     </div>

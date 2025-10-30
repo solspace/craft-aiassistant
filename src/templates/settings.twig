@@ -18,16 +18,14 @@
     {{ csrfInput() }}
     {{ actionInput('ai-assistant/settings/save') }}
 
-    {# No custom license UI; Craft handles plugin licensing #}
-
     <div style="display:flex; justify-content:space-between; align-items:center; margin: 8px 0 16px;">
         <div>
-            <h2 style="margin:0;">Enable per Field</h2>
-            <p class="instructions" style="margin:4px 0 0;">Select which fields will show the AI Assistant button.</p>
+            <h2 style="margin:0;">{{ 'Field Settings'|t('aiassistant') }}</h2>
+            <p class="instructions" style="margin:4px 0 0;">{{ 'Select which fields will show the AI Assistant button.'|t('aiassistant') }}</p>
         </div>
         <div style="display:flex; gap:8px;">
-            <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('app') }}</button>
-            <button type="button" id="disable-all" class="btn">{{ 'Disable all'|t('app') }}</button>
+            <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('aiassistant') }}</button>
+            <button type="button" id="disable-all" class="btn">{{ 'Disable all'|t('aiassistant') }}</button>
         </div>
     </div>
 
@@ -37,7 +35,7 @@
                     <th>{{ 'Field'|t('app') }}</th>
                     <th>{{ 'Handle'|t('app') }}</th>
                     <th>{{ 'Type'|t('app') }}</th>
-                    <th>{{ 'Field Specific Prompt'|t('app') }}</th>
+                    <th>{{ 'Field Specific Prompt'|t('aiassistant') }}</th>
                     <th style="text-align:right;">{{ 'Enabled'|t('app') }}</th>
                 </tr>
             </thead>
@@ -116,7 +114,7 @@
               if (window.$ && $.fn.selectize) {
                 $(select).selectize({
                   plugins: ['remove_button'],
-                  placeholder: '{{ "Select prompts"|t('app') }}',
+                  placeholder: '{{ "Select prompts"|t('aiassistant') }}',
                   dropdownParent: 'body',
                   allowEmptyOption: true,
                   closeAfterSelect: false,
