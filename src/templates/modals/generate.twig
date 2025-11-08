@@ -31,15 +31,52 @@
             </div>
         </div>
 
-        <!-- Prompt text editing - always visible -->
-        <div style="margin-bottom:20px;">
-            {{ forms.textareaField({
-                id: 'aiassistant-text-prompt-text',
-                name: 'aiassistant-text-prompt-text',
-                label: 'Prompt Text'|t('aiassistant'),
-                rows: 2,
-                instructions: 'Edit the prompt text as needed. This is what will be sent to the AI. You can modify it to better suit your needs. Select `Custom...` to write your own prompt from scratch.'|t('aiassistant')
-            }) }}
+        <!-- Prompt text (left) and Image options (right when type=image) -->
+        <div style="display:flex; gap:20px; margin-bottom:20px;">
+            <div id="aiassistant-prompt-left" style="flex:1;">
+                {{ forms.textareaField({
+                    id: 'aiassistant-text-prompt-text',
+                    name: 'aiassistant-text-prompt-text',
+                    label: 'Prompt Text'|t('aiassistant'),
+                    rows: 2,
+                    instructions: 'Edit the prompt text as needed. This is what will be sent to the AI. You can modify it to better suit your needs. Select `Custom...` to write your own prompt from scratch.'|t('aiassistant')
+                }) }}
+            </div>
+            <div id="aiassistant-image-col" style="flex:1;">
+                <div id="aiassistant-image-options" style="display:none; padding:15px; border:1px solid #ffecb5; border-radius:6px;">
+                    <div style="display:flex; gap:12px;">
+                        <div style="flex:1">
+                            {{ forms.textField({
+                                id: 'aiassistant-image-size',
+                                name: 'aiassistant-image-size',
+                                label: 'Size'|t('aiassistant'),
+                                placeholder: '1024x1024',
+                                instructions: 'WidthxHeight, e.g., 1024x1024.'|t('aiassistant')
+                            }) }}
+                        </div>
+                        <div style="width:150px">
+                            {{ forms.textField({
+                                id: 'aiassistant-image-count',
+                                name: 'aiassistant-image-count',
+                                label: 'Count'|t('aiassistant'),
+                                value: 1,
+                                instructions: 'Number of images.'|t('aiassistant')
+                            }) }}
+                        </div>
+                        <div style="flex:1">
+                            {{ forms.selectField({
+                                id: 'aiassistant-asset-target',
+                                name: 'aiassistant-asset-target',
+                                label: 'Asset Target (Volume or Folder)'|t('aiassistant'),
+                                instructions: 'Where to save images.'|t('aiassistant'),
+                                options: assetTargetOptions ?? [],
+                                value: defaultAssetTargetValue ?? '',
+                            }) }}
+                        </div>
+                    </div>
+                    <div id="aiassistant-image-preview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Input context and Generated text - side by side (always visible) -->
@@ -68,13 +105,14 @@
                 <div style="flex:1;">
                     <div class="field" style="margin-bottom:16px;">
                         <div class="heading">
-                            <span style="font-weight:600;">{{ 'Generated Text'|t('aiassistant') }}</span>
+                            <span style="font-weight:600;" id="aiassistant-generated-title">{{ 'Generated Text'|t('aiassistant') }}</span>
                         </div>
                         <div class="instructions">
-                            <p>{{ 'AI-generated content. Click Insert to replace the current content.'|t('aiassistant') }}</p>
+                            <p id="aiassistant-generated-instructions">{{ 'AI-generated content. Click Insert to replace the current content.'|t('aiassistant') }}</p>
                         </div>
                         <div class="input">
                             <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
+                            <div id="aiassistant-image-preview-right" style="display:none; gap:10px; flex-wrap:wrap;"></div>
                         </div>
                     </div>
                 </div>

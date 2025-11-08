@@ -36,7 +36,7 @@
                     {% for prompt in prompts %}
                         <tr class="{% if prompt.isBuiltIn %}ai-assistant-builtin-prompt{% endif %}">
                             <td>
-                                <strong>{{ prompt.name }}{% if 'image' in prompt.name|lower %} (Coming Soon){% endif %}</strong>
+                                <strong>{{ prompt.name }}</strong>
                                 {% if prompt.isBuiltIn %}
                                     <span class="ai-assistant-builtin-badge">Built-in</span>
                                 {% endif %}

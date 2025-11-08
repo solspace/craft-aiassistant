@@ -15,11 +15,11 @@ class PromptRecord extends ActiveRecord
     {
         return [
             [['name', 'promptText', 'type'], 'required'],
-            [['name', 'promptText'], 'string'],
+            [['name', 'promptText', 'imageSize', 'assetTarget'], 'string'],
             [['integrationHandle'], 'string', 'skipOnEmpty' => true],
             [['type'], 'in', 'range' => ['generate', 'rephrase', 'translate', 'image']],
             [['isActive'], 'boolean'],
-            [['sortOrder'], 'integer'],
+            [['sortOrder', 'imageCount'], 'integer'],
             [['isActive'], 'default', 'value' => true],
             [['sortOrder'], 'default', 'value' => 0],
         ];

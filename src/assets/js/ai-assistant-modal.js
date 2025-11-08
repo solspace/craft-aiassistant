@@ -16,7 +16,7 @@
     const MODAL_CONFIG = {
         options: {
             resizable: false,
-            closeOnEsc: true,
+            closeOnEsc: true, 
             shade: true,
             shadeCloseOnClick: true,
             autoShow: true,
@@ -292,14 +292,10 @@
             $select.empty();
             
             if (result.success && result.prompts) {
-                // Filter out image prompts
-                const textPrompts = result.prompts.filter(prompt => 
-                    !prompt.name.toLowerCase().includes('image')
-                );
-                
-                textPrompts.forEach(prompt => {
+                result.prompts.forEach(prompt => {
+                    const safeText = (prompt.promptText || '').replace(/"/g, '&quot;');
                     $select.append(
-                        `<option value="${prompt.id}" data-integration="${prompt.integrationHandle || ''}" data-prompt-text="${prompt.promptText.replace(/"/g, '&quot;')}">${prompt.name}</option>`
+                        `<option value="${prompt.id}" data-integration="${prompt.integrationHandle || ''}" data-type="${prompt.type || ''}" data-prompt-text="${safeText}">${prompt.name}</option>`
                     );
                 });
                 
@@ -507,11 +503,7 @@
         const fieldTag = field.querySelector('.ai-assistant-field');
         const fieldType = fieldTag ? fieldTag.dataset.fieldType : 'craft\\fields\\PlainText';
         
-        // Handle Assets fields differently
-        if (fieldType === 'craft\\fields\\Assets') {
-            await openImageGenerationModal(field);
-            return;
-        }
+        // Use unified modal for all field types (including Assets)
 
         try {
             const modalHtml = await fetchModalHtml();
@@ -554,6 +546,13 @@
                     const $btnGenerate = modal.$container.find('button#aiassistant-text-generate');
                     const $btnInsert = modal.$container.find('button#aiassistant-text-insert');
                     const $loading = modal.$container.find('#aiassistant-text-loading');
+                    const $imageOptions = $body.find('#aiassistant-image-options');
+                    const $imageCol = $body.find('#aiassistant-image-col');
+                    const $promptLeft = $body.find('#aiassistant-prompt-left');
+                    const $imageSize = $body.find('#aiassistant-image-size');
+                    const $imageCount = $body.find('#aiassistant-image-count');
+                    const $assetTarget = $body.find('#aiassistant-asset-target');
+                    const $imagePreview = $body.find('#aiassistant-image-preview');
 
                     // Always use comparison layout (input left, output right)
                     const inputObj = getFieldInput(field);
@@ -566,6 +565,8 @@
                     $comparisonSection.show();
                     $fallbackInput.hide();
                     $fallbackGenerated.hide();
+                    $imageOptions.hide();
+                    if ($imageCol.length) { $imageCol.hide(); }
 
                     // Initialize rich text editors (or HTML displays) for both rich and plain text
                     initializeRichTextEditors(fieldType, field, $comparisonSection);
@@ -641,6 +642,167 @@
                             }
                         }
 
+                        // Toggle image vs text mode, and wire handlers accordingly
+                        function toggleImageMode(type) {
+                            if ((type || '').toLowerCase() === 'image') {
+                                if ($imageCol.length) { 
+                                    $imageCol.show(); 
+                                    $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
+                                }
+                                $imageOptions.show();
+                                if ($promptLeft.length) {
+                                    $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
+                                }
+                                $comparisonSection.show();
+                                // Switch right panel to image preview mode
+                                const $genTitle = $body.find('#aiassistant-generated-title');
+                                const $genInstr = $body.find('#aiassistant-generated-instructions');
+                                const $genText = $body.find('#aiassistant-text-generated-rich');
+                                const $imgPrevRight = $body.find('#aiassistant-image-preview-right');
+                                if ($genTitle.length) $genTitle.text('Generated Image');
+                                if ($genInstr.length) $genInstr.text('Preview the generated image(s). Click Save to persist to Assets.');
+                                $genText.hide();
+                                $imgPrevRight.css('display', 'flex').empty();
+                                // Change Insert button label to Save
+                                $btnInsert.text('Save').prop('disabled', true);
+                                // Rewire generate for image (dry-run)
+                                $btnGenerate.off('click').on('click', async function() {
+                                    const payload = {
+                                        prompt: $promptText.val(),
+                                        integration: $integrationSelect.val(),
+                                        size: $imageSize.val(),
+                                        count: parseInt(($imageCount.val() || '1'), 10),
+                                        assetTarget: (function() {
+                                            if ($assetTarget && $assetTarget.length && $assetTarget.val()) {
+                                                return $assetTarget.val();
+                                            }
+                                            const selId = String($promptSelect.val());
+                                            const p = (prompts || []).find(pp => String(pp.id) === selId);
+                                            return p && p.assetTarget ? p.assetTarget : undefined;
+                                        })(),
+                                        options: {},
+                                        dryRun: true
+                                    };
+                                    if (!payload.prompt) {
+                                        Craft.cp.displayError('Prompt is required');
+                                        return;
+                                    }
+                                    $btnGenerate.prop('disabled', true);
+                                    $loading.show();
+                                    try {
+                                        const res = await fetch(Craft.getCpUrl('ai-assistant/api/generate-image'), {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'application/json',
+                                                'X-CSRF-Token': Craft.csrfTokenValue
+                                            },
+                                            body: JSON.stringify(payload)
+                                        });
+                                        const json = await res.json();
+                                        if (!json.success) {
+                                            Craft.cp.displayError(json.error || 'Failed to generate image');
+                                            return;
+                                        }
+                                        const previews = json.previewUrls || [];
+                                        $imgPrevRight.empty();
+                                        previews.forEach(url => {
+                                            const img = document.createElement('img');
+                                            img.src = url;
+                                            img.style.maxWidth = '120px';
+                                            img.style.border = '1px solid #eee';
+                                            img.style.borderRadius = '4px';
+                                            img.style.marginRight = '8px';
+                                            $imgPrevRight.append(img);
+                                        });
+                                        // Save handler persists images
+                                        if (previews.length > 0) {
+                                            $btnInsert.prop('disabled', false);
+                                            $btnInsert.off('click').on('click', async function() {
+                                                $btnInsert.prop('disabled', true);
+                                                $loading.show();
+                                                try {
+                                                    const saveRes = await fetch(Craft.getCpUrl('ai-assistant/api/save-image-to-assets'), {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'Accept': 'application/json',
+                                                            'X-CSRF-Token': Craft.csrfTokenValue
+                                                        },
+                                                        body: JSON.stringify({
+                                                            urls: previews,
+                                                            assetTarget: (function() {
+                                                                if ($assetTarget && $assetTarget.length && $assetTarget.val()) {
+                                                                    return $assetTarget.val();
+                                                                }
+                                                                const selId = String($promptSelect.val());
+                                                                const p = (prompts || []).find(pp => String(pp.id) === selId);
+                                                                return p && p.assetTarget ? p.assetTarget : undefined;
+                                                            })(),
+                                                            title: ($promptText.val() || '').slice(0, 60)
+                                                        })
+                                                    });
+                                                    const savedJson = await saveRes.json();
+                                                    if (!savedJson.success) {
+                                                        Craft.cp.displayError(savedJson.error || 'Failed to save image(s)');
+                                                        return;
+                                                    }
+                                                    const createdAssets = savedJson.assets || [];
+                                                    const inputObj2 = getFieldInput(field);
+                                                    if (inputObj2 && inputObj2.type === 'assets') {
+                                                        const hidden = field.querySelector('input[type="hidden"]');
+                                                        if (hidden) {
+                                                            hidden.value = createdAssets.map(a => a.id).join(',');
+                                                            $(hidden).trigger('change');
+                                                        }
+                                                    }
+                                                    modal.hide();
+                                                } catch(e) {
+                                                    Craft.cp.displayError('Failed to save image(s)');
+                                                } finally {
+                                                    $btnInsert.prop('disabled', false);
+                                                    $loading.hide();
+                                                }
+                                            });
+                                        } else {
+                                            $btnInsert.prop('disabled', true);
+                                        }
+                                    } catch (e) {
+                                        Craft.cp.displayError('Failed to generate image');
+                                    } finally {
+                                        $btnGenerate.prop('disabled', false);
+                                        $loading.hide();
+                                    }
+                                });
+                            } else {
+                                $imageOptions.hide();
+                                if ($imageCol.length) { 
+                                    $imageCol.hide(); 
+                                    $imageCol.css({ flex: '', maxWidth: '' });
+                                }
+                                if ($promptLeft.length) {
+                                    $promptLeft.css({ flex: '0 0 100%', maxWidth: '100%' });
+                                }
+                                $comparisonSection.show();
+                                // Rewire handlers back to text generation
+                                $btnInsert.prop('disabled', true);
+                                $btnInsert.text('Insert');
+                                $btnGenerate.off('click');
+                                $btnInsert.off('click');
+                                setupGenerateHandler(
+                                    $btnGenerate, $promptText, $inputContext,
+                                    $integrationSelect, $integrationSelect,
+                                    $input, $btnInsert, $loading, field, $includeContext
+                                );
+                                // Reset right panel
+                                const $genText = $body.find('#aiassistant-text-generated-rich');
+                                const $imgPrevRight = $body.find('#aiassistant-image-preview-right');
+                                $genText.show();
+                                $imgPrevRight.hide().empty();
+                                setupInsertHandler($btnInsert, $input, modal, field);
+                            }
+                        }
+
                         // Only set up handlers if buttons exist
                         if ($btnGenerate.length > 0 && $btnInsert.length > 0) {
                             setupGenerateHandler(
@@ -653,6 +815,31 @@
                             setupCancelHandler(modal);
                         } else {
                             // ignore
+                        }
+
+                        // Toggle image mode when prompt changes and prefill image defaults
+                        $promptSelect.on('change', function() {
+                            const opt = $(this).find('option:selected');
+                            const type = opt.data('type') || '';
+                            toggleImageMode(type);
+                            if ((type || '').toLowerCase() === 'image') {
+                                const selId = String($(this).val());
+                                const p = (prompts || []).find(pp => String(pp.id) === selId);
+                                if (p) {
+                                    if (p.imageSize && $imageSize.length) $imageSize.val(p.imageSize);
+                                    if (p.imageCount && $imageCount.length) $imageCount.val(p.imageCount);
+                                    if (p.assetTarget && $assetTarget.length) {
+                                        if ($assetTarget.find(`option[value="${p.assetTarget}"]`).length) {
+                                            $assetTarget.val(p.assetTarget);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        // Initial toggle
+                        const initOpt = $promptSelect.find('option:selected');
+                        if (initOpt && initOpt.length) {
+                            toggleImageMode(initOpt.data('type') || '');
                         }
                     }).catch(error => {
                         Craft.cp.displayError('Failed to load modal data');
@@ -671,15 +858,9 @@
         }
     }
 
-    async function openImageGenerationModal(field) {
-        // Placeholder for image generation functionality
-        Craft.cp.displayNotice('Image generation feature coming soon!');
-    }
-
     // Expose functions globally
     window.AiAssistantModal = {
         openGenerateModal,
-        openImageGenerationModal,
         getFieldInput,
         getFieldHandle,
         getFieldType,

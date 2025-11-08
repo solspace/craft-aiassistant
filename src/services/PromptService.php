@@ -90,6 +90,9 @@ class PromptService extends Component
         $record->integrationHandle = $prompt->integrationHandle;
         $record->isActive = $prompt->isActive;
         $record->sortOrder = $prompt->sortOrder;
+        $record->imageSize = $prompt->imageSize;
+        $record->imageCount = $prompt->imageCount;
+        $record->assetTarget = $prompt->assetTarget;
 
         $saved = $record->save();
 
@@ -131,6 +134,13 @@ class PromptService extends Component
                 'integrationHandle' => null,
                 'sortOrder' => 3,
             ],
+            [
+                'name' => 'Generate Image',
+                'promptText' => 'Create a high-quality, detailed image based on the following description:',
+                'type' => 'image',
+                'integrationHandle' => null,
+                'sortOrder' => 4,
+            ],
         ];
     }
 
@@ -148,6 +158,9 @@ class PromptService extends Component
         $prompt->dateCreated = $record->dateCreated;
         $prompt->dateUpdated = $record->dateUpdated;
         $prompt->uid = $record->uid;
+        $prompt->imageSize = $record->imageSize ?? null;
+        $prompt->imageCount = $record->imageCount ?? null;
+        $prompt->assetTarget = $record->assetTarget ?? null;
 
         return $prompt;
     }

@@ -30,10 +30,10 @@ class AiAssistant extends Plugin
      */
     public bool $hasCpSettings = true;
 
-   /**
+    /**
      * Plugin icon.
      */
-    public string $icon = __DIR__ . '/icon.svg';
+    public string $icon = __DIR__.'/icon.svg';
 
     /**
      * Plugin schema version.
@@ -91,7 +91,7 @@ class AiAssistant extends Plugin
         $nav = parent::getCpNavItem();
         $nav['label'] = 'AI Assistant';
         $nav['url'] = 'ai-assistant';
-        $nav['icon'] = __DIR__ . '/icon-mask.svg';
+        $nav['icon'] = __DIR__.'/icon-mask.svg';
 
         $nav['subnav'] = [
             'prompts' => [
@@ -191,6 +191,7 @@ class AiAssistant extends Plugin
             // UI endpoints
             'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
             'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
+            'ai-assistant/ui/generate-image-modal' => 'ai-assistant/ui/generate-image-modal',
         ];
 
         \Craft::$app->getUrlManager()->addRules($routes);
@@ -292,7 +293,7 @@ class AiAssistant extends Plugin
     private function initializeJavaScript(): void
     {
         $settings = $this->getSettings();
-        $iconPath = __DIR__ . '/icon-mask.svg';
+        $iconPath = __DIR__.'/icon-mask.svg';
 
         $this->serviceProvider->initializeJavaScript(
             $settings->toArray(),

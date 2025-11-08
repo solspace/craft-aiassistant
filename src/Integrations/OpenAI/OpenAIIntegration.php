@@ -110,7 +110,7 @@ class OpenAIIntegration extends BaseAiIntegration
             ]);
 
             $payload = [
-                'model' => $options['model'] ?? 'dall-e-3',
+                'model' => $options['model'] ?? $this->getModel(),
                 'prompt' => $prompt,
                 'n' => 1,
                 'size' => $options['size'] ?? '1024x1024',
