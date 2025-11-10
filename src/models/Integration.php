@@ -63,6 +63,7 @@ class Integration extends Model
             'gemini' => 'Google Gemini',
             'anthropic' => 'Anthropic',
             'xai' => 'xAI',
+            'replicate' => 'Replicate',
         ];
     }
 
@@ -92,6 +93,11 @@ class Integration extends Model
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
             ],
+            'replicate' => [
+                'black-forest-labs/flux-1.1-pro' => 'FLUX.1.1 Pro (Replicate)',
+                'black-forest-labs/flux-1.1-pro-ultra' => 'FLUX.1.1 Pro Ultra (Replicate)',
+                'stability-ai/sdxl' => 'Stable Diffusion XL (Replicate)',
+            ],
         ];
 
         return $models[$this->type] ?? [];
@@ -117,6 +123,10 @@ class Integration extends Model
             'xai' => [
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
+            ],
+            'replicate' => [
+                'black-forest-labs/flux-1.1-pro' => 'FLUX.1.1 Pro (Replicate)',
+                'stability-ai/sdxl' => 'Stable Diffusion XL (Replicate)',
             ],
         ];
 

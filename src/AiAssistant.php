@@ -4,7 +4,10 @@ namespace Solspace\AIAssistant;
 
 use craft\base\Field;
 use craft\base\Plugin;
+use craft\elements\Asset;
+use craft\enums\MenuItemType;
 use craft\events\DefineFieldHtmlEvent;
+use craft\events\DefineMenuItemsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
@@ -161,38 +164,42 @@ class AiAssistant extends Plugin
      */
     private function registerRoutes(): void
     {
-        if (!\Craft::$app->getRequest()->getIsCpRequest()) {
-            return;
+        $routes = [];
+        if (\Craft::$app->getRequest()->getIsCpRequest()) {
+            $routes = [
+                // Main pages
+                'ai-assistant' => 'ai-assistant/index',
+                'ai-assistant/prompts' => 'ai-assistant/prompts/index',
+                'ai-assistant/prompts/new' => 'ai-assistant/prompts/edit',
+                'ai-assistant/prompts/edit' => 'ai-assistant/prompts/edit',
+                'ai-assistant/prompts/<id:\d+>' => 'ai-assistant/prompts/edit',
+                'ai-assistant/integrations' => 'ai-assistant/integrations/index',
+                'ai-assistant/integrations/new' => 'ai-assistant/integrations/edit',
+                'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
+                'ai-assistant/settings' => 'ai-assistant/settings/index',
+                'ai-assistant/settings/save' => 'ai-assistant/settings/save',
+                'ai-assistant/settings/save-prompt' => 'ai-assistant/settings/save-prompt',
+
+                // API endpoints
+                'ai-assistant/api/integrations' => 'ai-assistant/api/get-integrations',
+                'ai-assistant/api/prompts' => 'ai-assistant/api/get-prompts',
+                'ai-assistant/api/generate-text' => 'ai-assistant/api/generate-text',
+                'ai-assistant/api/generate-image' => 'ai-assistant/api/generate-image',
+                'ai-assistant/api/save-image-to-assets' => 'ai-assistant/api/save-image-to-assets',
+                'ai-assistant/api/get-asset-url' => 'ai-assistant/api/get-asset-url',
+                'ai-assistant/api/stream-asset' => 'ai-assistant/api/stream-asset',
+                'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
+                'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
+
+                // UI endpoints
+                'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
+                'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
+                'ai-assistant/ui/generate-image-modal' => 'ai-assistant/ui/generate-image-modal',
+                'ai-assistant/ui/generate-from-asset-modal' => 'ai-assistant/ui/generate-from-asset-modal',
+            ];
         }
-
-        $routes = [
-            // Main pages
-            'ai-assistant' => 'ai-assistant/index',
-            'ai-assistant/prompts' => 'ai-assistant/prompts/index',
-            'ai-assistant/prompts/new' => 'ai-assistant/prompts/edit',
-            'ai-assistant/prompts/edit' => 'ai-assistant/prompts/edit',
-            'ai-assistant/prompts/<id:\d+>' => 'ai-assistant/prompts/edit',
-            'ai-assistant/integrations' => 'ai-assistant/integrations/index',
-            'ai-assistant/integrations/new' => 'ai-assistant/integrations/edit',
-            'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
-            'ai-assistant/settings' => 'ai-assistant/settings/index',
-            'ai-assistant/settings/save' => 'ai-assistant/settings/save',
-            'ai-assistant/settings/save-prompt' => 'ai-assistant/settings/save-prompt',
-
-            // API endpoints
-            'ai-assistant/api/integrations' => 'ai-assistant/api/get-integrations',
-            'ai-assistant/api/prompts' => 'ai-assistant/api/get-prompts',
-            'ai-assistant/api/generate-text' => 'ai-assistant/api/generate-text',
-            'ai-assistant/api/generate-image' => 'ai-assistant/api/generate-image',
-            'ai-assistant/api/save-image-to-assets' => 'ai-assistant/api/save-image-to-assets',
-            'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
-            'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
-
-            // UI endpoints
-            'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
-            'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
-            'ai-assistant/ui/generate-image-modal' => 'ai-assistant/ui/generate-image-modal',
-        ];
+        // Site-accessible endpoint for temporary public streaming (token-protected)
+        $routes['ai-assistant/api/public-stream-asset'] = 'ai-assistant/api/public-stream-asset';
 
         \Craft::$app->getUrlManager()->addRules($routes);
     }
@@ -203,6 +210,7 @@ class AiAssistant extends Plugin
     private function attachEventListeners(): void
     {
         $this->attachFieldInjectionListener();
+        $this->attachAssetMenuListener();
     }
 
     /**
@@ -298,6 +306,59 @@ class AiAssistant extends Plugin
         $this->serviceProvider->initializeJavaScript(
             $settings->toArray(),
             $iconPath
+        );
+    }
+
+    /**
+     * Attach asset menu listener to add AI Assistant option for images.
+     */
+    private function attachAssetMenuListener(): void
+    {
+        Event::on(
+            Asset::class,
+            Asset::EVENT_DEFINE_ACTION_MENU_ITEMS,
+            function (DefineMenuItemsEvent $event) {
+                /** @var Asset $asset */
+                $asset = $event->sender;
+
+                // Only show for image assets
+                if (Asset::KIND_IMAGE !== $asset->kind) {
+                    return;
+                }
+
+                $view = \Craft::$app->getView();
+                $aiAssistantId = \sprintf('action-ai-assistant-%s', mt_rand());
+
+                // Read AI Assistant icon
+                $iconPath = __DIR__.'/icon-mask.svg';
+                $iconSvg = file_exists($iconPath) ? file_get_contents($iconPath) : null;
+
+                // Add AI Assistant menu item
+                $items = $event->items;
+                $items[] = [
+                    'type' => MenuItemType::Button,
+                    'id' => $aiAssistantId,
+                    'icon' => $iconSvg ?: 'sparkles',
+                    'label' => \Craft::t('ai-assistant', 'AI Assistant'),
+                ];
+
+                // Register JavaScript to open AI Assistant modal from asset
+                $view->registerJsWithVars(fn ($id, $assetId, $assetUrl) => <<<JS
+                    $('#' + {$id}).on('activate', () => {
+                      if (window.AiAssistantModal && window.AiAssistantModal.openFromAssetModal) {
+                        window.AiAssistantModal.openFromAssetModal({$assetId}, {$assetUrl});
+                      } else {
+                        Craft.cp.displayError('AI Assistant is not available');
+                      }
+                    });
+                    JS, [
+                    $view->namespaceInputId($aiAssistantId),
+                    $asset->id,
+                    $asset->getUrl() ?? '',
+                ]);
+
+                $event->items = $items;
+            }
         );
     }
 

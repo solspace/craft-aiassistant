@@ -17,7 +17,7 @@
                     name: 'aiassistant-text-prompt',
                     label: 'Prompt'|t('aiassistant'),
                     options: [{ label: 'Loading…'|t('aiassistant'), value: '' }],
-                    instructions: 'Choose a prompt to generate text with.'|t('aiassistant')
+                    instructions: 'Choose a prompt to work with this image.'|t('aiassistant')
                 }) }}
             </div>
             <div style="flex:1;">
@@ -39,19 +39,26 @@
                     name: 'aiassistant-text-prompt-text',
                     label: 'Prompt Text'|t('aiassistant'),
                     rows: 2,
-                    instructions: 'Edit the prompt text as needed. This is what will be sent to the AI. You can modify it to better suit your needs. Select `Custom...` to write your own prompt from scratch.'|t('aiassistant')
+                    instructions: 'Edit the prompt text as needed. This is what will be sent to the AI along with the image. You can modify it to better suit your needs.'|t('aiassistant')
                 }) }}
             </div>
             <div id="aiassistant-image-col" style="flex:1;">
                 <div id="aiassistant-image-options" style="display:none; padding:15px; border:1px solid #ffecb5; border-radius:6px;">
-                    <div style="display:flex; gap:12px;">
-                        <div style="flex:1">
+                    <div style="display:flex; gap:12px; align-items:flex-start;">
+                        <div style="display:flex; align-items:center; justify-content:center; padding-top:24px;">
+                            {{ forms.lightswitch({
+                                id: 'aiassistant-keep-original-size',
+                                name: 'aiassistant-keep-original-size',
+                                on: true
+                            }) }}
+                        </div>
+                        <div style="flex:1;" id="aiassistant-size-field-wrap">
                             {{ forms.textField({
                                 id: 'aiassistant-image-size',
                                 name: 'aiassistant-image-size',
                                 label: 'Size'|t('aiassistant'),
                                 placeholder: '1024x1024',
-                                instructions: 'WidthxHeight, e.g., 1024x1024.'|t('aiassistant')
+                                instructions: 'Keep original size (recommended).'|t('aiassistant')
                             }) }}
                         </div>
                         <div style="width:150px">
@@ -79,39 +86,34 @@
             </div>
         </div>
 
-        <!-- Input context and Generated text - side by side (always visible) -->
-        <div id="aiassistant-text-comparison" style="display:block;">
+        <!-- Input context (image) and Generated result - side by side -->
+        <div id="aiassistant-asset-comparison" style="display:block;">
             <div style="display:flex; gap:20px;">
                 <div style="flex:1;">
                     <div class="field" style="margin-bottom:16px;">
-                        <div class="heading" style="display:flex; align-items:center; gap:12px;">
-                            <div style="display:flex; align-items:center; justify-content:center; width:36px; min-width:36px;">
-                                {{ forms.lightswitch({
-                                    id: 'aiassistant-include-context',
-                                    name: 'aiassistant-include-context',
-                                    on: true
-                                }) }}
-                            </div>
-                            <div style="display:flex; flex-direction:column; gap:6px;">
-                                <span style="font-weight:600;">{{ 'Input Context'|t('aiassistant') }}</span>
-                                <span class="light" style="font-size:12px;">{{ 'Current content from the field. Toggle to include it in the generation.'|t('aiassistant') }}</span>
-                            </div>
+                        <div class="heading">
+                            <span style="font-weight:600;">{{ 'Input Image'|t('aiassistant') }}</span>
+                        </div>
+                        <div class="instructions">
+                            <p class="light" style="font-size:12px;">{{ 'The image you selected. This will be sent to the AI for processing.'|t('aiassistant') }}</p>
                         </div>
                         <div class="input">
-                            <div id="aiassistant-text-input-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
+                            <div id="aiassistant-asset-preview" style="border:1px solid #e5e7eb; border-radius:4px; padding:10px; background:#f9fafb; text-align:center; height:260px; display:flex; align-items:center; justify-content:center; box-sizing:border-box;">
+                                <div style="color:#9ca3af; font-size:14px;">{{ 'Loading image...'|t('aiassistant') }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div style="flex:1;">
                     <div class="field" style="margin-bottom:16px;">
                         <div class="heading">
-                            <span style="font-weight:600;" id="aiassistant-generated-title">{{ 'Generated Text'|t('aiassistant') }}</span>
+                            <span style="font-weight:600;" id="aiassistant-generated-title">{{ 'Generated Result'|t('aiassistant') }}</span>
                         </div>
                         <div class="instructions">
-                            <p id="aiassistant-generated-instructions">{{ 'AI-generated content. Click Insert to replace the current content.'|t('aiassistant') }}</p>
+                            <p id="aiassistant-generated-instructions">{{ 'AI-generated content will appear here.'|t('aiassistant') }}</p>
                         </div>
                         <div class="input">
-                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
+                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px; display:none;"></div>
                             <div id="aiassistant-image-preview-right" class="aiassistant-image-slider" style="display:none; position:relative; border:1px solid #e5e7eb; border-radius:4px; padding:10px; background:#f9fafb; height:260px; align-items:center; justify-content:center;">
                                 <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('aiassistant') }}" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:none; background:rgba(0,0,0,0.45); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">‹</button>
                                 <div class="aiassistant-image-slider-viewport" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
@@ -125,38 +127,13 @@
                 </div>
             </div>
         </div>
-
-        <!-- Input context - fallback for plain text (hidden; using comparison layout instead) -->
-        <div id="aiassistant-text-input-fallback" style="display:none;">
-            {{ forms.textareaField({
-                id: 'aiassistant-text-input',
-                name: 'aiassistant-text-input',
-                label: 'Input Context'|t('aiassistant'),
-                rows: 3,
-                instructions: 'Optional context to include in generation. Will be appended to the prompt.'|t('aiassistant')
-            }) }}
-        </div>
-
-        <!-- Generated text result - fallback for plain text (hidden; using comparison layout instead) -->
-        <div id="aiassistant-text-generated-fallback" style="display:none;">
-            {{ forms.textareaField({
-                id: 'aiassistant-text-generated',
-                name: 'aiassistant-text-generated',
-                label: 'Generated Text'|t('aiassistant'),
-                rows: 6,
-                instructions: 'The AI-generated text will appear here.'|t('aiassistant'),
-                readonly: true
-            }) }}
-        </div>
     </div>
 
     <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
         <div id="aiassistant-text-loading" class="spinner" style="display:none;"></div>
         <button type="button" class="btn cancel">{{ 'Cancel'|t('app') }}</button>
         <button type="button" class="btn" id="aiassistant-text-generate">{{ 'Generate'|t('aiassistant') }}</button>
-        <button type="button" class="btn submit" id="aiassistant-text-insert" disabled>{{ 'Insert'|t('aiassistant') }}</button>
+        <button type="button" class="btn submit" id="aiassistant-text-insert" disabled>{{ 'Save'|t('aiassistant') }}</button>
     </div>
 </div>
-
-
 

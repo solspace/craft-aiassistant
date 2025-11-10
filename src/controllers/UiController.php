@@ -97,4 +97,59 @@ class UiController extends Controller
 
         return $this->asRaw($html);
     }
+
+    public function actionGenerateFromAssetModal(): Response
+    {
+        $this->requireCpRequest();
+
+        // Build asset target options (volumes + folders) using UIDs for the modal
+        $assetTargetOptions = [];
+        $volumes = \Craft::$app->getVolumes()->getAllVolumes();
+        $volumeIdToName = [];
+        foreach ($volumes as $vol) {
+            $volumeIdToName[$vol->id] = $vol->name;
+            $assetTargetOptions[] = [
+                'label' => $vol->name.' (root)',
+                'value' => 'volume:'.$vol->uid,
+            ];
+        }
+        $folderRecords = VolumeFolder::find()->all();
+        $folderById = [];
+        foreach ($folderRecords as $fr) {
+            $folderById[$fr->id] = $fr;
+        }
+        $buildFolderPath = static function ($folder) use (&$folderById): string {
+            $parts = [];
+            $current = $folder;
+            while ($current && $current->parentId) {
+                $parts[] = $current->name;
+                $current = $folderById[$current->parentId] ?? null;
+            }
+
+            return implode('/', array_reverse($parts));
+        };
+        foreach ($folderRecords as $fr) {
+            if (null === $fr->parentId) {
+                continue;
+            }
+            $volName = $volumeIdToName[$fr->volumeId] ?? 'Volume';
+            $path = $buildFolderPath($fr);
+            $label = $path ? ($volName.' / '.$path) : ($volName.' / '.$fr->name);
+            $assetTargetOptions[] = [
+                'label' => $label,
+                'value' => 'folder:'.$fr->uid,
+            ];
+        }
+        $defaultAssetTargetValue = '';
+        if (!empty($assetTargetOptions)) {
+            $defaultAssetTargetValue = $assetTargetOptions[0]['value'] ?? '';
+        }
+
+        $html = \Craft::$app->getView()->renderTemplate('ai-assistant/modals/generate-from-asset', [
+            'assetTargetOptions' => $assetTargetOptions,
+            'defaultAssetTargetValue' => $defaultAssetTargetValue,
+        ]);
+
+        return $this->asRaw($html);
+    }
 }

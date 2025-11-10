@@ -185,6 +185,7 @@ class IntegrationsController extends Controller
             'gemini' => 'Solspace\AIAssistant\Integrations\Gemini\GeminiIntegration',
             'anthropic' => 'Solspace\AIAssistant\Integrations\Anthropic\AnthropicIntegration',
             'xai' => 'Solspace\AIAssistant\Integrations\xAI\xAIIntegration',
+            'replicate' => 'Solspace\AIAssistant\Integrations\Replicate\ReplicateIntegration',
         ];
 
         return $classes[$type] ?? '';

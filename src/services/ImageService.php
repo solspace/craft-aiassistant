@@ -21,12 +21,29 @@ class ImageService extends Component
         $tmpPath = \Craft::$app->getPath()->getTempPath();
         FileHelper::createDirectory($tmpPath);
 
-        $ext = pathinfo(parse_url($url, \PHP_URL_PATH) ?? '', \PATHINFO_EXTENSION) ?: 'png';
+        // Support data URLs (data:image/png;base64,...) and remote URLs
+        $isDataUrl = false;
+        $ext = 'png';
+        if (preg_match('/^data:image\/(png|jpe?g|webp);base64,/', $url, $m)) {
+            $isDataUrl = true;
+            $ext = 'jpeg' === $m[1] ? 'jpg' : $m[1];
+        } else {
+            $ext = pathinfo(parse_url($url, \PHP_URL_PATH) ?? '', \PATHINFO_EXTENSION) ?: 'png';
+        }
         $safeName = $filename ?: ('ai-image-'.time().'-'.substr(sha1($url), 0, 8).'.'.$ext);
         $tmpFile = $tmpPath.\DIRECTORY_SEPARATOR.$safeName;
 
-        $client = new Client();
-        $client->request('GET', $url, ['sink' => $tmpFile]);
+        if ($isDataUrl) {
+            $data = preg_replace('/^data:image\/[a-zA-Z0-9.+-]+;base64,/', '', $url);
+            $bytes = base64_decode((string) $data, true);
+            if (false === $bytes) {
+                return null;
+            }
+            file_put_contents($tmpFile, $bytes);
+        } else {
+            $client = new Client();
+            $client->request('GET', $url, ['sink' => $tmpFile]);
+        }
 
         // Resolve target folder
         $targetFolderId = null;

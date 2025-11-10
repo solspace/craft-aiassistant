@@ -12,10 +12,10 @@ class AiAssistantAsset extends AssetBundle
         $this->sourcePath = __DIR__.'/../assets';
         $this->depends = [CpAsset::class];
         $this->js = [
-            'js/ai-assistant-modal.js',
-            'js/ai-assistant.js',
+            'js/ai-assistant-modal.min.js',
+            'js/ai-assistant.min.js',
         ];
-        $this->css = ['css/ai-assistant.css'];
+        $this->css = ['css/ai-assistant.min.css'];
 
         parent::init();
     }

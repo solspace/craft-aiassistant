@@ -61,7 +61,7 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
 
     public function getModel(): string
     {
-        return $this->model;
+        return (string) $this->getProcessedValue($this->model);
     }
 
     public function getMaxTokens(): int
