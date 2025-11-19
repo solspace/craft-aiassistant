@@ -5,14 +5,13 @@ namespace Solspace\AIAssistant;
 use craft\base\Field;
 use craft\base\Plugin;
 use craft\elements\Asset;
-use craft\enums\MenuItemType;
 use craft\events\DefineFieldHtmlEvent;
 use craft\events\DefineMenuItemsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\web\View;
-use Solspace\AIAssistant\assets\AiAssistantAsset;
+use Solspace\AIAssistant\assets\MainAssetBundle;
 use Solspace\AIAssistant\models\Settings;
 use Solspace\AIAssistant\services\IntegrationService;
 use Solspace\AIAssistant\services\PromptService;
@@ -292,7 +291,7 @@ class AiAssistant extends Plugin
      */
     private function registerAssetBundle(): void
     {
-        \Craft::$app->getView()->registerAssetBundle(AiAssistantAsset::class);
+        \Craft::$app->getView()->registerAssetBundle(MainAssetBundle::class);
     }
 
     /**
@@ -335,8 +334,13 @@ class AiAssistant extends Plugin
 
                 // Add AI Assistant menu item
                 $items = $event->items;
+                // Craft 4 uses string 'button', Craft 5 uses MenuItemType::Button enum
+                $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
+                $menuItemType = $isCraft5 
+                    ? (class_exists(\craft\enums\MenuItemType::class) ? \craft\enums\MenuItemType::Button->value : 'button')
+                    : 'button';
                 $items[] = [
-                    'type' => MenuItemType::Button,
+                    'type' => $menuItemType,
                     'id' => $aiAssistantId,
                     'icon' => $iconSvg ?: 'sparkles',
                     'label' => \Craft::t('ai-assistant', 'AI Assistant'),
