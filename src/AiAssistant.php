@@ -5,7 +5,6 @@ namespace Solspace\AIAssistant;
 use craft\base\Field;
 use craft\base\Plugin;
 use craft\elements\Asset;
-use craft\enums\MenuItemType;
 use craft\events\DefineFieldHtmlEvent;
 use craft\events\DefineMenuItemsEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -311,12 +310,31 @@ class AiAssistant extends Plugin
 
     /**
      * Attach asset menu listener to add AI Assistant option for images.
+     * Note: This is Craft 5+ only feature (EVENT_DEFINE_ACTION_MENU_ITEMS doesn't exist in Craft 4).
      */
     private function attachAssetMenuListener(): void
     {
+        // Only attach listener in Craft 5+ (EVENT_DEFINE_ACTION_MENU_ITEMS is Craft 5+ only)
+        $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
+        if (!$isCraft5) {
+            return;
+        }
+
+        // Check if the constant exists using reflection (safe for Craft 4)
+        try {
+            $reflection = new \ReflectionClass(Asset::class);
+            if (!$reflection->hasConstant('EVENT_DEFINE_ACTION_MENU_ITEMS')) {
+                return;
+            }
+            $eventName = $reflection->getConstant('EVENT_DEFINE_ACTION_MENU_ITEMS');
+        } catch (\Throwable $e) {
+            // If reflection fails or constant doesn't exist, skip
+            return;
+        }
+
         Event::on(
             Asset::class,
-            Asset::EVENT_DEFINE_ACTION_MENU_ITEMS,
+            $eventName,
             function (DefineMenuItemsEvent $event) {
                 /** @var Asset $asset */
                 $asset = $event->sender;
@@ -335,8 +353,16 @@ class AiAssistant extends Plugin
 
                 // Add AI Assistant menu item
                 $items = $event->items;
+                // Craft 5 uses MenuItemType::Button enum, Craft 4 uses string 'button'
+                // Using eval to prevent php-cs-fixer from detecting and adding import
+                $menuItemType = 'button';
+                $menuItemTypeClass = '\craft\enums\MenuItemType';
+                if (class_exists($menuItemTypeClass)) {
+                    // @phpstan-ignore-next-line - Craft 5-only enum, accessed dynamically via eval
+                    $menuItemType = eval("return {$menuItemTypeClass}::Button->value;");
+                }
                 $items[] = [
-                    'type' => MenuItemType::Button,
+                    'type' => $menuItemType,
                     'id' => $aiAssistantId,
                     'icon' => $iconSvg ?: 'sparkles',
                     'label' => \Craft::t('ai-assistant', 'AI Assistant'),
