@@ -2,17 +2,17 @@
 
 {% import "_includes/forms" as forms %}
 
-{% set title = "AI Integrations" %}
+{% set title = "AI Integrations"|t('ai-assistant') %}
 {% set selectedSubnavItem = 'integrations' %}
 {% set crumbs = [
-  { label: 'AI Assistant', url: url('ai-assistant') },
-  { label: 'Integrations', url: url('ai-assistant/integrations') },
+  { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
+  { label: 'Integrations'|t('ai-assistant'), url: url('ai-assistant/integrations') },
 ] %}
 
 {% block actionButton %}
     <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">
         <span data-icon="plus"></span>
-        {{ "New Integration"|t('aiassistant') }}
+        {{ "New Integration"|t('ai-assistant') }}
     </a>
 {% endblock %}
 
@@ -22,11 +22,11 @@
             <table class="data fullwidth">
                 <thead>
                     <tr>
-                        <th>{{ "Name"|t('app') }}</th>
-                        <th>{{ "Type"|t('aiassistant') }}</th>
-                        <th>{{ "Model"|t('aiassistant') }}</th>
-                        <th>{{ "Test Connection"|t('aiassistant') }}</th>
-                        <th>{{ "Actions"|t('aiassistant') }}</th>
+                        <th>{{ "Name"|t('ai-assistant') }}</th>
+                        <th>{{ "Type"|t('ai-assistant') }}</th>
+                        <th>{{ "Model"|t('ai-assistant') }}</th>
+                        <th>{{ "Test Connection"|t('ai-assistant') }}</th>
+                        <th>{{ "Actions"|t('ai-assistant') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,19 +41,19 @@
                             <td>{{ integration.model }}</td>
                             <td>
                                 <button type="button" class="btn small ai-assistant-test-button" onclick="testIntegration({{ integration.id }}, event)">
-                                    Test
+                                    {{ "Test"|t('ai-assistant') }}
                                 </button>
                             </td>
                             <td>
                                 <div class="ai-assistant-actions">
-                                    <a href="{{ url('ai-assistant/integrations/' ~ integration.id) }}" class="btn small" title="Edit">
+                                    <a href="{{ url('ai-assistant/integrations/' ~ integration.id) }}" class="btn small" title="{{ "Edit"|t('ai-assistant') }}">
                                         <span data-icon="edit"></span>
                                     </a>
                                     <form method="post">
                                         {{ csrfInput() }}
                                         {{ actionInput('ai-assistant/integrations/delete') }}
                                         {{ hiddenInput('id', integration.id) }}
-                                        <button type="submit" class="btn small" onclick="return confirm('{{ 'Are you sure you want to delete this integration?'|t('aiassistant') }}')" title="Delete">
+                                        <button type="submit" class="btn small" onclick="return confirm('{{ 'Are you sure you want to delete this integration?'|t('ai-assistant') }}')" title="{{ "Delete"|t('ai-assistant') }}">
                                             <span data-icon="trash"></span>
                                         </button>
                                     </form>
@@ -65,10 +65,10 @@
             </table>
         {% else %}
             <div class="empty-state">
-                <h2>{{ "No integrations yet"|t('aiassistant') }}</h2>
-                <p>{{ "Get started by adding your first AI integration."|t('aiassistant') }}</p>
+                <h2>{{ "No integrations yet"|t('ai-assistant') }}</h2>
+                <p>{{ "Get started by adding your first AI integration."|t('ai-assistant') }}</p>
                 <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">
-                    {{ "Add Integration"|t('aiassistant') }}
+                    {{ "Add Integration"|t('ai-assistant') }}
                 </a>
             </div>
         {% endif %}

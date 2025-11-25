@@ -5,6 +5,7 @@ namespace Solspace\AIAssistant;
 use craft\base\Field;
 use craft\base\Plugin;
 use craft\elements\Asset;
+use craft\enums\MenuItemType;
 use craft\events\DefineFieldHtmlEvent;
 use craft\events\DefineMenuItemsEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -22,6 +23,12 @@ use yii\web\Response;
 
 class AiAssistant extends Plugin
 {
+    /**
+     * Translation category for the plugin.
+     * Matches the plugin handle 'ai-assistant' for automatic translation registration.
+     */
+    public const TRANSLATION_CATEGORY = 'ai-assistant';
+
     /**
      * Plugin instance.
      */
@@ -91,21 +98,21 @@ class AiAssistant extends Plugin
     public function getCpNavItem(): ?array
     {
         $nav = parent::getCpNavItem();
-        $nav['label'] = 'AI Assistant';
+        $nav['label'] = \Craft::t(self::TRANSLATION_CATEGORY, 'AI Assistant');
         $nav['url'] = 'ai-assistant';
         $nav['icon'] = __DIR__.'/icon-mask.svg';
 
         $nav['subnav'] = [
             'prompts' => [
-                'label' => 'Prompts',
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Prompts'),
                 'url' => 'ai-assistant/prompts',
             ],
             'integrations' => [
-                'label' => 'Integrations',
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Integrations'),
                 'url' => 'ai-assistant/integrations',
             ],
             'settings' => [
-                'label' => 'Settings',
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Settings'),
                 'url' => 'ai-assistant/settings',
             ],
         ];
@@ -127,6 +134,20 @@ class AiAssistant extends Plugin
     public static function getPromptService(): PromptService
     {
         return self::$plugin->promptService;
+    }
+
+    /**
+     * Translates a message to the application language.
+     *
+     * @param string      $message  the message to be translated
+     * @param array       $params   the parameters that will be used to replace the corresponding placeholders in the message
+     * @param null|string $language the language code (e.g. 'en-US', 'en'). If null, the application language will be used
+     *
+     * @return string the translated message
+     */
+    public static function t(string $message, array $params = [], ?string $language = null): string
+    {
+        return \Craft::t(self::TRANSLATION_CATEGORY, $message, $params, $language);
     }
 
     /**
@@ -336,14 +357,14 @@ class AiAssistant extends Plugin
                 $items = $event->items;
                 // Craft 4 uses string 'button', Craft 5 uses MenuItemType::Button enum
                 $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
-                $menuItemType = $isCraft5 
-                    ? (class_exists(\craft\enums\MenuItemType::class) ? \craft\enums\MenuItemType::Button->value : 'button')
+                $menuItemType = $isCraft5
+                    ? (class_exists(MenuItemType::class) ? MenuItemType::Button->value : 'button')
                     : 'button';
                 $items[] = [
                     'type' => $menuItemType,
                     'id' => $aiAssistantId,
                     'icon' => $iconSvg ?: 'sparkles',
-                    'label' => \Craft::t('ai-assistant', 'AI Assistant'),
+                    'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'AI Assistant'),
                 ];
 
                 // Register JavaScript to open AI Assistant modal from asset

@@ -83,17 +83,95 @@ export function getFieldInput(field) {
         return {
             type: 'redactor',
             element: redactorTextarea,
-            value: () => redactorTextarea.value || '',
-            setValue: (val) => {
-                if (window.Redactor && redactorTextarea.id) {
-                    const redactorInstance = window.Redactor.get(redactorTextarea.id);
-                    if (redactorInstance) {
-                        redactorInstance.code.set(val);
-                    } else {
-                        redactorTextarea.value = val;
+            value: () => {
+                // Try to get value from Redactor instance
+                if (window.$ && window.$(redactorTextarea).data('redactor')) {
+                    const instance = window.$(redactorTextarea).data('redactor');
+                    if (instance && typeof instance.code.get === 'function') {
+                        return instance.code.get();
                     }
-                } else {
-                    redactorTextarea.value = val;
+                }
+                // Fallback to textarea value
+                return redactorTextarea.value || '';
+            },
+            setValue: (val) => {
+                // Method 1: Try $R API (Redactor global function) - most common in Craft
+                if (typeof window.$R === 'function' && redactorTextarea.id) {
+                    try {
+                        window.$R('#' + redactorTextarea.id, 'source.setCode', val);
+                        // Also sync to update the editor
+                        window.$R('#' + redactorTextarea.id, 'sync');
+                        return;
+                    } catch (e) {
+                        // Continue to next method
+                    }
+                }
+                
+                // Method 2: Try jQuery data('redactor') - Craft's way
+                if (window.$) {
+                    const $textarea = window.$(redactorTextarea);
+                    const instance = $textarea.data('redactor');
+                    
+                    if (instance) {
+                        // Try code.set (most common)
+                        if (instance.code && typeof instance.code.set === 'function') {
+                            instance.code.set(val);
+                            // Sync to update the editor
+                            if (typeof instance.sync === 'function') {
+                                instance.sync();
+                            }
+                            return;
+                        }
+                        // Try insert.set
+                        if (instance.insert && typeof instance.insert.set === 'function') {
+                            instance.insert.set(val);
+                            if (typeof instance.sync === 'function') {
+                                instance.sync();
+                            }
+                            return;
+                        }
+                        // Try set method
+                        if (typeof instance.set === 'function') {
+                            instance.set(val);
+                            if (typeof instance.sync === 'function') {
+                                instance.sync();
+                            }
+                            return;
+                        }
+                    }
+                }
+                
+                // Method 3: Try window.Redactor.get API (older versions)
+                if (window.Redactor && redactorTextarea.id) {
+                    if (typeof window.Redactor.get === 'function') {
+                        try {
+                            const redactorInstance = window.Redactor.get(redactorTextarea.id);
+                            if (redactorInstance) {
+                                if (redactorInstance.code && typeof redactorInstance.code.set === 'function') {
+                                    redactorInstance.code.set(val);
+                                    if (typeof redactorInstance.sync === 'function') {
+                                        redactorInstance.sync();
+                                    }
+                                    return;
+                                }
+                            }
+                        } catch (e) {
+                            // Continue to fallback
+                        }
+                    }
+                }
+                
+                // Final fallback: set textarea value directly and trigger events
+                redactorTextarea.value = val;
+                // Trigger multiple events for Craft compatibility
+                if (window.$) {
+                    const $ta = window.$(redactorTextarea);
+                    $ta.trigger('change');
+                    $ta.trigger('input');
+                }
+                if (redactorTextarea.dispatchEvent) {
+                    redactorTextarea.dispatchEvent(new Event('change', { bubbles: true }));
+                    redactorTextarea.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             }
         };
@@ -113,14 +191,24 @@ export function getFieldInput(field) {
         };
     }
 
-    // Plain input/textarea
-    const textInput = qs('input[type="text"], textarea', field);
+    // Plain input/textarea (covers PlainText fields and Title field)
+    const textInput = qs('input[type="text"], textarea:not([id*="redactor"]):not([id*="tinymce"])', field);
     if (textInput) {
         return {
             type: textInput.tagName.toLowerCase(),
             element: textInput,
             value: () => textInput.value || '',
-            setValue: (val) => { textInput.value = val; }
+            setValue: (val) => {
+                textInput.value = val;
+                // Trigger events for Craft CMS to detect the change
+                if (window.$) {
+                    $(textInput).trigger('change').trigger('input');
+                }
+                if (textInput.dispatchEvent) {
+                    textInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    textInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
         };
     }
 

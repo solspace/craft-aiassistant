@@ -18,6 +18,7 @@ import './views/integrations/index.js';
 import './views/prompts/edit.js';
 import './views/settings/index.js';
 import './views/modals/prompt-edit.js';
+import './views/widgets/quick-ai-actions.js';
 
 /**
  * Attach inline buttons to all eligible fields

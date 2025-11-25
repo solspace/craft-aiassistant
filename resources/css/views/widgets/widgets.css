@@ -148,7 +148,7 @@
     height: 34px;
     border-radius: 17px;
     border: 1px solid var(--hairline-color, #d1d5db);
-    background: var(--white, #fff);
+    background: var(--light-text-color, #6b7280);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -160,7 +160,6 @@
 .aiassistant-image-slider-button:hover:not(:disabled) {
     background: var(--brand-color, #3b82f6);
     color: #fff;
-    transform: translateY(-1px);
 }
 
 .aiassistant-image-slider-button:disabled {

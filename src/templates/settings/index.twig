@@ -2,11 +2,11 @@
 
 {% import "_includes/forms" as forms %}
 
-{% set title = "AI Assistant Settings" %}
+{% set title = "AI Assistant Settings"|t('ai-assistant') %}
 {% set selectedSubnavItem = 'settings' %}
 {% set crumbs = [
-  { label: 'AI Assistant', url: url('ai-assistant') },
-  { label: 'Settings', url: url('ai-assistant/settings') },
+  { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
+  { label: 'Settings'|t('ai-assistant'), url: url('ai-assistant/settings') },
 ] %}
 
 {% block actionButton %}
@@ -20,12 +20,12 @@
 
     <div class="ai-assistant-settings-header">
         <div>
-            <h2>{{ 'Field Settings'|t('aiassistant') }}</h2>
-            <p class="instructions">{{ 'Select which fields will show the AI Assistant button.'|t('aiassistant') }}</p>
+            <h2>{{ 'Field Settings'|t('ai-assistant') }}</h2>
+            <p class="instructions">{{ 'Select which fields will show the AI Assistant button.'|t('ai-assistant') }}</p>
         </div>
         <div class="ai-assistant-settings-header-actions">
-            <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('aiassistant') }}</button>
-            <button type="button" id="disable-all" class="btn">{{ 'Disable all'|t('aiassistant') }}</button>
+            <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('ai-assistant') }}</button>
+            <button type="button" id="disable-all" class="btn">{{ 'Disable all'|t('ai-assistant') }}</button>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
                     <th>{{ 'Field'|t('app') }}</th>
                     <th>{{ 'Handle'|t('app') }}</th>
                     <th>{{ 'Type'|t('app') }}</th>
-                    <th>{{ 'Field Specific Prompt'|t('aiassistant') }}</th>
+                    <th>{{ 'Field Specific Prompt'|t('ai-assistant') }}</th>
                     <th class="ai-assistant-settings-lightswitch-cell">{{ 'Enabled'|t('app') }}</th>
                 </tr>
             </thead>

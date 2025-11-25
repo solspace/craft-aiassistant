@@ -2,19 +2,19 @@
 
 <div class="aiassistant-widget">
     <div class="aiassistant-widget-header">
-        <p class="light">{{ "Generate content directly from the dashboard"|t('aiassistant') }}</p>
+        <p class="light">{{ "Generate content directly from the dashboard"|t('ai-assistant') }}</p>
     </div>
 
     <div class="aiassistant-widget-content">
         <form id="aiassistant-quick-form">
             <div class="field">
                 {{ forms.selectField({
-                    label: "Prompt"|t('aiassistant'),
+                    label: "Prompt"|t('ai-assistant'),
                     id: 'aiassistant-widget-prompt',
                     name: 'prompt',
                     options: [
                         {
-                            label: "Custom text..."|t('aiassistant'),
+                            label: "Custom text..."|t('ai-assistant'),
                             value: "custom-text",
                             data: {
                                 type: 'text',
@@ -26,7 +26,7 @@
                             }
                         },
                         {
-                            label: "Custom image..."|t('aiassistant'),
+                            label: "Custom image..."|t('ai-assistant'),
                             value: "custom-image",
                             data: {
                                 type: 'image',
@@ -49,17 +49,17 @@
                             integration: prompt.integrationHandle ?? ''
                         }
                     })),
-                    instructions: "Choose a prompt to generate content with"|t('aiassistant')
+                    instructions: "Choose a prompt to generate content with"|t('ai-assistant')
                 }) }}
             </div>
 
             <div id="aiassistant-widget-prompt-field" class="field">
                 {{ forms.textareaField({
-                    label: "Prompt Text"|t('aiassistant'),
+                    label: "Prompt Text"|t('ai-assistant'),
                     id: 'aiassistant-widget-prompt-text',
                     name: 'promptText',
                     rows: 4,
-                    instructions: "Edit the prompt text as needed. This is what will be sent to the AI."|t('aiassistant'),
+                    instructions: "Edit the prompt text as needed. This is what will be sent to the AI."|t('ai-assistant'),
                     placeholder: "Select a prompt above or write your own custom prompt..."
                 }) }}
             </div>
@@ -68,33 +68,33 @@
                 <div class="aiassistant-widget-image-options-row">
                     <div class="field">
                         {{ forms.textField({
-                            label: "Image Size"|t('aiassistant'),
+                            label: "Image Size"|t('ai-assistant'),
                             id: 'aiassistant-widget-image-size',
                             name: 'imageSize',
                             placeholder: "1024x1024",
-                            instructions: "Optional. Use WidthxHeight (for example, 1024x1024)."|t('aiassistant')
+                            instructions: "Optional. Use WidthxHeight (for example, 1024x1024)."|t('ai-assistant')
                         }) }}
                     </div>
                     <div class="field count-field">
                         {{ forms.textField({
-                            label: "Image Count"|t('aiassistant'),
+                            label: "Image Count"|t('ai-assistant'),
                             id: 'aiassistant-widget-image-count',
                             name: 'imageCount',
                             type: 'number',
                             min: 1,
                             value: 1,
-                            instructions: "Number of images to request (many providers allow 1-4)."|t('aiassistant')
+                            instructions: "Number of images to request (many providers allow 1-4)."|t('ai-assistant')
                         }) }}
                     </div>
                 </div>
                 <div class="field asset-target-field">
                     {{ forms.selectField({
-                        label: "Save To"|t('aiassistant'),
+                        label: "Save To"|t('ai-assistant'),
                         id: 'aiassistant-widget-asset-target',
                         name: 'assetTarget',
                         options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
                         value: defaultAssetTargetValue ?? '',
-                        instructions: "Choose where generated images should be saved."|t('aiassistant'),
+                        instructions: "Choose where generated images should be saved."|t('ai-assistant'),
                         inputAttributes: {
                             'data-default-value': defaultAssetTargetValue ?? ''
                         }
@@ -104,537 +104,53 @@
 
             <div class="field">
                 {{ forms.selectField({
-                    label: "Integration"|t('aiassistant'),
+                    label: "Integration"|t('ai-assistant'),
                     id: 'aiassistant-widget-integration',
                     name: 'integration',
-                    options: integrations|map(integration => { label: integration.name, value: integration.handle }),
-                    instructions: "Select the AI service to use"|t('aiassistant')
+                    options: integrations|map(integration => { 
+                        label: integration.name, 
+                        value: integration.handle,
+                        data: {
+                            type: integration.type ?? ''
+                        }
+                    }),
+                    instructions: "Select the AI service to use"|t('ai-assistant')
                 }) }}
             </div>
 
             <div id="aiassistant-widget-output-field" class="field">
                 {{ forms.textareaField({
-                    label: "Generated Content"|t('aiassistant'),
+                    label: "Generated Content"|t('ai-assistant'),
                     id: 'aiassistant-widget-output',
                     name: 'output',
                     rows: 4,
                     readonly: true,
-                    instructions: "AI-generated content will appear here"|t('aiassistant')
+                    instructions: "AI-generated content will appear here"|t('ai-assistant')
                 }) }}
             </div>
 
             <div id="aiassistant-widget-image-preview" class="aiassistant-widget-image-preview aiassistant-hidden">
-                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('aiassistant') }}" disabled>&lt;</button>
+                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('ai-assistant') }}" disabled>&lt;</button>
                 <div class="aiassistant-image-slider-stage">
-                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('aiassistant') }}" />
-                    <div class="aiassistant-image-slider-placeholder">{{ "Generate to preview images"|t('aiassistant') }}</div>
+                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('ai-assistant') }}" />
+                    <div class="aiassistant-image-slider-placeholder">{{ "Generate to preview images"|t('ai-assistant') }}</div>
                 </div>
-                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('aiassistant') }}" disabled>&gt;</button>
+                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('ai-assistant') }}" disabled>&gt;</button>
                 <div class="aiassistant-image-slider-counter"></div>
             </div>
 
             <div class="aiassistant-widget-actions">
                 <button type="button" id="aiassistant-widget-generate" class="btn submit">
-                    {{ "Generate"|t('aiassistant') }}
+                    {{ "Generate"|t('ai-assistant') }}
                 </button>
                 <button type="button" id="aiassistant-widget-copy" class="btn aiassistant-hidden" disabled>
-                    {{ "Copy"|t('aiassistant') }}
+                    {{ "Copy"|t('ai-assistant') }}
                 </button>
                 <button type="button" id="aiassistant-widget-save" class="btn aiassistant-hidden" disabled>
-                    {{ "Save to Assets"|t('aiassistant') }}
+                    {{ "Save to Assets"|t('ai-assistant') }}
                 </button>
                 <div id="aiassistant-widget-loading" class="spinner aiassistant-hidden"></div>
             </div>
         </form>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const generateBtn = document.getElementById('aiassistant-widget-generate');
-    const copyBtn = document.getElementById('aiassistant-widget-copy');
-    const saveBtn = document.getElementById('aiassistant-widget-save');
-    const outputField = document.getElementById('aiassistant-widget-output');
-    const outputFieldWrap = document.getElementById('aiassistant-widget-output-field');
-    const loadingSpinner = document.getElementById('aiassistant-widget-loading');
-    const promptSelect = document.getElementById('aiassistant-widget-prompt');
-    const integrationSelect = document.getElementById('aiassistant-widget-integration');
-    const promptTextField = document.getElementById('aiassistant-widget-prompt-text');
-    const imageOptions = document.getElementById('aiassistant-widget-image-options');
-    const imageSizeInput = document.getElementById('aiassistant-widget-image-size');
-    const imageCountInput = document.getElementById('aiassistant-widget-image-count');
-    const assetTargetSelect = document.getElementById('aiassistant-widget-asset-target');
-    const imagePreview = document.getElementById('aiassistant-widget-image-preview');
-    const sliderImg = imagePreview ? imagePreview.querySelector('.aiassistant-image-slider-img') : null;
-    const sliderPrev = imagePreview ? imagePreview.querySelector('.aiassistant-image-slider-button.prev') : null;
-    const sliderNext = imagePreview ? imagePreview.querySelector('.aiassistant-image-slider-button.next') : null;
-    const sliderCounter = imagePreview ? imagePreview.querySelector('.aiassistant-image-slider-counter') : null;
-    const sliderPlaceholder = imagePreview ? imagePreview.querySelector('.aiassistant-image-slider-placeholder') : null;
-
-    let currentPreviewUrls = [];
-    let currentSliderIndex = 0;
-
-    function startLoading() {
-        if (loadingSpinner) {
-            loadingSpinner.classList.remove('aiassistant-hidden');
-            loadingSpinner.classList.add('show');
-        }
-        if (generateBtn) {
-            generateBtn.disabled = true;
-        }
-        if (copyBtn) {
-            copyBtn.disabled = true;
-        }
-        if (saveBtn) {
-            saveBtn.disabled = true;
-        }
-    }
-
-    function stopLoading(isImageMode) {
-        if (loadingSpinner) {
-            loadingSpinner.classList.add('aiassistant-hidden');
-            loadingSpinner.classList.remove('show');
-        }
-        if (generateBtn) {
-            generateBtn.disabled = false;
-        }
-        if (copyBtn) {
-            if (isImageMode) {
-                copyBtn.disabled = true;
-            } else if (outputField) {
-                copyBtn.disabled = !outputField.value.trim();
-            }
-        }
-        if (saveBtn) {
-            saveBtn.disabled = !isImageMode || currentPreviewUrls.length === 0;
-        }
-    }
-
-    function resetSlider() {
-        currentPreviewUrls = [];
-        currentSliderIndex = 0;
-        if (sliderImg) {
-            sliderImg.src = '';
-            sliderImg.style.display = 'none';
-        }
-        if (sliderCounter) {
-            sliderCounter.textContent = '';
-        }
-        if (sliderPrev) {
-            sliderPrev.disabled = true;
-        }
-        if (sliderNext) {
-            sliderNext.disabled = true;
-        }
-        if (sliderPlaceholder) {
-            sliderPlaceholder.style.display = 'block';
-        }
-        if (imagePreview) {
-            imagePreview.style.display = 'none';
-        }
-        if (saveBtn) {
-            saveBtn.disabled = true;
-        }
-    }
-
-    function updateSlider() {
-        if (!imagePreview) {
-            return;
-        }
-        if (!currentPreviewUrls.length) {
-            resetSlider();
-            return;
-        }
-        if (currentSliderIndex < 0 || currentSliderIndex >= currentPreviewUrls.length) {
-            currentSliderIndex = 0;
-        }
-        const url = currentPreviewUrls[currentSliderIndex];
-        if (sliderImg) {
-            sliderImg.src = url;
-            sliderImg.style.display = 'block';
-        }
-        if (sliderCounter) {
-            sliderCounter.textContent = (currentSliderIndex + 1) + ' / ' + currentPreviewUrls.length;
-        }
-        if (sliderPrev) {
-            sliderPrev.disabled = currentPreviewUrls.length <= 1;
-        }
-        if (sliderNext) {
-            sliderNext.disabled = currentPreviewUrls.length <= 1;
-        }
-        if (sliderPlaceholder) {
-            sliderPlaceholder.style.display = 'none';
-        }
-        imagePreview.style.display = 'flex';
-        if (saveBtn) {
-            saveBtn.disabled = currentPreviewUrls.length === 0;
-        }
-    }
-
-    if (sliderPrev) {
-        sliderPrev.addEventListener('click', function() {
-            if (!currentPreviewUrls.length) {
-                return;
-            }
-            currentSliderIndex = (currentSliderIndex - 1 + currentPreviewUrls.length) % currentPreviewUrls.length;
-            updateSlider();
-        });
-    }
-
-    if (sliderNext) {
-        sliderNext.addEventListener('click', function() {
-            if (!currentPreviewUrls.length) {
-                return;
-            }
-            currentSliderIndex = (currentSliderIndex + 1) % currentPreviewUrls.length;
-            updateSlider();
-        });
-    }
-
-    if (sliderImg) {
-        sliderImg.addEventListener('click', function() {
-            const url = currentPreviewUrls[currentSliderIndex];
-            if (url) {
-                window.open(url, '_blank', 'noopener');
-            }
-        });
-    }
-
-    function setIntegrationIfExists(handle) {
-        if (!integrationSelect || !handle) {
-            return;
-        }
-        const option = Array.from(integrationSelect.options || []).find(opt => opt.value === handle);
-        if (option) {
-            integrationSelect.value = handle;
-        }
-    }
-
-    function setAssetTarget(value) {
-        if (!assetTargetSelect) {
-            return;
-        }
-        const defaultValue = assetTargetSelect.getAttribute('data-default-value') || '';
-        const target = value && value !== 'null' ? value : defaultValue;
-        const options = Array.from(assetTargetSelect.options || []);
-        const match = options.find(opt => opt.value === target);
-        if (match) {
-            assetTargetSelect.value = target;
-        } else if (options.length) {
-            assetTargetSelect.selectedIndex = 0;
-        }
-    }
-
-    function getSelectedPromptData() {
-        if (!promptSelect) {
-            return { value: '', type: 'text' };
-        }
-        const option = promptSelect.options[promptSelect.selectedIndex];
-        if (!option) {
-            return { value: '', type: 'text' };
-        }
-        return {
-            value: option.value || '',
-            type: option.dataset.type || 'text',
-            promptText: option.dataset.promptText || '',
-            imageSize: option.dataset.imageSize || '',
-            imageCount: option.dataset.imageCount || '',
-            assetTarget: option.dataset.assetTarget || '',
-            integration: option.dataset.integration || ''
-        };
-    }
-
-    function toggleMode(isImage) {
-        if (imageOptions) {
-            imageOptions.style.display = isImage ? 'block' : 'none';
-        }
-        if (outputFieldWrap) {
-            outputFieldWrap.style.display = isImage ? 'none' : 'block';
-        }
-        if (copyBtn) {
-            copyBtn.style.display = isImage ? 'none' : 'inline-flex';
-            if (!isImage && outputField) {
-                copyBtn.disabled = !outputField.value.trim();
-            }
-        }
-        if (saveBtn) {
-            saveBtn.style.display = isImage ? 'inline-flex' : 'none';
-            saveBtn.disabled = !isImage || currentPreviewUrls.length === 0;
-        }
-        if (!isImage) {
-            resetSlider();
-        } else if (currentPreviewUrls.length) {
-            updateSlider();
-        }
-    }
-
-    function applyPromptSelection() {
-        const data = getSelectedPromptData();
-        const type = (data.type || '').toLowerCase();
-        const isImage = type === 'image';
-
-        if (promptTextField) {
-            if (data.value === 'custom-text') {
-                promptTextField.value = '';
-                promptTextField.placeholder = 'Write your custom prompt here...';
-            } else if (data.value === 'custom-image') {
-                promptTextField.value = '';
-                promptTextField.placeholder = 'Describe the image you want to generate...';
-            } else {
-                promptTextField.value = data.promptText || '';
-                promptTextField.placeholder = 'Edit the prompt text as needed...';
-            }
-        }
-
-        if (isImage) {
-            if (imageSizeInput) {
-                imageSizeInput.value = data.imageSize || '';
-            }
-            if (imageCountInput) {
-                const numericCount = parseInt(data.imageCount, 10);
-                imageCountInput.value = Number.isFinite(numericCount) && numericCount > 0 ? numericCount : 1;
-            }
-            setAssetTarget(data.assetTarget);
-            setIntegrationIfExists(data.integration);
-        } else {
-            setAssetTarget('');
-        }
-
-        toggleMode(isImage);
-    }
-
-    if (promptSelect) {
-        if (promptSelect.value === 'custom-text' || promptSelect.value === 'custom') {
-            const firstPrompt = Array.from(promptSelect.options || []).find(opt => opt.value !== 'custom-text' && opt.value !== 'custom-image');
-            if (firstPrompt) {
-                firstPrompt.selected = true;
-            }
-        }
-        promptSelect.addEventListener('change', applyPromptSelection);
-    }
-
-    if (outputField) {
-        outputField.addEventListener('input', function() {
-            if (copyBtn && copyBtn.style.display !== 'none') {
-                copyBtn.disabled = !this.value.trim();
-            }
-        });
-    }
-
-    async function handleTextGenerate(promptText, integrationHandle) {
-        startLoading();
-        if (outputField) {
-            outputField.value = '';
-        }
-        try {
-            console.log('[AI Assistant Widget] generate-text request', { promptText, integrationHandle });
-            const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-text'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-Token': Craft.csrfTokenValue
-                },
-                body: JSON.stringify({
-                    promptText: promptText,
-                    integration: integrationHandle,
-                    fieldType: 'input'
-                })
-            });
-
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || 'Request failed');
-            }
-
-            const result = await response.json();
-            console.log('[AI Assistant Widget] generate-text response', result);
-            if (result.success) {
-                const generatedText = result.data || result.content || result.text || '';
-                if (outputField) {
-                    outputField.value = generatedText;
-                }
-                if (copyBtn) {
-                    copyBtn.disabled = !generatedText.trim();
-                }
-                Craft.cp.displayNotice('Content generated successfully!');
-            } else {
-                Craft.cp.displayError(result.message || result.error || 'Generation failed');
-            }
-        } catch (error) {
-            console.error('Generation error:', error);
-            Craft.cp.displayError('Failed to generate content');
-        } finally {
-            stopLoading(false);
-        }
-    }
-
-    async function handleImageGenerate(promptText, integrationHandle, promptData) {
-        const trimmedPrompt = promptText.trim();
-        if (!trimmedPrompt) {
-            Craft.cp.displayError('Please enter or select a prompt text.');
-            return;
-        }
-
-        let count = parseInt(imageCountInput ? imageCountInput.value : '1', 10);
-        if (!Number.isFinite(count) || count < 1) {
-            count = 1;
-            if (imageCountInput) {
-                imageCountInput.value = 1;
-            }
-        }
-
-        const payload = {
-            prompt: trimmedPrompt,
-            integration: integrationHandle,
-            count: count,
-            dryRun: true,
-            options: {}
-        };
-
-        const sizeValue = imageSizeInput ? (imageSizeInput.value || '').trim() : '';
-        if (sizeValue) {
-            payload.size = sizeValue;
-        }
-
-        const selectedTarget = assetTargetSelect ? (assetTargetSelect.value || '') : '';
-        const fallbackTarget = promptData.assetTarget || '';
-        if (selectedTarget || fallbackTarget) {
-            payload.assetTarget = selectedTarget || fallbackTarget;
-        }
-
-        startLoading();
-        resetSlider();
-
-        try {
-            console.log('[AI Assistant Widget] generate-image request', payload);
-            const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-image'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-Token': Craft.csrfTokenValue
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || 'Request failed');
-            }
-
-            const result = await response.json();
-            console.log('[AI Assistant Widget] generate-image response', result);
-            if (result.success) {
-                currentPreviewUrls = Array.isArray(result.previewUrls) ? result.previewUrls : [];
-                currentSliderIndex = 0;
-                if (!currentPreviewUrls.length) {
-                    Craft.cp.displayError(result.error || 'No images were returned.');
-                }
-                updateSlider();
-            } else {
-                Craft.cp.displayError(result.error || 'Generation failed');
-            }
-        } catch (error) {
-            console.error('Image generation error:', error);
-            Craft.cp.displayError('Failed to generate image');
-        } finally {
-            stopLoading(true);
-        }
-    }
-
-    if (generateBtn) {
-        generateBtn.addEventListener('click', function() {
-            if (!promptSelect) {
-                Craft.cp.displayError('Please select a prompt.');
-                return;
-            }
-
-            const selectedPrompt = getSelectedPromptData();
-            const integrationHandle = integrationSelect ? integrationSelect.value : '';
-            if (!integrationHandle) {
-                Craft.cp.displayError('Please select an integration.');
-                return;
-            }
-
-            const promptValue = promptTextField ? promptTextField.value : '';
-            const isImage = (selectedPrompt.type || '').toLowerCase() === 'image';
-
-            if (!isImage && !promptValue.trim()) {
-                Craft.cp.displayError('Please enter or select a prompt text.');
-                return;
-            }
-
-            if (isImage) {
-                handleImageGenerate(promptValue, integrationHandle, selectedPrompt);
-            } else {
-                handleTextGenerate(promptValue.trim(), integrationHandle);
-            }
-        });
-    }
-
-    if (copyBtn) {
-        copyBtn.addEventListener('click', function() {
-            if (!outputField || !outputField.value.trim()) {
-                return;
-            }
-            navigator.clipboard.writeText(outputField.value).then(function() {
-                Craft.cp.displayNotice('Content copied to clipboard!');
-            }).catch(function() {
-                outputField.select();
-                document.execCommand('copy');
-                Craft.cp.displayNotice('Content copied to clipboard!');
-            });
-        });
-    }
-
-    if (saveBtn) {
-        saveBtn.addEventListener('click', async function() {
-            if (!currentPreviewUrls.length) {
-                Craft.cp.displayError('No images to save.');
-                return;
-            }
-
-            const assetTarget = assetTargetSelect ? (assetTargetSelect.value || '') : '';
-            const title = promptTextField ? promptTextField.value.trim() : '';
-
-            startLoading();
-
-            try {
-                const response = await fetch(Craft.getCpUrl('ai-assistant/api/save-image-to-assets'), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-Token': Craft.csrfTokenValue
-                    },
-                    body: JSON.stringify({
-                        urls: currentPreviewUrls,
-                        assetTarget: assetTarget,
-                        title: title
-                    })
-                });
-
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(text || 'Request failed');
-                }
-
-                const result = await response.json();
-                if (result.success) {
-                    Craft.cp.displayNotice('Images saved to Assets.');
-                } else {
-                    Craft.cp.displayError(result.error || 'Failed to save images');
-                }
-            } catch (error) {
-                console.error('Save image error:', error);
-                Craft.cp.displayError('Failed to save images');
-            } finally {
-                stopLoading(true);
-            }
-        });
-    }
-
-    applyPromptSelection();
-});
-</script>

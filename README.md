@@ -17,17 +17,18 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 - [x] Quick AI Actions dashboard widget (select prompt, editable prompt text, generate, copy)
 - [x] Craft-native UI components (lightswitch, notices), event-based widget registration
 - [x] Responsive, larger modal with dynamic body height
+- [x] Responsive, larger modal with dynamic body height
+- [x] Image generation for Assets fields
+- [x] Multi-language support
 
 ## Upcoming Features
 
-- [ ] Image generation for Assets fields
 - [ ] Per-site settings and field rules
 - [ ] Prompt variables and templating
 - [ ] Batch content processing
 - [ ] Analytics dashboard
 - [ ] SEO content assistant
 - [ ] Commerce integration
-- [ ] Multi-language support
 
 ## Installation
 
@@ -95,7 +96,7 @@ Notes:
 
 ## Requirements
 
-- Craft CMS 5+
+- Craft CMS 4+
 - PHP 8.0+
 - Valid API key(s) for configured providers
 

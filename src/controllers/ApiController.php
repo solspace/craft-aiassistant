@@ -64,7 +64,8 @@ class ApiController extends Controller
         if ($model) {
             $options['model'] = $model;
         }
-        if ($size) {
+        // Always include size if provided (even if empty string, let integration handle defaults)
+        if (null !== $size && '' !== $size) {
             $options['size'] = $size;
         }
         // Include asset context for variations/edits or provider-specific image context

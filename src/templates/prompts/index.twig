@@ -2,18 +2,18 @@
 
 {% import "_includes/forms" as forms %}
 
-{% set title = "AI Assistant Prompts" %}
+{% set title = "AI Assistant Prompts"|t('ai-assistant') %}
 {% set selectedSubnavItem = 'prompts' %}
 {% set crumbs = [
-  { label: 'AI Assistant', url: url('ai-assistant') },
-  { label: 'Prompts', url: url('ai-assistant/prompts') },
+  { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
+  { label: 'Prompts'|t('ai-assistant'), url: url('ai-assistant/prompts') },
 ] %}
 
 {% block actionButton %}
     <div class="btngroup">
         <a class="btn submit" href="{{ url('ai-assistant/prompts/edit') }}">
             <span data-icon="plus"></span>
-            Add Prompt
+            {{ "Add Prompt"|t('ai-assistant') }}
         </a>
     </div>
 {% endblock %}
@@ -26,10 +26,10 @@
             <table class="data fullwidth ai-prompts-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Integration</th>
-                        <th>Actions</th>
+                        <th>{{ "Name"|t('ai-assistant') }}</th>
+                        <th>{{ "Type"|t('ai-assistant') }}</th>
+                        <th>{{ "Integration"|t('ai-assistant') }}</th>
+                        <th>{{ "Actions"|t('ai-assistant') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +38,7 @@
                             <td>
                                 <strong>{{ prompt.name }}</strong>
                                 {% if prompt.isBuiltIn %}
-                                    <span class="ai-assistant-builtin-badge">Built-in</span>
+                                    <span class="ai-assistant-builtin-badge">{{ "Built-in"|t('ai-assistant') }}</span>
                                 {% endif %}
                                 <div class="ai-assistant-prompt-text">{{ prompt.promptText|length > 80 ? prompt.promptText|slice(0, 80) ~ '…' : prompt.promptText }}</div>
                             </td>
@@ -47,14 +47,14 @@
                             </td>
                             <td>
                                 {% if prompt.isBuiltIn %}
-                                    Any
+                                    {{ "Any"|t('ai-assistant') }}
                                 {% else %}
-                                    {{ prompt.integrationHandle ?: 'Default' }}
+                                    {{ prompt.integrationHandle ?: ("Default"|t('ai-assistant')) }}
                                 {% endif %}
                             </td>
                             <td>
                                 <div class="ai-assistant-actions">
-                                    <a class="btn small" href="{{ url('ai-assistant/prompts/edit', { id: prompt.id }) }}" title="Edit">
+                                    <a class="btn small" href="{{ url('ai-assistant/prompts/edit', { id: prompt.id }) }}" title="{{ "Edit"|t('ai-assistant') }}">
                                         <span data-icon="edit"></span>
                                     </a>
                                     {% if not prompt.isBuiltIn %}
@@ -62,7 +62,7 @@
                                             {{ csrfInput() }}
                                             {{ actionInput('ai-assistant/prompts/delete') }}
                                             {{ hiddenInput('id', prompt.id) }}
-                                            <button type="submit" class="btn small delete" onclick="return confirm('Are you sure you want to delete this prompt?')" title="Delete">
+                                            <button type="submit" class="btn small delete" onclick="return confirm('{{ "Are you sure you want to delete this prompt?"|t('ai-assistant') }}')" title="{{ "Delete"|t('ai-assistant') }}">
                                                 <span data-icon="trash"></span>
                                             </button>
                                         </form>
@@ -75,9 +75,9 @@
             </table>
         {% else %}
             <div class="ai-assistant-empty-state">
-                <h3>No custom prompts yet</h3>
-                <p>Create your first custom prompt to get started with AI Assistant.</p>
-                <a class="btn submit" href="{{ url('ai-assistant/prompts/edit') }}">Add Your First Prompt</a>
+                <h3>{{ "No custom prompts yet"|t('ai-assistant') }}</h3>
+                <p>{{ "Create your first custom prompt to get started with AI Assistant."|t('ai-assistant') }}</p>
+                <a class="btn submit" href="{{ url('ai-assistant/prompts/edit') }}">{{ "Add Your First Prompt"|t('ai-assistant') }}</a>
             </div>
         {% endif %}
     </div>

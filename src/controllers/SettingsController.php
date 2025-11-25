@@ -22,6 +22,8 @@ class SettingsController extends Controller
 
     public function actionIndex(): ?Response
     {
+        $this->registerTranslations();
+
         $plugin = \Craft::$app->plugins->getPlugin('ai-assistant');
         $settings = $plugin->getSettings();
 
@@ -222,5 +224,15 @@ class SettingsController extends Controller
         } catch (\Throwable $e) {
             return $this->asJson(['success' => false, 'error' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Register translations for CP pages.
+     */
+    private function registerTranslations(): void
+    {
+        $translations = include __DIR__.'/../translations/en/ai-assistant.php';
+        $translations = array_keys($translations);
+        $this->view->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
     }
 }

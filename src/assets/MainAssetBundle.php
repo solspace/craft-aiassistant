@@ -7,7 +7,7 @@ use craft\web\assets\cp\CpAsset;
 
 /**
  * Main asset bundle for AI Assistant plugin
- * Loaded globally on all CP pages
+ * Loaded globally on all CP pages.
  */
 class MainAssetBundle extends AssetBundle
 {
@@ -25,4 +25,3 @@ class MainAssetBundle extends AssetBundle
         parent::init();
     }
 }
-
