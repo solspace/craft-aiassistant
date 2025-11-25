@@ -1,0 +1,82 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% set title = "AI Assistant Settings" %}
+{% set selectedSubnavItem = 'settings' %}
+{% set crumbs = [
+  { label: 'AI Assistant', url: url('ai-assistant') },
+  { label: 'Settings', url: url('ai-assistant/settings') },
+] %}
+
+{% block actionButton %}
+    <button type="button" class="btn submit" onclick="document.getElementById('ai-assistant-settings-form').submit()">{{ "Save"|t('app') }}</button>
+{% endblock %}
+
+{% block content %}
+<form method="post" accept-charset="UTF-8" id="ai-assistant-settings-form">
+    {{ csrfInput() }}
+    {{ actionInput('ai-assistant/settings/save') }}
+
+    <div class="ai-assistant-settings-header">
+        <div>
+            <h2>{{ 'Field Settings'|t('aiassistant') }}</h2>
+            <p class="instructions">{{ 'Select which fields will show the AI Assistant button.'|t('aiassistant') }}</p>
+        </div>
+        <div class="ai-assistant-settings-header-actions">
+            <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('aiassistant') }}</button>
+            <button type="button" id="disable-all" class="btn">{{ 'Disable all'|t('aiassistant') }}</button>
+        </div>
+    </div>
+
+        <table class="data fullwidth">
+            <thead>
+                <tr>
+                    <th>{{ 'Field'|t('app') }}</th>
+                    <th>{{ 'Handle'|t('app') }}</th>
+                    <th>{{ 'Type'|t('app') }}</th>
+                    <th>{{ 'Field Specific Prompt'|t('aiassistant') }}</th>
+                    <th class="ai-assistant-settings-lightswitch-cell">{{ 'Enabled'|t('app') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% set enabledSet = (settings.enabledFieldHandles is defined and settings.enabledFieldHandles is iterable) ? settings.enabledFieldHandles : [] %}
+            {% for f in allFields %}
+                {% set checked = (enabledSet ? (enabledSet[f.handle] ?? (f.handle in enabledSet)) : false) %}
+                <tr>
+                    <td>{{ f.name }}</td>
+                    <td><code>{{ f.handle }}</code></td>
+                    <td><code>{{ f.type }}</code></td>
+                    <td>
+                        {% set selectedId = settings.fieldPrompts[f.handle] ?? '' %}
+                        {% set selectedPrompt = (allPrompts|filter(p => p.id == selectedId)|first) %}
+                        <div class="ai-prompts-chip">
+                            {% if selectedPrompt %}
+                                <span class="ai-assistant-type-badge ai-assistant-type-{{ selectedPrompt.type }}">{{ selectedPrompt.name }}</span>
+                            {% else %}
+                                <span class="ai-assistant-type-badge ai-assistant-type-any">{{ 'Any'|t('app') }}</span>
+                            {% endif %}
+                            <button type="button" class="btn small" title="{{ 'Edit'|t('app') }}" onclick="window.AiAssistant && window.AiAssistant.openPromptPicker && window.AiAssistant.openPromptPicker('{{ f.handle }}')">
+                                <span data-icon="edit"></span>
+                            </button>
+                        </div>
+                        <input type="hidden" name="settings[fieldPrompts][{{ f.handle }}]" value="{{ selectedId }}" data-prompt-value="{{ f.handle }}" />
+                    </td>
+                    <td class="ai-assistant-settings-lightswitch-cell">
+                        <div>
+                            {{ forms.lightswitchField({
+                                id: 'enabled-' ~ f.handle,
+                                name: 'settings[enabledFieldHandles][' ~ f.handle ~ ']',
+                                on: checked,
+                                small: true,
+                                label: null,
+                            }) }}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+</form>
+{% endblock %}
+

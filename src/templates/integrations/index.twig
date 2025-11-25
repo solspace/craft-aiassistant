@@ -40,7 +40,7 @@
                             <td>{{ integration.type|title }}</td>
                             <td>{{ integration.model }}</td>
                             <td>
-                                <button type="button" class="btn small" onclick="testIntegration({{ integration.id }})" style="background-color: #2563eb; color: white;">
+                                <button type="button" class="btn small ai-assistant-test-button" onclick="testIntegration({{ integration.id }}, event)">
                                     Test
                                 </button>
                             </td>
@@ -73,104 +73,4 @@
             </div>
         {% endif %}
     </div>
-{% endblock %}
-
-{% block head %}
-{{ parent() }}
-<style>
-.ai-assistant-actions {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 8px;
-    align-items: center;
-}
-
-.ai-assistant-actions form {
-    display: inline-block !important;
-    margin: 0;
-}
-
-.ai-assistant-actions .btn [data-icon] {
-    margin-block-start: 0 !important;
-    margin-inline-end: 0 !important;
-    margin: 0 !important;
-}
-
-.ai-assistant-actions .btn {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    min-width: 32px !important;
-    height: 32px !important;
-}
-
-.ai-assistant-actions .btn span[data-icon] {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 16px !important;
-    height: 16px !important;
-}
-
-.ai-assistant-actions .btn span[data-icon] svg {
-    width: 16px !important;
-    height: 16px !important;
-    display: block !important;
-}
-
-/* Custom spinner */
-.custom-spinner {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s ease-in-out infinite;
-    margin-right: 8px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-</style>
-
-<script>
-function testIntegration(integrationId) {
-    const button = event.target.closest('button');
-    const originalContent = button.innerHTML;
-    
-    // Show loading state
-    button.innerHTML = '<span class="custom-spinner"></span>Test';
-    button.disabled = true;
-    
-    // Make AJAX request to test integration
-    Craft.postActionRequest('ai-assistant/integrations/test', {
-        id: integrationId
-    }, function(response) {
-        if (response.success) {
-            // Show success popup
-            Craft.cp.displayNotice('Integration test successful! ' + (response.message || 'Connection established successfully.'));
-        } else {
-            // Show error popup
-            Craft.cp.displayError('Integration test failed: ' + (response.message || 'Connection failed. Please check your API key and settings.'));
-        }
-        button.innerHTML = originalContent;
-        button.disabled = false;
-    }, function(xhr) {
-        // Show error popup
-        let errorMessage = 'Connection failed. Please check your API key and settings.';
-        try {
-            const response = JSON.parse(xhr.responseText);
-            errorMessage = response.message || errorMessage;
-        } catch (e) {
-            // Use default error message
-        }
-        Craft.cp.displayError('Integration test failed: ' + errorMessage);
-        button.innerHTML = originalContent;
-        button.disabled = false;
-    });
-}
-</script>
 {% endblock %}

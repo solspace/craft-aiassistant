@@ -17,7 +17,7 @@ class PromptsController extends Controller
         $promptService = AiAssistant::getPromptService();
         $prompts = $promptService->getAllPrompts();
 
-        return $this->renderTemplate('ai-assistant/prompts', [
+        return $this->renderTemplate('ai-assistant/prompts/index', [
             'prompts' => $prompts,
         ]);
     }

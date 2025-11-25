@@ -2,16 +2,16 @@
 
 <div class="modal aiassistant-modal">
     <div class="header">
-        <h2 id="aiassistant-modal-title" style="margin:0; display:flex; align-items:center; gap:8px;">
-            <span id="aiassistant-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
+        <h2 id="aiassistant-modal-title">
+            <span id="aiassistant-modal-icon"></span>
             <span id="aiassistant-modal-text">{{ 'AI Assistant'|t('aiassistant') }}</span>
         </h2>
     </div>
     
-    <div class="body" style="max-height:60vh; overflow-y:auto; padding:20px 20px 60px 20px;">
+    <div class="body">
         <!-- Top row: Prompt and Integration selection -->
-        <div style="display:flex; gap:20px; margin-bottom:20px;">
-            <div style="flex:1;">
+        <div class="aiassistant-prompt-select-row">
+            <div class="aiassistant-prompt-select-col">
                 {{ forms.selectField({
                     id: 'aiassistant-text-prompt',
                     name: 'aiassistant-text-prompt',
@@ -20,7 +20,7 @@
                     instructions: 'Choose a prompt to generate text with.'|t('aiassistant')
                 }) }}
             </div>
-            <div style="flex:1;">
+            <div class="aiassistant-prompt-select-col">
                 {{ forms.selectField({
                     id: 'aiassistant-text-integration',
                     name: 'aiassistant-text-integration',
@@ -32,8 +32,8 @@
         </div>
 
         <!-- Prompt text (left) and Image options (right when type=image) -->
-        <div style="display:flex; gap:20px; margin-bottom:20px;">
-            <div id="aiassistant-prompt-left" style="flex:1;">
+        <div class="aiassistant-prompt-content-row">
+            <div id="aiassistant-prompt-left" class="aiassistant-prompt-left">
                 {{ forms.textareaField({
                     id: 'aiassistant-text-prompt-text',
                     name: 'aiassistant-text-prompt-text',
@@ -42,10 +42,10 @@
                     instructions: 'Edit the prompt text as needed. This is what will be sent to the AI. You can modify it to better suit your needs. Select `Custom...` to write your own prompt from scratch.'|t('aiassistant')
                 }) }}
             </div>
-            <div id="aiassistant-image-col" style="flex:1;">
-                <div id="aiassistant-image-options" style="display:none; padding:15px; border:1px solid #ffecb5; border-radius:6px;">
-                    <div style="display:flex; gap:12px;">
-                        <div style="flex:1">
+            <div id="aiassistant-image-col" class="aiassistant-image-col">
+                <div id="aiassistant-image-options">
+                    <div class="aiassistant-image-options-row">
+                        <div class="size-field-wrap">
                             {{ forms.textField({
                                 id: 'aiassistant-image-size',
                                 name: 'aiassistant-image-size',
@@ -54,7 +54,7 @@
                                 instructions: 'WidthxHeight, e.g., 1024x1024.'|t('aiassistant')
                             }) }}
                         </div>
-                        <div style="width:150px">
+                        <div class="count-field">
                             {{ forms.textField({
                                 id: 'aiassistant-image-count',
                                 name: 'aiassistant-image-count',
@@ -63,7 +63,7 @@
                                 instructions: 'Number of images.'|t('aiassistant')
                             }) }}
                         </div>
-                        <div style="flex:1">
+                        <div class="asset-target-field">
                             {{ forms.selectField({
                                 id: 'aiassistant-asset-target',
                                 name: 'aiassistant-asset-target',
@@ -74,51 +74,51 @@
                             }) }}
                         </div>
                     </div>
-                    <div id="aiassistant-image-preview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;"></div>
+                    <div id="aiassistant-image-preview"></div>
                 </div>
             </div>
         </div>
 
         <!-- Input context and Generated text - side by side (always visible) -->
-        <div id="aiassistant-text-comparison" style="display:block;">
-            <div style="display:flex; gap:20px;">
-                <div style="flex:1;">
-                    <div class="field" style="margin-bottom:16px;">
-                        <div class="heading" style="display:flex; align-items:center; gap:12px;">
-                            <div style="display:flex; align-items:center; justify-content:center; width:36px; min-width:36px;">
+        <div id="aiassistant-text-comparison">
+            <div class="aiassistant-comparison-row">
+                <div class="aiassistant-comparison-col">
+                    <div class="field aiassistant-input-context-field">
+                        <div class="heading">
+                            <div class="lightswitch-wrapper">
                                 {{ forms.lightswitch({
                                     id: 'aiassistant-include-context',
                                     name: 'aiassistant-include-context',
                                     on: true
                                 }) }}
                             </div>
-                            <div style="display:flex; flex-direction:column; gap:6px;">
-                                <span style="font-weight:600;">{{ 'Input Context'|t('aiassistant') }}</span>
-                                <span class="light" style="font-size:12px;">{{ 'Current content from the field. Toggle to include it in the generation.'|t('aiassistant') }}</span>
+                            <div class="heading-content">
+                                <span class="aiassistant-generated-title">{{ 'Input Context'|t('aiassistant') }}</span>
+                                <span class="light">{{ 'Current content from the field. Toggle to include it in the generation.'|t('aiassistant') }}</span>
                             </div>
                         </div>
                         <div class="input">
-                            <div id="aiassistant-text-input-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
+                            <div id="aiassistant-text-input-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true"></div>
                         </div>
                     </div>
                 </div>
-                <div style="flex:1;">
-                    <div class="field" style="margin-bottom:16px;">
+                <div class="aiassistant-comparison-col">
+                    <div class="field aiassistant-input-context-field">
                         <div class="heading">
-                            <span style="font-weight:600;" id="aiassistant-generated-title">{{ 'Generated Text'|t('aiassistant') }}</span>
+                            <span class="aiassistant-generated-title" id="aiassistant-generated-title">{{ 'Generated Text'|t('aiassistant') }}</span>
                         </div>
                         <div class="instructions">
                             <p id="aiassistant-generated-instructions">{{ 'AI-generated content. Click Insert to replace the current content.'|t('aiassistant') }}</p>
                         </div>
                         <div class="input">
-                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px;"></div>
-                            <div id="aiassistant-image-preview-right" class="aiassistant-image-slider" style="display:none; position:relative; border:1px solid #e5e7eb; border-radius:4px; padding:10px; background:#f9fafb; height:260px; align-items:center; justify-content:center;">
-                                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('aiassistant') }}" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:none; background:rgba(0,0,0,0.45); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">‹</button>
-                                <div class="aiassistant-image-slider-viewport" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('aiassistant') }}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:4px; display:none;" />
+                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true"></div>
+                            <div id="aiassistant-image-preview-right" class="aiassistant-image-slider aiassistant-hidden">
+                                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('aiassistant') }}">‹</button>
+                                <div class="aiassistant-image-slider-viewport">
+                                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('aiassistant') }}" />
                                 </div>
-                                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('aiassistant') }}" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:none; background:rgba(0,0,0,0.45); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">›</button>
-                                <div class="aiassistant-image-slider-counter" style="position:absolute; bottom:10px; right:14px; background:rgba(0,0,0,0.55); color:#fff; font-size:12px; padding:2px 8px; border-radius:12px; display:none;">0 / 0</div>
+                                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('aiassistant') }}">›</button>
+                                <div class="aiassistant-image-slider-counter aiassistant-hidden">0 / 0</div>
                             </div>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
         </div>
 
         <!-- Input context - fallback for plain text (hidden; using comparison layout instead) -->
-        <div id="aiassistant-text-input-fallback" style="display:none;">
+        <div id="aiassistant-text-input-fallback" class="aiassistant-hidden">
             {{ forms.textareaField({
                 id: 'aiassistant-text-input',
                 name: 'aiassistant-text-input',
@@ -138,7 +138,7 @@
         </div>
 
         <!-- Generated text result - fallback for plain text (hidden; using comparison layout instead) -->
-        <div id="aiassistant-text-generated-fallback" style="display:none;">
+        <div id="aiassistant-text-generated-fallback" class="aiassistant-hidden">
             {{ forms.textareaField({
                 id: 'aiassistant-text-generated',
                 name: 'aiassistant-text-generated',
@@ -150,8 +150,8 @@
         </div>
     </div>
 
-    <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-        <div id="aiassistant-text-loading" class="spinner" style="display:none;"></div>
+    <div class="footer">
+        <div id="aiassistant-text-loading" class="spinner aiassistant-hidden"></div>
         <button type="button" class="btn cancel">{{ 'Cancel'|t('app') }}</button>
         <button type="button" class="btn" id="aiassistant-text-generate">{{ 'Generate'|t('aiassistant') }}</button>
         <button type="button" class="btn submit" id="aiassistant-text-insert" disabled>{{ 'Insert'|t('aiassistant') }}</button>

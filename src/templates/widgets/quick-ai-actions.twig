@@ -64,9 +64,9 @@
                 }) }}
             </div>
 
-            <div id="aiassistant-widget-image-options" class="field" style="display:none;">
-                <div class="flex" style="gap:12px; flex-wrap:wrap;">
-                    <div class="field" style="flex:1 1 180px;">
+            <div id="aiassistant-widget-image-options" class="field aiassistant-hidden">
+                <div class="aiassistant-widget-image-options-row">
+                    <div class="field">
                         {{ forms.textField({
                             label: "Image Size"|t('aiassistant'),
                             id: 'aiassistant-widget-image-size',
@@ -75,7 +75,7 @@
                             instructions: "Optional. Use WidthxHeight (for example, 1024x1024)."|t('aiassistant')
                         }) }}
                     </div>
-                    <div class="field" style="flex:1 1 140px;">
+                    <div class="field count-field">
                         {{ forms.textField({
                             label: "Image Count"|t('aiassistant'),
                             id: 'aiassistant-widget-image-count',
@@ -87,7 +87,7 @@
                         }) }}
                     </div>
                 </div>
-                <div class="field" style="margin-top:12px;">
+                <div class="field asset-target-field">
                     {{ forms.selectField({
                         label: "Save To"|t('aiassistant'),
                         id: 'aiassistant-widget-asset-target',
@@ -123,10 +123,10 @@
                 }) }}
             </div>
 
-            <div id="aiassistant-widget-image-preview" class="aiassistant-widget-image-preview" style="display:none;">
+            <div id="aiassistant-widget-image-preview" class="aiassistant-widget-image-preview aiassistant-hidden">
                 <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('aiassistant') }}" disabled>&lt;</button>
                 <div class="aiassistant-image-slider-stage">
-                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('aiassistant') }}" style="display:none;">
+                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('aiassistant') }}" />
                     <div class="aiassistant-image-slider-placeholder">{{ "Generate to preview images"|t('aiassistant') }}</div>
                 </div>
                 <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('aiassistant') }}" disabled>&gt;</button>
@@ -137,158 +137,17 @@
                 <button type="button" id="aiassistant-widget-generate" class="btn submit">
                     {{ "Generate"|t('aiassistant') }}
                 </button>
-                <button type="button" id="aiassistant-widget-copy" class="btn" disabled>
+                <button type="button" id="aiassistant-widget-copy" class="btn aiassistant-hidden" disabled>
                     {{ "Copy"|t('aiassistant') }}
                 </button>
-                <button type="button" id="aiassistant-widget-save" class="btn" style="display:none;" disabled>
+                <button type="button" id="aiassistant-widget-save" class="btn aiassistant-hidden" disabled>
                     {{ "Save to Assets"|t('aiassistant') }}
                 </button>
-                <div id="aiassistant-widget-loading" class="spinner" style="display: none;"></div>
+                <div id="aiassistant-widget-loading" class="spinner aiassistant-hidden"></div>
             </div>
         </form>
     </div>
 </div>
-
-<style>
-.aiassistant-widget {
-    padding: 0;
-}
-
-.aiassistant-widget-header {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--hairline-color, #e5e7eb);
-}
-
-.aiassistant-widget-header h3 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.aiassistant-widget-header .light {
-    margin: 0;
-    font-size: 12px;
-    color: var(--light-text-color, #6b7280);
-}
-
-.aiassistant-widget-content .field {
-    margin-bottom: 15px;
-}
-
-.aiassistant-widget-content .field:last-of-type {
-    margin-bottom: 20px;
-}
-
-.aiassistant-widget-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.aiassistant-widget-actions .btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.aiassistant-widget-actions .spinner {
-    margin-left: 10px;
-    margin-top: 10px;
-}
-
-#aiassistant-widget-output {
-    background-color: var(--ui-control-bg, #f9fafb);
-    border-color: var(--hairline-color, #e5e7eb);
-}
-
-#aiassistant-widget-output:focus {
-    border-color: var(--brand-color, #3b82f6);
-    box-shadow: 0 0 0 1px var(--brand-color, #3b82f6);
-}
-
-#aiassistant-widget-image-options {
-    margin-top: 10px;
-    padding: 12px;
-    border: 1px solid var(--hairline-color, #e5e7eb);
-    border-radius: 6px;
-    background: var(--ui-control-bg, #f9fafb);
-}
-
-.aiassistant-widget-image-preview {
-    margin-top: 16px;
-    display: none;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 1px solid var(--hairline-color, #e5e7eb);
-    border-radius: 6px;
-    background: var(--ui-control-bg, #f9fafb);
-    flex-wrap: wrap;
-}
-
-.aiassistant-image-slider-stage {
-    flex: 1 1 240px;
-    min-height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--white, #fff);
-    border: 1px dashed var(--hairline-color, #e5e7eb);
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-    padding: 12px;
-}
-
-.aiassistant-image-slider-img {
-    max-width: 100%;
-    max-height: 320px;
-    object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 1px 4px rgb(15 23 42 / 0.12);
-    cursor: zoom-in;
-}
-
-.aiassistant-image-slider-placeholder {
-    font-size: 13px;
-    color: var(--light-text-color, #6b7280);
-    text-align: center;
-}
-
-.aiassistant-image-slider-button {
-    width: 34px;
-    height: 34px;
-    border-radius: 17px;
-    border: 1px solid var(--hairline-color, #d1d5db);
-    background: var(--white, #fff);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.aiassistant-image-slider-button:hover:not(:disabled) {
-    background: var(--brand-color, #3b82f6);
-    color: #fff;
-    transform: translateY(-1px);
-}
-
-.aiassistant-image-slider-button:disabled {
-    opacity: 0.4;
-    cursor: default;
-}
-
-.aiassistant-image-slider-counter {
-    font-size: 12px;
-    color: var(--medium-text-color, #4b5563);
-    text-align: center;
-    flex: 1 1 100%;
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -317,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function startLoading() {
         if (loadingSpinner) {
-            loadingSpinner.style.display = 'inline-block';
+            loadingSpinner.classList.remove('aiassistant-hidden');
+            loadingSpinner.classList.add('show');
         }
         if (generateBtn) {
             generateBtn.disabled = true;
@@ -332,7 +192,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function stopLoading(isImageMode) {
         if (loadingSpinner) {
-            loadingSpinner.style.display = 'none';
+            loadingSpinner.classList.add('aiassistant-hidden');
+            loadingSpinner.classList.remove('show');
         }
         if (generateBtn) {
             generateBtn.disabled = false;

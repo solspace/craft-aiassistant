@@ -129,7 +129,7 @@ class SettingsController extends Controller
             ];
         }, $prompts);
 
-        return $this->renderTemplate('ai-assistant/settings', [
+        return $this->renderTemplate('ai-assistant/settings/index', [
             'settings' => $settings,
             'plugin' => $plugin,
             'allFields' => $allFields,

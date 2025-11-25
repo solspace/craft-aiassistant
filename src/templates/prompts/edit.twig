@@ -68,9 +68,9 @@
       }) }}
     </div>
 
-    <div id="image-options" class="field" style="display:none; margin-top:8px; padding:12px; border:1px solid #ffecb5; border-radius:6px;">
-      <div class="flex" style="gap:16px;">
-        <div class="field" style="flex:1;">
+    <div id="image-options" class="field aiassistant-hidden">
+      <div class="flex">
+        <div class="field">
           {{ forms.textField({
             label: 'Size'|t('ai-assistant'),
             id: 'imageSize',
@@ -80,7 +80,7 @@
             instructions: 'Enter WidthxHeight. Common presets: square 1024x1024, landscape 1792x1024, portrait 1024x1792, mobile 768x1365.'|t('ai-assistant')
           }) }}
         </div>
-        <div class="field" style="flex:1;">
+        <div class="field">
           {{ forms.textField({
             label: 'Count'|t('ai-assistant'),
             id: 'imageCount',
@@ -91,8 +91,8 @@
           }) }}
         </div>
       </div>
-      <div class="flex" style="gap:16px; margin-top:14px;">
-        <div class="field" style="flex:1;">
+      <div class="flex">
+        <div class="field">
           {{ forms.selectField({
             label: 'Asset Target (Volume or Folder)'|t('ai-assistant'),
             instructions: 'Select a volume root or a specific folder. Stored as UID-based source.'|t('ai-assistant'),
@@ -144,20 +144,5 @@
     #}
   </form>
 {% endblock %}
-
-{% js %}
-(function() {
-  const type = document.getElementById('type');
-  const imageOptions = document.getElementById('image-options');
-  function toggle() {
-    if (!type || !imageOptions) return;
-    imageOptions.style.display = (type.value === 'image') ? 'block' : 'none';
-  }
-  if (type) {
-    type.addEventListener('change', toggle);
-    toggle();
-  }
-})();
-{% endjs %}
 
 

@@ -175,35 +175,3 @@
     </div>
 </div>
 
-<style>
-/* Badge styling for prompt details */
-.ai-assistant-prompt-modal .ai-assistant-type-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.ai-assistant-prompt-modal .ai-assistant-type-generate { background:#e6f4ff; color:#1a73e8; }
-.ai-assistant-prompt-modal .ai-assistant-type-rephrase { background:#f3e8ff; color:#7b1fa2; }
-.ai-assistant-prompt-modal .ai-assistant-type-translate { background:#e6f7ee; color:#2e7d32; }
-.ai-assistant-prompt-modal .ai-assistant-type-image { background:#fff4e5; color:#b26a00; }
-</style>
-
-<script>
-(function(){
-  const typeSelect = document.getElementById('modal-type');
-  const imageExtra = document.getElementById('image-extra-options');
-  function toggleImageOptions() {
-    if (!typeSelect || !imageExtra) return;
-    imageExtra.style.display = (typeSelect.value === 'image') ? 'block' : 'none';
-  }
-  if (typeSelect) {
-    typeSelect.addEventListener('change', toggleImageOptions);
-    toggleImageOptions();
-  }
-})();
-</script>
-
