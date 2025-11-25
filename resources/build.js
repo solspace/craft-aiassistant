@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Build script for AI Assistant front-end assets.
- * - Bundles and minifies JS from scripts/js → src/assets/js (single file)
- * - Bundles and minifies CSS from scripts/css → src/assets/css (with view-specific files)
+ * - Bundles and minifies JS from resources/js → src/assets/js (single file)
+ * - Bundles and minifies CSS from resources/css → src/assets/css (with view-specific files)
  */
 
 const esbuild = require('esbuild');
