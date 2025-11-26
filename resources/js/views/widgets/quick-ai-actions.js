@@ -157,6 +157,7 @@
             elements.sliderPlaceholder.style.display = 'block';
         }
         if (elements.imagePreview) {
+            elements.imagePreview.classList.add('aiassistant-hidden');
             elements.imagePreview.style.display = 'none';
         }
         if (elements.saveBtn) {
@@ -202,9 +203,14 @@
             elements.sliderPlaceholder.style.display = 'none';
         }
 
+        // Show the image preview - remove hidden class and set display
+        elements.imagePreview.classList.remove('aiassistant-hidden');
         elements.imagePreview.style.display = 'flex';
 
+        // Show and enable save button
         if (elements.saveBtn) {
+            elements.saveBtn.classList.remove('aiassistant-hidden');
+            elements.saveBtn.style.display = 'inline-flex';
             elements.saveBtn.disabled = currentPreviewUrls.length === 0;
         }
     }
@@ -301,14 +307,36 @@
             return { value: '', type: 'text' };
         }
 
+        // Get data attributes - handle both camelCase (dataset) and kebab-case (getAttribute)
+        const getDataAttr = (attr, decodeHtml = false) => {
+            // Try dataset first (camelCase)
+            const camelCase = attr.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+            let value = '';
+            if (option.dataset && option.dataset[camelCase] !== undefined) {
+                value = option.dataset[camelCase] || '';
+            } else {
+                // Fallback to getAttribute (kebab-case)
+                value = option.getAttribute(`data-${attr}`) || '';
+            }
+            
+            // Decode HTML entities if needed
+            if (decodeHtml && value) {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = value;
+                value = textarea.value;
+            }
+            
+            return value;
+        };
+
         return {
             value: option.value || '',
-            type: option.dataset.type || 'text',
-            promptText: option.dataset.promptText || '',
-            imageSize: option.dataset.imageSize || '',
-            imageCount: option.dataset.imageCount || '',
-            assetTarget: option.dataset.assetTarget || '',
-            integration: option.dataset.integration || ''
+            type: getDataAttr('type') || 'text',
+            promptText: getDataAttr('prompt-text', true) || getDataAttr('promptText', true) || '',
+            imageSize: getDataAttr('image-size') || getDataAttr('imageSize') || '',
+            imageCount: getDataAttr('image-count') || getDataAttr('imageCount') || '',
+            assetTarget: getDataAttr('asset-target') || getDataAttr('assetTarget') || '',
+            integration: getDataAttr('integration') || ''
         };
     }
 
@@ -373,6 +401,7 @@
             if (isImage) {
                 elements.imageOptions.classList.remove('aiassistant-hidden');
                 elements.imageOptions.style.display = 'block';
+                elements.imageOptions.style.visibility = 'visible';
             } else {
                 elements.imageOptions.classList.add('aiassistant-hidden');
                 elements.imageOptions.style.display = 'none';
@@ -382,14 +411,26 @@
             elements.outputFieldWrap.style.display = isImage ? 'none' : 'block';
         }
         if (elements.copyBtn) {
-            elements.copyBtn.style.display = isImage ? 'none' : 'inline-flex';
-            if (!isImage && elements.outputField) {
-                elements.copyBtn.disabled = !elements.outputField.value.trim();
+            if (isImage) {
+                elements.copyBtn.classList.add('aiassistant-hidden');
+                elements.copyBtn.style.display = 'none';
+            } else {
+                elements.copyBtn.classList.remove('aiassistant-hidden');
+                elements.copyBtn.style.display = 'inline-flex';
+                if (elements.outputField) {
+                    elements.copyBtn.disabled = !elements.outputField.value.trim();
+                }
             }
         }
         if (elements.saveBtn) {
-            elements.saveBtn.style.display = isImage ? 'inline-flex' : 'none';
-            elements.saveBtn.disabled = !isImage || currentPreviewUrls.length === 0;
+            if (isImage) {
+                elements.saveBtn.classList.remove('aiassistant-hidden');
+                elements.saveBtn.style.display = 'inline-flex';
+                elements.saveBtn.disabled = currentPreviewUrls.length === 0;
+            } else {
+                elements.saveBtn.classList.add('aiassistant-hidden');
+                elements.saveBtn.style.display = 'none';
+            }
         }
 
         if (!isImage) {
@@ -437,15 +478,20 @@
 
         // Update image-specific fields with defaults if not provided
         if (isImage) {
+            // Always show image options when image prompt is selected
             if (elements.imageSizeInput) {
-                elements.imageSizeInput.value = data.imageSize || '1024x1024';
+                // Use prompt's imageSize if provided, otherwise keep current value or use default
+                const sizeValue = data.imageSize && data.imageSize.trim() ? data.imageSize.trim() : (elements.imageSizeInput.value || '1024x1024');
+                elements.imageSizeInput.value = sizeValue;
             }
             if (elements.imageCountInput) {
-                const numericCount = parseInt(data.imageCount, 10);
-                elements.imageCountInput.value = Number.isFinite(numericCount) && numericCount > 0 ? numericCount : 1;
+                // Use prompt's imageCount if provided, otherwise keep current value or use default
+                const countValue = data.imageCount && data.imageCount.trim() ? parseInt(data.imageCount, 10) : (parseInt(elements.imageCountInput.value, 10) || 1);
+                const numericCount = Number.isFinite(countValue) && countValue > 0 ? countValue : 1;
+                elements.imageCountInput.value = numericCount;
             }
             // Set asset target - use prompt value or default to first option
-            if (data.assetTarget) {
+            if (data.assetTarget && data.assetTarget.trim()) {
                 setAssetTarget(elements, data.assetTarget);
             } else {
                 // No prompt value, use default (first option)
@@ -489,8 +535,6 @@
         }
 
         try {
-            console.log('[AI Assistant Widget] generate-text request', { promptText, integrationHandle });
-
             const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-text'), {
                 method: 'POST',
                 headers: {
@@ -511,7 +555,6 @@
             }
 
             const result = await response.json();
-            console.log('[AI Assistant Widget] generate-text response', result);
 
             if (result.success) {
                 const generatedText = result.data || result.content || result.text || '';
@@ -519,6 +562,9 @@
                     elements.outputField.value = generatedText;
                 }
                 if (elements.copyBtn) {
+                    // Show the copy button and enable it if there's content
+                    elements.copyBtn.classList.remove('aiassistant-hidden');
+                    elements.copyBtn.style.display = 'inline-flex';
                     elements.copyBtn.disabled = !generatedText.trim();
                 }
                 Craft.cp.displayNotice('Content generated successfully!');
@@ -580,8 +626,6 @@
         resetSlider(elements);
 
         try {
-            console.log('[AI Assistant Widget] generate-image request', payload);
-
             const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-image'), {
                 method: 'POST',
                 headers: {
@@ -598,7 +642,6 @@
             }
 
             const result = await response.json();
-            console.log('[AI Assistant Widget] generate-image response', result);
 
             if (result.success) {
                 currentPreviewUrls = Array.isArray(result.previewUrls) ? result.previewUrls : [];
@@ -694,9 +737,6 @@
                 applyPromptSelection(elements);
             });
         }
-
-        // Note: Image options visibility is based on prompt type, not integration
-        // Integration change doesn't affect visibility, only generation capability
 
         // Output field input handler (for copy button state)
         if (elements.outputField) {
@@ -794,4 +834,3 @@
         init();
     }
 })();
-

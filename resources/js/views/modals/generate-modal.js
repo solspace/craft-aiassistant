@@ -407,8 +407,6 @@ export async function openGenerateModal(field) {
                       return;
                     }
                     const previews = result.previewUrls || [];
-                    console.log('Image generation result:', result);
-                    console.log('Preview URLs:', previews);
                     if (previews.length > 0) {
                       renderImageSlider($imgPrevRight, previews);
                       $btnInsert.data('previewUrls', previews);
@@ -1567,9 +1565,6 @@ export async function openFromAssetModal(assetId, assetUrl) {
                 }
               }
             });
-
-            // Note: Image options visibility is based on prompt type, not integration
-            // Integration change doesn't affect visibility, only generation capability
 
             // Initial toggle
             const initOpt = $promptSelect.find('option:selected');

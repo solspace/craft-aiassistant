@@ -103,6 +103,8 @@
     border-radius: 6px;
     background: var(--ui-control-bg, #f9fafb);
     flex-wrap: wrap;
+    margin-bottom: 20px;
+    position: relative;
 }
 
 .aiassistant-widget-image-preview.show {
@@ -115,8 +117,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--white, #fff);
-    border: 1px dashed var(--hairline-color, #e5e7eb);
     border-radius: 4px;
     position: relative;
     overflow: hidden;
