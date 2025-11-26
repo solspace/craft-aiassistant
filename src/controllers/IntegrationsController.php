@@ -14,6 +14,8 @@ class IntegrationsController extends Controller
 
     public function actionIndex(): Response
     {
+        $this->registerTranslations();
+
         $integrationService = AiAssistant::getIntegrationService();
         $integrations = $integrationService->getAllIntegrations();
 
@@ -24,6 +26,8 @@ class IntegrationsController extends Controller
 
     public function actionEdit(?int $id = null): Response
     {
+        $this->registerTranslations();
+
         $integration = null;
         if ($id) {
             $integrationService = AiAssistant::getIntegrationService();
@@ -178,6 +182,16 @@ class IntegrationsController extends Controller
         ]);
     }
 
+    /**
+     * Register translations for CP pages.
+     */
+    private function registerTranslations(): void
+    {
+        $translations = include __DIR__.'/../translations/en/ai-assistant.php';
+        $translations = array_keys($translations);
+        $this->view->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
+    }
+
     private function getClassForType(string $type): string
     {
         $classes = [
@@ -185,6 +199,7 @@ class IntegrationsController extends Controller
             'gemini' => 'Solspace\AIAssistant\Integrations\Gemini\GeminiIntegration',
             'anthropic' => 'Solspace\AIAssistant\Integrations\Anthropic\AnthropicIntegration',
             'xai' => 'Solspace\AIAssistant\Integrations\xAI\xAIIntegration',
+            'replicate' => 'Solspace\AIAssistant\Integrations\Replicate\ReplicateIntegration',
         ];
 
         return $classes[$type] ?? '';

@@ -33,3 +33,9 @@ release.sh
 .phpunit.result.cache
 .php_cs.cache
 .php-cs-fixer.cache
+
+# Node
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

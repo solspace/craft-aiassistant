@@ -18,14 +18,19 @@ class Prompt extends Model
     public ?string $dateUpdated = null;
     public ?string $uid = null;
 
+    // Image-specific options (for type = image) — model comes from Integration
+    public ?string $imageSize = null;        // e.g., 1024x1024
+    public ?int $imageCount = null;          // e.g., 1
+    public ?string $assetTarget = null;      // "volume:{uid}" or "folder:{uid}"
+
     public function rules(): array
     {
         return [
             [['name', 'promptText', 'type'], 'required'],
-            [['name', 'promptText', 'integrationHandle'], 'string'],
+            [['name', 'promptText', 'integrationHandle', 'imageSize', 'assetTarget'], 'string'],
             [['type'], 'in', 'range' => ['generate', 'rephrase', 'translate', 'image']],
             [['isActive'], 'boolean'],
-            [['sortOrder'], 'integer'],
+            [['sortOrder', 'imageCount'], 'integer'],
             [['id'], 'integer'],
         ];
     }

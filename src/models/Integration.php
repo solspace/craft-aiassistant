@@ -20,7 +20,7 @@ class Integration extends Model
     // Integration-specific properties
     public string $apiKey = '';
     public string $model = '';
-    public int $maxTokens = 1000;
+    public int $maxTokens = 0; // 0 = use provider default
     public string $temperature = '0.7';
 
     public function rules(): array
@@ -63,6 +63,7 @@ class Integration extends Model
             'gemini' => 'Google Gemini',
             'anthropic' => 'Anthropic',
             'xai' => 'xAI',
+            'replicate' => 'Replicate',
         ];
     }
 
@@ -92,6 +93,22 @@ class Integration extends Model
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
             ],
+            'replicate' => [
+                'black-forest-labs/flux-kontext-pro' => 'FLUX Kontext Pro',
+                'black-forest-labs/flux-1.1-pro' => 'FLUX.1.1 Pro',
+                'black-forest-labs/flux-1.1-pro-ultra' => 'FLUX.1.1 Pro Ultra',
+                'black-forest-labs/flux-dev' => 'FLUX Dev',
+                'black-forest-labs/flux-schnell' => 'FLUX Schnell',
+                'stability-ai/sdxl' => 'Stable Diffusion XL',
+                'stability-ai/stable-diffusion' => 'Stable Diffusion 1.5',
+                'ideogram-ai/ideogram-v3-turbo' => 'Ideogram V3 Turbo',
+                'ideogram-ai/ideogram-v3' => 'Ideogram V3',
+                'google/imagen-4-fast' => 'Google Imagen 4 Fast',
+                'google/imagen-4' => 'Google Imagen 4',
+                'bytedance/seedream-4' => 'Seedream 4',
+                'recraft-ai/recraft-v3-svg' => 'Recraft V3 SVG',
+                'recraft-ai/recraft-v3' => 'Recraft V3',
+            ],
         ];
 
         return $models[$this->type] ?? [];
@@ -117,6 +134,22 @@ class Integration extends Model
             'xai' => [
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
+            ],
+            'replicate' => [
+                'black-forest-labs/flux-kontext-pro' => 'FLUX Kontext Pro',
+                'black-forest-labs/flux-1.1-pro' => 'FLUX.1.1 Pro',
+                'black-forest-labs/flux-1.1-pro-ultra' => 'FLUX.1.1 Pro Ultra',
+                'black-forest-labs/flux-dev' => 'FLUX Dev',
+                'black-forest-labs/flux-schnell' => 'FLUX Schnell',
+                'stability-ai/sdxl' => 'Stable Diffusion XL',
+                'stability-ai/stable-diffusion' => 'Stable Diffusion 1.5',
+                'ideogram-ai/ideogram-v3-turbo' => 'Ideogram V3 Turbo',
+                'ideogram-ai/ideogram-v3' => 'Ideogram V3',
+                'google/imagen-4-fast' => 'Google Imagen 4 Fast',
+                'google/imagen-4' => 'Google Imagen 4',
+                'bytedance/seedream-4' => 'Seedream 4',
+                'recraft-ai/recraft-v3-svg' => 'Recraft V3 SVG',
+                'recraft-ai/recraft-v3' => 'Recraft V3',
             ],
         ];
 

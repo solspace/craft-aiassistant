@@ -44,6 +44,10 @@ class Install extends Migration
             'integrationHandle' => $this->string(),
             'isActive' => $this->boolean()->notNull()->defaultValue(true),
             'sortOrder' => $this->integer()->notNull()->defaultValue(0),
+            // Image-specific optional defaults for prompts
+            'imageSize' => $this->string(),
+            'imageCount' => $this->integer(),
+            'assetTarget' => $this->string(),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
         ]);

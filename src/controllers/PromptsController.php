@@ -2,6 +2,7 @@
 
 namespace Solspace\AIAssistant\controllers;
 
+use craft\records\VolumeFolder;
 use craft\web\Controller;
 use Solspace\AIAssistant\AiAssistant;
 use Solspace\AIAssistant\models\Prompt;
@@ -13,16 +14,20 @@ class PromptsController extends Controller
 
     public function actionIndex(): ?Response
     {
+        $this->registerTranslations();
+
         $promptService = AiAssistant::getPromptService();
         $prompts = $promptService->getAllPrompts();
 
-        return $this->renderTemplate('ai-assistant/prompts', [
+        return $this->renderTemplate('ai-assistant/prompts/index', [
             'prompts' => $prompts,
         ]);
     }
 
     public function actionEdit($id = null): ?Response
     {
+        $this->registerTranslations();
+
         // Accept both route param and query param for id (supports built-ins like builtin_*)
         $id ??= (string) $this->request->getQueryParam('id');
 
@@ -67,9 +72,66 @@ class PromptsController extends Controller
         $integrationService = AiAssistant::getIntegrationService();
         $integrations = $integrationService->getEnabledIntegrations();
 
+        $volOptions = [];
+        foreach (\Craft::$app->getVolumes()->getAllVolumes() as $vol) {
+            $volOptions[] = ['label' => $vol->name, 'value' => $vol->id];
+        }
+
+        // Build asset target options (volumes + folders) using UIDs
+        $assetTargetOptions = [];
+        $volumes = \Craft::$app->getVolumes()->getAllVolumes();
+        $volumeIdToName = [];
+        foreach ($volumes as $vol) {
+            $volumeIdToName[$vol->id] = $vol->name;
+            $assetTargetOptions[] = [
+                'label' => $vol->name.' (root)',
+                'value' => 'volume:'.$vol->uid,
+            ];
+        }
+        // Query folders via records to support Craft 4/5
+        $folderRecords = VolumeFolder::find()->all();
+        // Index by id to build full paths
+        $folderById = [];
+        foreach ($folderRecords as $fr) {
+            $folderById[$fr->id] = $fr;
+        }
+        // Helper to build folder path within a volume
+        $buildFolderPath = static function ($folder) use (&$folderById): string {
+            $parts = [];
+            $current = $folder;
+            // Walk up to root (parentId === null)
+            while ($current && $current->parentId) {
+                $parts[] = $current->name;
+                $current = $folderById[$current->parentId] ?? null;
+            }
+
+            return implode('/', array_reverse($parts));
+        };
+        foreach ($folderRecords as $fr) {
+            // Skip root folders (no parent)
+            if (null === $fr->parentId) {
+                continue;
+            }
+            $volName = $volumeIdToName[$fr->volumeId] ?? 'Volume';
+            $path = $buildFolderPath($fr);
+            $label = $path ? ($volName.' / '.$path) : ($volName.' / '.$fr->name);
+            $assetTargetOptions[] = [
+                'label' => $label,
+                'value' => 'folder:'.$fr->uid,
+            ];
+        }
+        // Compute first option value for defaulting in UI
+        $defaultAssetTargetValue = '';
+        if (!empty($assetTargetOptions)) {
+            $defaultAssetTargetValue = $assetTargetOptions[0]['value'] ?? '';
+        }
+
         return $this->renderTemplate('ai-assistant/prompts/edit', [
             'prompt' => $prompt,
             'integrations' => $integrations,
+            'volumesOptions' => $volOptions,
+            'assetTargetOptions' => $assetTargetOptions,
+            'defaultAssetTargetValue' => $defaultAssetTargetValue,
         ]);
     }
 
@@ -97,6 +159,13 @@ class PromptsController extends Controller
         $prompt->integrationHandle = '' !== $integrationHandle ? $integrationHandle : null;
         $prompt->isActive = (bool) $this->request->getBodyParam('isActive', true);
         $prompt->sortOrder = (int) $this->request->getBodyParam('sortOrder', 0);
+        // Image-specific fields (only when type=image, but safe to read regardless)
+        $imageSize = $this->request->getBodyParam('imageSize');
+        $prompt->imageSize = null !== $imageSize && '' !== $imageSize ? (string) $imageSize : null;
+        $imageCount = $this->request->getBodyParam('imageCount');
+        $prompt->imageCount = null !== $imageCount && '' !== $imageCount ? (int) $imageCount : null;
+        $assetTarget = $this->request->getBodyParam('assetTarget');
+        $prompt->assetTarget = null !== $assetTarget && '' !== $assetTarget ? (string) $assetTarget : null;
 
         // Check for duplicate names
         $existingPrompt = $promptService->getPromptByName($prompt->name);
@@ -106,9 +175,41 @@ class PromptsController extends Controller
             $integrationService = AiAssistant::getIntegrationService();
             $integrations = $integrationService->getEnabledIntegrations();
 
+            $volOptions = [];
+            foreach (\Craft::$app->getVolumes()->getAllVolumes() as $vol) {
+                $volOptions[] = ['label' => $vol->name, 'value' => $vol->id];
+            }
+
+            // Rebuild asset target options for re-render
+            $assetTargetOptions = [];
+            $volumes = \Craft::$app->getVolumes()->getAllVolumes();
+            foreach ($volumes as $vol) {
+                $assetTargetOptions[] = [
+                    'label' => $vol->name.' (root)',
+                    'value' => 'volume:'.$vol->uid,
+                ];
+            }
+            $folderRecords = VolumeFolder::find()->all();
+            foreach ($folderRecords as $fr) {
+                if (null === $fr->parentId) {
+                    continue;
+                }
+                $assetTargetOptions[] = [
+                    'label' => $fr->name,
+                    'value' => 'folder:'.$fr->uid,
+                ];
+            }
+            $defaultAssetTargetValue = '';
+            if (!empty($assetTargetOptions)) {
+                $defaultAssetTargetValue = $assetTargetOptions[0]['value'] ?? '';
+            }
+
             return $this->renderTemplate('ai-assistant/prompts/edit', [
                 'prompt' => $prompt,
                 'integrations' => $integrations,
+                'volumesOptions' => $volOptions,
+                'assetTargetOptions' => $assetTargetOptions,
+                'defaultAssetTargetValue' => $defaultAssetTargetValue,
             ]);
         }
 
@@ -119,9 +220,41 @@ class PromptsController extends Controller
             $integrationService = AiAssistant::getIntegrationService();
             $integrations = $integrationService->getEnabledIntegrations();
 
+            $volOptions = [];
+            foreach (\Craft::$app->getVolumes()->getAllVolumes() as $vol) {
+                $volOptions[] = ['label' => $vol->name, 'value' => $vol->id];
+            }
+
+            // Rebuild asset target options for re-render
+            $assetTargetOptions = [];
+            $volumes = \Craft::$app->getVolumes()->getAllVolumes();
+            foreach ($volumes as $vol) {
+                $assetTargetOptions[] = [
+                    'label' => $vol->name.' (root)',
+                    'value' => 'volume:'.$vol->uid,
+                ];
+            }
+            $folderRecords = VolumeFolder::find()->all();
+            foreach ($folderRecords as $fr) {
+                if (null === $fr->parentId) {
+                    continue;
+                }
+                $assetTargetOptions[] = [
+                    'label' => $fr->name,
+                    'value' => 'folder:'.$fr->uid,
+                ];
+            }
+            $defaultAssetTargetValue = '';
+            if (!empty($assetTargetOptions)) {
+                $defaultAssetTargetValue = $assetTargetOptions[0]['value'] ?? '';
+            }
+
             return $this->renderTemplate('ai-assistant/prompts/edit', [
                 'prompt' => $prompt,
                 'integrations' => $integrations,
+                'volumesOptions' => $volOptions,
+                'assetTargetOptions' => $assetTargetOptions,
+                'defaultAssetTargetValue' => $defaultAssetTargetValue,
             ]);
         }
 
@@ -136,9 +269,41 @@ class PromptsController extends Controller
         $integrationService = AiAssistant::getIntegrationService();
         $integrations = $integrationService->getEnabledIntegrations();
 
+        $volOptions = [];
+        foreach (\Craft::$app->getVolumes()->getAllVolumes() as $vol) {
+            $volOptions[] = ['label' => $vol->name, 'value' => $vol->id];
+        }
+
+        // Rebuild asset target options for re-render
+        $assetTargetOptions = [];
+        $volumes = \Craft::$app->getVolumes()->getAllVolumes();
+        foreach ($volumes as $vol) {
+            $assetTargetOptions[] = [
+                'label' => $vol->name.' (root)',
+                'value' => 'volume:'.$vol->uid,
+            ];
+        }
+        $folderRecords = VolumeFolder::find()->all();
+        foreach ($folderRecords as $fr) {
+            if (null === $fr->parentId) {
+                continue;
+            }
+            $assetTargetOptions[] = [
+                'label' => $fr->name,
+                'value' => 'folder:'.$fr->uid,
+            ];
+        }
+        $defaultAssetTargetValue = '';
+        if (!empty($assetTargetOptions)) {
+            $defaultAssetTargetValue = $assetTargetOptions[0]['value'] ?? '';
+        }
+
         return $this->renderTemplate('ai-assistant/prompts/edit', [
             'prompt' => $prompt,
             'integrations' => $integrations,
+            'volumesOptions' => $volOptions,
+            'assetTargetOptions' => $assetTargetOptions,
+            'defaultAssetTargetValue' => $defaultAssetTargetValue,
         ]);
     }
 
@@ -158,5 +323,15 @@ class PromptsController extends Controller
         }
 
         return $this->redirect('ai-assistant/prompts');
+    }
+
+    /**
+     * Register translations for CP pages.
+     */
+    private function registerTranslations(): void
+    {
+        $translations = include __DIR__.'/../translations/en/ai-assistant.php';
+        $translations = array_keys($translations);
+        $this->view->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
     }
 }

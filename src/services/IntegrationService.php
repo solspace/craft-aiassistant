@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Solspace\AIAssistant\Integrations\Anthropic\AnthropicIntegration;
 use Solspace\AIAssistant\Integrations\Gemini\GeminiIntegration;
 use Solspace\AIAssistant\Integrations\OpenAI\OpenAIIntegration;
+use Solspace\AIAssistant\Integrations\Replicate\ReplicateIntegration;
 use Solspace\AIAssistant\Integrations\xAI\xAIIntegration;
 use Solspace\AIAssistant\models\Integration;
 use Solspace\AIAssistant\records\IntegrationRecord;
@@ -18,6 +19,7 @@ class IntegrationService extends Component
         'gemini' => GeminiIntegration::class,
         'anthropic' => AnthropicIntegration::class,
         'xai' => xAIIntegration::class,
+        'replicate' => ReplicateIntegration::class,
     ];
 
     public function getAllIntegrations(): array
@@ -246,7 +248,7 @@ class IntegrationService extends Component
             if (\is_array($metadata)) {
                 $integration->apiKey = $metadata['apiKey'] ?? '';
                 $integration->model = $metadata['model'] ?? '';
-                $integration->maxTokens = $metadata['maxTokens'] ?? 1000;
+                $integration->maxTokens = $metadata['maxTokens'] ?? 0; // 0 = use provider default
                 $integration->temperature = $metadata['temperature'] ?? '0.7';
             }
         }
