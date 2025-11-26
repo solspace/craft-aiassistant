@@ -17,7 +17,7 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
         protected string $name,
         protected string $apiKey = '',
         protected string $model = '',
-        protected int $maxTokens = 1000,
+        protected int $maxTokens = 0, // 0 = use provider default
         protected string $temperature = '0.7',
         protected ?LoggerInterface $logger = null,
     ) {}

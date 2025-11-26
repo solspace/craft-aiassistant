@@ -10,7 +10,7 @@ use Solspace\AIAssistant\Integrations\BaseAiIntegration;
 class ReplicateIntegration extends BaseAiIntegration
 {
     protected const LOG_CATEGORY = 'Replicate';
-    protected const DEFAULT_MODEL = 'black-forest-labs/flux-1.1-pro';
+    protected const DEFAULT_MODEL = 'black-forest-labs/flux-kontext-pro';
 
     protected string $siteUrl = '';
 
@@ -72,11 +72,6 @@ class ReplicateIntegration extends BaseAiIntegration
 
         // Prepare a debug copy of inputs to return for diagnostics (no API keys)
         $debugInputs = $inputs;
-
-        // Set strength parameter (if supported)
-        if ($modelConfig['supportsStrength']) {
-            $inputs['strength'] = $options['strength'] ?? 0.3;
-        }
 
         try {
             $client = new Client([
