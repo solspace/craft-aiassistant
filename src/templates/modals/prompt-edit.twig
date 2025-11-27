@@ -5,7 +5,7 @@
     <div class="header">
         <h2 style="margin:0; display:flex; align-items:center; gap:8px;">
             <span id="aiassistant-prompt-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
-            <span id="aiassistant-prompt-modal-text">{{ 'Manage Prompts'|t('aiassistant') }}</span>
+            <span id="aiassistant-prompt-modal-text">{{ 'Manage Prompts'|t('ai-assistant') }}</span>
         </h2>
     </div>
     
@@ -13,9 +13,9 @@
         <!-- Select Existing Prompt Section -->
         <div id="prompt-select-mode">
             <div style="margin-bottom:20px;">
-                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Select Prompt'|t('aiassistant') }}</h3>
+                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Select Prompt'|t('ai-assistant') }}</h3>
                 
-                {% set promptOptions = [{ label: 'Any'|t('aiassistant'), value: '' }] %}
+                {% set promptOptions = [{ label: 'Any'|t('ai-assistant'), value: '' }] %}
                 {% for p in prompts %}
                     {% set promptOptions = promptOptions|merge([{ label: p.name ~ ' (' ~ (p.type|title) ~ ')', value: p.id, data: { type: p.type } }]) %}
                 {% endfor %}
@@ -23,7 +23,7 @@
                     id: 'prompt-existing-select',
                     name: 'prompt-existing-select',
                     options: promptOptions,
-                    instructions: 'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.'|t('aiassistant')
+                    instructions: 'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.'|t('ai-assistant')
                 }) }}
             </div>
             
@@ -37,21 +37,21 @@
                     <div id="prompt-details-integration" style="font-size:12px; color:#6b7280; margin-bottom:8px;"></div>
                 </div>
                 <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e5e7eb;">
-                    <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:6px;">{{ 'Prompt Text'|t('aiassistant') }}</div>
+                    <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:6px;">{{ 'Prompt Text'|t('ai-assistant') }}</div>
                     <div id="prompt-details-text" style="font-size:12px; color:#4b5563; line-height:1.5; white-space:pre-wrap; max-height:120px; overflow-y:auto;"></div>
                 </div>
             </div>
             
             <div style="margin-top:24px; padding-top:24px;">
-                {{ 'or'|t('aiassistant') }} <button type="button" id="show-create-prompt-form" class="btn">{{ 'Create New Prompt'|t('aiassistant') }}</button>
+                {{ 'or'|t('ai-assistant') }} <button type="button" id="show-create-prompt-form" class="btn">{{ 'Create New Prompt'|t('ai-assistant') }}</button>
             </div>
         </div>
         
         <!-- Create New Prompt Form Section -->
         <div id="prompt-create-mode" style="display:none;">
             <div style="margin-bottom:20px;">
-                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Create New Prompt'|t('aiassistant') }}</h3>
-                <p class="instructions" style="margin:4px 0 16px 0;">{{ 'Create a new custom prompt for AI text generation.'|t('aiassistant') }}</p>
+                <h3 style="margin:0 0 12px 0; font-weight:600;">{{ 'Create New Prompt'|t('ai-assistant') }}</h3>
+                <p class="instructions" style="margin:4px 0 16px 0;">{{ 'Create a new custom prompt for AI text generation.'|t('ai-assistant') }}</p>
             </div>
             
             <form method="post" id="prompt-edit-form">
@@ -64,33 +64,33 @@
                         id: 'modal-name',
                         name: 'name',
                         required: true,
-                        instructions: 'Give your prompt a descriptive name.'|t('aiassistant')
+                        instructions: 'Give your prompt a descriptive name.'|t('ai-assistant')
                     }) }}
                 </div>
                 
                 <div style="margin-bottom:20px;">
                 {{ forms.selectField({
-                        label: 'Type'|t('aiassistant'),
+                        label: 'Type'|t('ai-assistant'),
                         id: 'modal-type',
                         name: 'type',
                         value: 'generate',
                         options: [
-                            { label: 'Generate'|t('aiassistant'), value: 'generate' },
-                            { label: 'Rephrase'|t('aiassistant'), value: 'rephrase' },
-                            { label: 'Translate'|t('aiassistant'), value: 'translate' },
-                            { label: 'Generate Image'|t('aiassistant'), value: 'image' },
+                            { label: 'Generate'|t('ai-assistant'), value: 'generate' },
+                            { label: 'Rephrase'|t('ai-assistant'), value: 'rephrase' },
+                            { label: 'Translate'|t('ai-assistant'), value: 'translate' },
+                            { label: 'Generate Image'|t('ai-assistant'), value: 'image' },
                         ],
-                        instructions: 'Select the type of prompt.'|t('aiassistant')
+                        instructions: 'Select the type of prompt.'|t('ai-assistant')
                     }) }}
                 </div>
                 
                 <div style="margin-bottom:20px;">
                     {{ forms.selectField({
-                        label: 'Integration'|t('aiassistant'),
+                        label: 'Integration'|t('ai-assistant'),
                         id: 'modal-integration',
                         name: 'integrationHandle',
                         options: [],
-                        instructions: 'Select the AI integration to use.'|t('aiassistant')
+                        instructions: 'Select the AI integration to use.'|t('ai-assistant')
                     }) }}
                 </div>
                 
@@ -98,19 +98,19 @@
                     <div style="display:flex; gap:12px;">
                         <div style="flex:1">
                             {{ forms.selectField({
-                                label: 'OpenAI Model'|t('aiassistant'),
+                                label: 'OpenAI Model'|t('ai-assistant'),
                                 id: 'modal-image-model',
                                 name: 'imageModel',
                                 options: [
                                     { label: 'DALL·E 3', value: 'dall-e-3' },
                                     { label: 'DALL·E 2', value: 'dall-e-2' },
                                 ],
-                                instructions: 'Model used when generating with this prompt (can still be overridden in the generation modal).'|t('aiassistant')
+                                instructions: 'Model used when generating with this prompt (can still be overridden in the generation modal).'|t('ai-assistant')
                             }) }}
                         </div>
                         <div style="flex:1">
                             {{ forms.selectField({
-                                label: 'Default Size'|t('aiassistant'),
+                                label: 'Default Size'|t('ai-assistant'),
                                 id: 'modal-image-size',
                                 name: 'imageSize',
                                 options: [
@@ -122,7 +122,7 @@
                         </div>
                         <div style="flex:1">
                             {{ forms.textField({
-                                label: 'Default Count'|t('aiassistant'),
+                                label: 'Default Count'|t('ai-assistant'),
                                 id: 'modal-image-count',
                                 name: 'imageCount',
                                 value: 1,
@@ -132,38 +132,38 @@
                     <div style="display:flex; gap:12px;">
                         <div style="flex:1">
                             {{ forms.textField({
-                                label: 'Preferred Volume ID'|t('aiassistant'),
+                                label: 'Preferred Volume ID'|t('ai-assistant'),
                                 id: 'modal-image-volume',
                                 name: 'imageVolumeId',
-                                instructions: 'Optional. If blank, you can select per-generation.'|t('aiassistant')
+                                instructions: 'Optional. If blank, you can select per-generation.'|t('ai-assistant')
                             }) }}
                         </div>
                         <div style="flex:1">
                             {{ forms.textField({
-                                label: 'Preferred Folder ID'|t('aiassistant'),
+                                label: 'Preferred Folder ID'|t('ai-assistant'),
                                 id: 'modal-image-folder',
                                 name: 'imageFolderId',
-                                instructions: 'Optional. If blank, top-level of volume.'|t('aiassistant')
+                                instructions: 'Optional. If blank, top-level of volume.'|t('ai-assistant')
                             }) }}
                         </div>
                     </div>
-                    <p class="instructions" style="margin-top:8px;">{{ 'These defaults are stored on the prompt and can be used by the generation modal. They do not affect other prompts.'|t('aiassistant') }}</p>
+                    <p class="instructions" style="margin-top:8px;">{{ 'These defaults are stored on the prompt and can be used by the generation modal. They do not affect other prompts.'|t('ai-assistant') }}</p>
                 </div>
 
                 <div style="margin-bottom:60px;">
                     {{ forms.textareaField({
-                        label: 'Prompt Text'|t('aiassistant'),
+                        label: 'Prompt Text'|t('ai-assistant'),
                         id: 'modal-promptText',
                         name: 'promptText',
                         rows: 5,
                         required: true,
-                        instructions: 'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.'|t('aiassistant')
+                        instructions: 'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.'|t('ai-assistant')
                     }) }}
                 </div>
             </form>
             
             <div style="margin-top:24px; padding-top:24px; border-top:1px solid #e5e7eb;">
-                <button type="button" id="show-select-prompt" class="btn">{{ 'Select Existing Prompt'|t('aiassistant') }}</button>
+                <button type="button" id="show-select-prompt" class="btn">{{ 'Select Existing Prompt'|t('ai-assistant') }}</button>
             </div>
         </div>
     </div>
@@ -174,36 +174,4 @@
         <button type="button" id="save-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
     </div>
 </div>
-
-<style>
-/* Badge styling for prompt details */
-.ai-assistant-prompt-modal .ai-assistant-type-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.ai-assistant-prompt-modal .ai-assistant-type-generate { background:#e6f4ff; color:#1a73e8; }
-.ai-assistant-prompt-modal .ai-assistant-type-rephrase { background:#f3e8ff; color:#7b1fa2; }
-.ai-assistant-prompt-modal .ai-assistant-type-translate { background:#e6f7ee; color:#2e7d32; }
-.ai-assistant-prompt-modal .ai-assistant-type-image { background:#fff4e5; color:#b26a00; }
-</style>
-
-<script>
-(function(){
-  const typeSelect = document.getElementById('modal-type');
-  const imageExtra = document.getElementById('image-extra-options');
-  function toggleImageOptions() {
-    if (!typeSelect || !imageExtra) return;
-    imageExtra.style.display = (typeSelect.value === 'image') ? 'block' : 'none';
-  }
-  if (typeSelect) {
-    typeSelect.addEventListener('change', toggleImageOptions);
-    toggleImageOptions();
-  }
-})();
-</script>
 

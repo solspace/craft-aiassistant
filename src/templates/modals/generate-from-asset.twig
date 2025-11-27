@@ -2,125 +2,125 @@
 
 <div class="modal aiassistant-modal">
     <div class="header">
-        <h2 id="aiassistant-modal-title" style="margin:0; display:flex; align-items:center; gap:8px;">
-            <span id="aiassistant-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
-            <span id="aiassistant-modal-text">{{ 'AI Assistant'|t('aiassistant') }}</span>
+        <h2 id="aiassistant-modal-title">
+            <span id="aiassistant-modal-icon"></span>
+            <span id="aiassistant-modal-text">{{ 'AI Assistant'|t('ai-assistant') }}</span>
         </h2>
     </div>
-    
-    <div class="body" style="max-height:60vh; overflow-y:auto; padding:20px 20px 60px 20px;">
+
+    <div class="body">
         <!-- Top row: Prompt and Integration selection -->
-        <div style="display:flex; gap:20px; margin-bottom:20px;">
-            <div style="flex:1;">
+        <div class="aiassistant-prompt-select-row">
+            <div class="aiassistant-prompt-select-col">
                 {{ forms.selectField({
                     id: 'aiassistant-text-prompt',
                     name: 'aiassistant-text-prompt',
-                    label: 'Prompt'|t('aiassistant'),
-                    options: [{ label: 'Loading…'|t('aiassistant'), value: '' }],
-                    instructions: 'Choose a prompt to work with this image.'|t('aiassistant')
+                    label: 'Prompt'|t('ai-assistant'),
+                    options: [{ label: 'Loading…'|t('ai-assistant'), value: '' }],
+                    instructions: 'Choose a prompt to work with this image.'|t('ai-assistant')
                 }) }}
             </div>
-            <div style="flex:1;">
+            <div class="aiassistant-prompt-select-col">
                 {{ forms.selectField({
                     id: 'aiassistant-text-integration',
                     name: 'aiassistant-text-integration',
-                    label: 'Integration'|t('aiassistant'),
-                    options: [{ label: 'Loading…'|t('aiassistant'), value: '' }],
-                    instructions: 'Defaulted from the prompt; you can change it.'|t('aiassistant')
+                    label: 'Integration'|t('ai-assistant'),
+                    options: [{ label: 'Loading…'|t('ai-assistant'), value: '' }],
+                    instructions: 'Defaulted from the prompt; you can change it.'|t('ai-assistant')
                 }) }}
             </div>
         </div>
 
         <!-- Prompt text (left) and Image options (right when type=image) -->
-        <div style="display:flex; gap:20px; margin-bottom:20px;">
-            <div id="aiassistant-prompt-left" style="flex:1;">
+        <div class="aiassistant-prompt-content-row">
+            <div id="aiassistant-prompt-left" class="aiassistant-prompt-left">
                 {{ forms.textareaField({
                     id: 'aiassistant-text-prompt-text',
                     name: 'aiassistant-text-prompt-text',
-                    label: 'Prompt Text'|t('aiassistant'),
+                    label: 'Prompt Text'|t('ai-assistant'),
                     rows: 2,
-                    instructions: 'Edit the prompt text as needed. This is what will be sent to the AI along with the image. You can modify it to better suit your needs.'|t('aiassistant')
+                    instructions: 'Edit the prompt text as needed. This is what will be sent to the AI along with the image. You can modify it to better suit your needs.'|t('ai-assistant')
                 }) }}
             </div>
-            <div id="aiassistant-image-col" style="flex:1;">
-                <div id="aiassistant-image-options" style="display:none; padding:15px; border:1px solid #ffecb5; border-radius:6px;">
-                    <div style="display:flex; gap:12px; align-items:flex-start;">
-                        <div style="display:flex; align-items:center; justify-content:center; padding-top:24px;">
+            <div id="aiassistant-image-col" class="aiassistant-image-col">
+                <div id="aiassistant-image-options">
+                    <div class="aiassistant-image-options-row">
+                        <div class="lightswitch-wrapper">
                             {{ forms.lightswitch({
                                 id: 'aiassistant-keep-original-size',
                                 name: 'aiassistant-keep-original-size',
                                 on: true
                             }) }}
                         </div>
-                        <div style="flex:1;" id="aiassistant-size-field-wrap">
+                        <div id="aiassistant-size-field-wrap" class="size-field-wrap">
                             {{ forms.textField({
                                 id: 'aiassistant-image-size',
                                 name: 'aiassistant-image-size',
-                                label: 'Size'|t('aiassistant'),
+                                label: 'Size'|t('ai-assistant'),
                                 placeholder: '1024x1024',
-                                instructions: 'Keep original size (recommended).'|t('aiassistant')
+                                instructions: 'Keep original size (recommended).'|t('ai-assistant')
                             }) }}
                         </div>
-                        <div style="width:150px">
+                        <div class="count-field">
                             {{ forms.textField({
                                 id: 'aiassistant-image-count',
                                 name: 'aiassistant-image-count',
-                                label: 'Count'|t('aiassistant'),
+                                label: 'Count'|t('ai-assistant'),
                                 value: 1,
-                                instructions: 'Number of images.'|t('aiassistant')
+                                instructions: 'Number of images.'|t('ai-assistant')
                             }) }}
                         </div>
-                        <div style="flex:1">
+                        <div class="asset-target-field">
                             {{ forms.selectField({
                                 id: 'aiassistant-asset-target',
                                 name: 'aiassistant-asset-target',
-                                label: 'Asset Target (Volume or Folder)'|t('aiassistant'),
-                                instructions: 'Where to save images.'|t('aiassistant'),
+                                label: 'Asset Target (Volume or Folder)'|t('ai-assistant'),
+                                instructions: 'Where to save images.'|t('ai-assistant'),
                                 options: assetTargetOptions ?? [],
                                 value: defaultAssetTargetValue ?? '',
                             }) }}
                         </div>
                     </div>
-                    <div id="aiassistant-image-preview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;"></div>
+                    <div id="aiassistant-image-preview"></div>
                 </div>
             </div>
         </div>
 
         <!-- Input context (image) and Generated result - side by side -->
-        <div id="aiassistant-asset-comparison" style="display:block;">
-            <div style="display:flex; gap:20px;">
-                <div style="flex:1;">
-                    <div class="field" style="margin-bottom:16px;">
+        <div id="aiassistant-asset-comparison">
+            <div class="aiassistant-comparison-row">
+                <div class="aiassistant-comparison-col">
+                    <div class="field aiassistant-input-context-field">
                         <div class="heading">
-                            <span style="font-weight:600;">{{ 'Input Image'|t('aiassistant') }}</span>
+                            <span class="aiassistant-generated-title">{{ 'Input Image'|t('ai-assistant') }}</span>
                         </div>
                         <div class="instructions">
-                            <p class="light" style="font-size:12px;">{{ 'The image you selected. This will be sent to the AI for processing.'|t('aiassistant') }}</p>
+                            <p class="light">{{ 'The image you selected. This will be sent to the AI for processing.'|t('ai-assistant') }}</p>
                         </div>
                         <div class="input">
-                            <div id="aiassistant-asset-preview" style="border:1px solid #e5e7eb; border-radius:4px; padding:10px; background:#f9fafb; text-align:center; height:260px; display:flex; align-items:center; justify-content:center; box-sizing:border-box;">
-                                <div style="color:#9ca3af; font-size:14px;">{{ 'Loading image...'|t('aiassistant') }}</div>
+                            <div id="aiassistant-asset-preview">
+                                <div class="loading-text">{{ 'Loading image...'|t('ai-assistant') }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div style="flex:1;">
-                    <div class="field" style="margin-bottom:16px;">
+                <div class="aiassistant-comparison-col">
+                    <div class="field aiassistant-input-context-field">
                         <div class="heading">
-                            <span style="font-weight:600;" id="aiassistant-generated-title">{{ 'Generated Result'|t('aiassistant') }}</span>
+                            <span class="aiassistant-generated-title" id="aiassistant-generated-title">{{ 'Generated Result'|t('ai-assistant') }}</span>
                         </div>
                         <div class="instructions">
-                            <p id="aiassistant-generated-instructions">{{ 'AI-generated content will appear here.'|t('aiassistant') }}</p>
+                            <p id="aiassistant-generated-instructions">{{ 'AI-generated content will appear here.'|t('ai-assistant') }}</p>
                         </div>
                         <div class="input">
-                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor" contenteditable="true" role="textbox" aria-multiline="true" style="min-height:200px; border:1px solid #e5e7eb; border-radius:4px; padding:10px; display:none;"></div>
-                            <div id="aiassistant-image-preview-right" class="aiassistant-image-slider" style="display:none; position:relative; border:1px solid #e5e7eb; border-radius:4px; padding:10px; background:#f9fafb; height:260px; align-items:center; justify-content:center;">
-                                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('aiassistant') }}" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:none; background:rgba(0,0,0,0.45); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">‹</button>
-                                <div class="aiassistant-image-slider-viewport" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('aiassistant') }}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:4px; display:none;" />
+                            <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor aiassistant-hidden" contenteditable="true" role="textbox" aria-multiline="true"></div>
+                            <div id="aiassistant-image-preview-right" class="aiassistant-image-slider aiassistant-hidden">
+                                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('ai-assistant') }}">‹</button>
+                                <div class="aiassistant-image-slider-viewport">
+                                    <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('ai-assistant') }}" />
                                 </div>
-                                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('aiassistant') }}" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:none; background:rgba(0,0,0,0.45); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">›</button>
-                                <div class="aiassistant-image-slider-counter" style="position:absolute; bottom:10px; right:14px; background:rgba(0,0,0,0.55); color:#fff; font-size:12px; padding:2px 8px; border-radius:12px; display:none;">0 / 0</div>
+                                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('ai-assistant') }}">›</button>
+                                <div class="aiassistant-image-slider-counter aiassistant-hidden">0 / 0</div>
                             </div>
                         </div>
                     </div>
@@ -129,11 +129,11 @@
         </div>
     </div>
 
-    <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-        <div id="aiassistant-text-loading" class="spinner" style="display:none;"></div>
+    <div class="footer">
+        <div id="aiassistant-text-loading" class="spinner aiassistant-hidden"></div>
         <button type="button" class="btn cancel">{{ 'Cancel'|t('app') }}</button>
-        <button type="button" class="btn" id="aiassistant-text-generate">{{ 'Generate'|t('aiassistant') }}</button>
-        <button type="button" class="btn submit" id="aiassistant-text-insert" disabled>{{ 'Save'|t('aiassistant') }}</button>
+        <button type="button" class="btn" id="aiassistant-text-generate">{{ 'Generate'|t('ai-assistant') }}</button>
+        <button type="button" class="btn submit" id="aiassistant-text-insert" disabled>{{ 'Save'|t('ai-assistant') }}</button>
     </div>
 </div>
 

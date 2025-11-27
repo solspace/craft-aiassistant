@@ -4,14 +4,12 @@ namespace Solspace\AIAssistant;
 
 use craft\base\Field;
 use craft\base\Plugin;
-use craft\elements\Asset;
 use craft\events\DefineFieldHtmlEvent;
-use craft\events\DefineMenuItemsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\web\View;
-use Solspace\AIAssistant\assets\AiAssistantAsset;
+use Solspace\AIAssistant\assets\MainAssetBundle;
 use Solspace\AIAssistant\models\Settings;
 use Solspace\AIAssistant\services\IntegrationService;
 use Solspace\AIAssistant\services\PromptService;
@@ -23,6 +21,12 @@ use yii\web\Response;
 class AiAssistant extends Plugin
 {
     /**
+     * Translation category for the plugin.
+     * Matches the plugin handle 'ai-assistant' for automatic translation registration.
+     */
+    public const TRANSLATION_CATEGORY = 'ai-assistant';
+
+    /**
      * Plugin instance.
      */
     public static ?AiAssistant $plugin = null;
@@ -32,10 +36,10 @@ class AiAssistant extends Plugin
      */
     public bool $hasCpSettings = true;
 
-    /**
+   /**
      * Plugin icon.
      */
-    public string $icon = __DIR__.'/icon.svg';
+    public string $icon = __DIR__ . '/icon.svg';
 
     /**
      * Plugin schema version.
@@ -91,21 +95,21 @@ class AiAssistant extends Plugin
     public function getCpNavItem(): ?array
     {
         $nav = parent::getCpNavItem();
-        $nav['label'] = 'AI Assistant';
+        $nav['label'] = \Craft::t(self::TRANSLATION_CATEGORY, 'AI Assistant');
         $nav['url'] = 'ai-assistant';
-        $nav['icon'] = __DIR__.'/icon-mask.svg';
+        $nav['icon'] = __DIR__ . '/icon-mask.svg';
 
         $nav['subnav'] = [
             'prompts' => [
-                'label' => 'Prompts',
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Prompts'),
                 'url' => 'ai-assistant/prompts',
             ],
             'integrations' => [
-                'label' => 'Integrations',
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Integrations'),
                 'url' => 'ai-assistant/integrations',
             ],
             'settings' => [
-                'label' => 'Settings',
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Settings'),
                 'url' => 'ai-assistant/settings',
             ],
         ];
@@ -127,6 +131,20 @@ class AiAssistant extends Plugin
     public static function getPromptService(): PromptService
     {
         return self::$plugin->promptService;
+    }
+
+    /**
+     * Translates a message to the application language.
+     *
+     * @param string      $message  the message to be translated
+     * @param array       $params   the parameters that will be used to replace the corresponding placeholders in the message
+     * @param null|string $language the language code (e.g. 'en-US', 'en'). If null, the application language will be used
+     *
+     * @return string the translated message
+     */
+    public static function t(string $message, array $params = [], ?string $language = null): string
+    {
+        return \Craft::t(self::TRANSLATION_CATEGORY, $message, $params, $language);
     }
 
     /**
@@ -163,42 +181,37 @@ class AiAssistant extends Plugin
      */
     private function registerRoutes(): void
     {
-        $routes = [];
-        if (\Craft::$app->getRequest()->getIsCpRequest()) {
-            $routes = [
-                // Main pages
-                'ai-assistant' => 'ai-assistant/index',
-                'ai-assistant/prompts' => 'ai-assistant/prompts/index',
-                'ai-assistant/prompts/new' => 'ai-assistant/prompts/edit',
-                'ai-assistant/prompts/edit' => 'ai-assistant/prompts/edit',
-                'ai-assistant/prompts/<id:\d+>' => 'ai-assistant/prompts/edit',
-                'ai-assistant/integrations' => 'ai-assistant/integrations/index',
-                'ai-assistant/integrations/new' => 'ai-assistant/integrations/edit',
-                'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
-                'ai-assistant/settings' => 'ai-assistant/settings/index',
-                'ai-assistant/settings/save' => 'ai-assistant/settings/save',
-                'ai-assistant/settings/save-prompt' => 'ai-assistant/settings/save-prompt',
-
-                // API endpoints
-                'ai-assistant/api/integrations' => 'ai-assistant/api/get-integrations',
-                'ai-assistant/api/prompts' => 'ai-assistant/api/get-prompts',
-                'ai-assistant/api/generate-text' => 'ai-assistant/api/generate-text',
-                'ai-assistant/api/generate-image' => 'ai-assistant/api/generate-image',
-                'ai-assistant/api/save-image-to-assets' => 'ai-assistant/api/save-image-to-assets',
-                'ai-assistant/api/get-asset-url' => 'ai-assistant/api/get-asset-url',
-                'ai-assistant/api/stream-asset' => 'ai-assistant/api/stream-asset',
-                'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
-                'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
-
-                // UI endpoints
-                'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
-                'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
-                'ai-assistant/ui/generate-image-modal' => 'ai-assistant/ui/generate-image-modal',
-                'ai-assistant/ui/generate-from-asset-modal' => 'ai-assistant/ui/generate-from-asset-modal',
-            ];
+        if (!\Craft::$app->getRequest()->getIsCpRequest()) {
+            return;
         }
-        // Site-accessible endpoint for temporary public streaming (token-protected)
-        $routes['ai-assistant/api/public-stream-asset'] = 'ai-assistant/api/public-stream-asset';
+
+        $routes = [
+            // Main pages
+            'ai-assistant' => 'ai-assistant/index',
+            'ai-assistant/prompts' => 'ai-assistant/prompts/index',
+            'ai-assistant/prompts/new' => 'ai-assistant/prompts/edit',
+            'ai-assistant/prompts/edit' => 'ai-assistant/prompts/edit',
+            'ai-assistant/prompts/<id:\d+>' => 'ai-assistant/prompts/edit',
+            'ai-assistant/integrations' => 'ai-assistant/integrations/index',
+            'ai-assistant/integrations/new' => 'ai-assistant/integrations/edit',
+            'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
+            'ai-assistant/settings' => 'ai-assistant/settings/index',
+            'ai-assistant/settings/save' => 'ai-assistant/settings/save',
+            'ai-assistant/settings/save-prompt' => 'ai-assistant/settings/save-prompt',
+
+            // API endpoints
+            'ai-assistant/api/integrations' => 'ai-assistant/api/get-integrations',
+            'ai-assistant/api/prompts' => 'ai-assistant/api/get-prompts',
+            'ai-assistant/api/generate-text' => 'ai-assistant/api/generate-text',
+            'ai-assistant/api/generate-image' => 'ai-assistant/api/generate-image',
+            'ai-assistant/api/save-image-to-assets' => 'ai-assistant/api/save-image-to-assets',
+            'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
+            'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
+
+            // UI endpoints
+            'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
+            'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
+        ];
 
         \Craft::$app->getUrlManager()->addRules($routes);
     }
@@ -209,7 +222,6 @@ class AiAssistant extends Plugin
     private function attachEventListeners(): void
     {
         $this->attachFieldInjectionListener();
-        $this->attachAssetMenuListener();
     }
 
     /**
@@ -291,7 +303,7 @@ class AiAssistant extends Plugin
      */
     private function registerAssetBundle(): void
     {
-        \Craft::$app->getView()->registerAssetBundle(AiAssistantAsset::class);
+        \Craft::$app->getView()->registerAssetBundle(MainAssetBundle::class);
     }
 
     /**
@@ -300,7 +312,7 @@ class AiAssistant extends Plugin
     private function initializeJavaScript(): void
     {
         $settings = $this->getSettings();
-        $iconPath = __DIR__.'/icon-mask.svg';
+        $iconPath = __DIR__ . '/icon-mask.svg';
 
         $this->serviceProvider->initializeJavaScript(
             $settings->toArray(),
@@ -310,31 +322,12 @@ class AiAssistant extends Plugin
 
     /**
      * Attach asset menu listener to add AI Assistant option for images.
-     * Note: This is Craft 5+ only feature (EVENT_DEFINE_ACTION_MENU_ITEMS doesn't exist in Craft 4).
      */
     private function attachAssetMenuListener(): void
     {
-        // Only attach listener in Craft 5+ (EVENT_DEFINE_ACTION_MENU_ITEMS is Craft 5+ only)
-        $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
-        if (!$isCraft5) {
-            return;
-        }
-
-        // Check if the constant exists using reflection (safe for Craft 4)
-        try {
-            $reflection = new \ReflectionClass(Asset::class);
-            if (!$reflection->hasConstant('EVENT_DEFINE_ACTION_MENU_ITEMS')) {
-                return;
-            }
-            $eventName = $reflection->getConstant('EVENT_DEFINE_ACTION_MENU_ITEMS');
-        } catch (\Throwable $e) {
-            // If reflection fails or constant doesn't exist, skip
-            return;
-        }
-
         Event::on(
             Asset::class,
-            $eventName,
+            Asset::EVENT_DEFINE_ACTION_MENU_ITEMS,
             function (DefineMenuItemsEvent $event) {
                 /** @var Asset $asset */
                 $asset = $event->sender;
@@ -353,19 +346,16 @@ class AiAssistant extends Plugin
 
                 // Add AI Assistant menu item
                 $items = $event->items;
-                // Craft 5 uses MenuItemType::Button enum, Craft 4 uses string 'button'
-                // Using eval to prevent php-cs-fixer from detecting and adding import
-                $menuItemType = 'button';
-                $menuItemTypeClass = '\craft\enums\MenuItemType';
-                if (class_exists($menuItemTypeClass)) {
-                    // @phpstan-ignore-next-line - Craft 5-only enum, accessed dynamically via eval
-                    $menuItemType = eval("return {$menuItemTypeClass}::Button->value;");
-                }
+                // Craft 4 uses string 'button', Craft 5 uses MenuItemType::Button enum
+                $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
+                $menuItemType = $isCraft5
+                    ? (class_exists(MenuItemType::class) ? MenuItemType::Button->value : 'button')
+                    : 'button';
                 $items[] = [
                     'type' => $menuItemType,
                     'id' => $aiAssistantId,
                     'icon' => $iconSvg ?: 'sparkles',
-                    'label' => \Craft::t('ai-assistant', 'AI Assistant'),
+                    'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'AI Assistant'),
                 ];
 
                 // Register JavaScript to open AI Assistant modal from asset

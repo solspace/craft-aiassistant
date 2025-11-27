@@ -248,7 +248,7 @@ class IntegrationService extends Component
             if (\is_array($metadata)) {
                 $integration->apiKey = $metadata['apiKey'] ?? '';
                 $integration->model = $metadata['model'] ?? '';
-                $integration->maxTokens = $metadata['maxTokens'] ?? 1000;
+                $integration->maxTokens = $metadata['maxTokens'] ?? 0; // 0 = use provider default
                 $integration->temperature = $metadata['temperature'] ?? '0.7';
             }
         }

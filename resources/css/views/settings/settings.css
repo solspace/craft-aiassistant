@@ -1,0 +1,115 @@
+/**
+ * Settings View Styles
+ * Styles specific to the AI Assistant settings page
+ */
+
+.ai-assistant-settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0 16px;
+}
+
+.ai-assistant-settings-header > div:first-child h2 {
+    margin: 0;
+}
+
+.ai-assistant-settings-header .instructions {
+    margin: 4px 0 0;
+}
+
+.ai-assistant-settings-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ai-prompts-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ai-prompts-cell .ai-prompts-select {
+    min-width: 260px;
+}
+
+.ai-prompts-cell .hint {
+    color: var(--gray-600);
+    font-size: 12px;
+}
+
+.ai-prompts-chip {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Match the prompts page badge styling */
+.ai-assistant-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ai-assistant-type-generate {
+    background: #e6f4ff;
+    color: #1a73e8;
+}
+
+.ai-assistant-type-rephrase {
+    background: #f3e8ff;
+    color: #7b1fa2;
+}
+
+.ai-assistant-type-translate {
+    background: #e6f7ee;
+    color: #2e7d32;
+}
+
+.ai-assistant-type-image {
+    background: #fff4e5;
+    color: #b26a00;
+}
+
+.ai-assistant-type-any {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Match the prompts page edit button styling */
+.ai-prompts-chip .btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    min-width: 32px !important;
+    height: 32px !important;
+}
+
+.ai-prompts-chip .btn span[data-icon] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 !important;
+}
+
+.ai-prompts-chip .btn span[data-icon] svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+}
+
+.ai-assistant-settings-lightswitch-cell {
+    width: 120px;
+    text-align: right;
+}
+
+.ai-assistant-settings-lightswitch-cell > div {
+    display: inline-block;
+}
+

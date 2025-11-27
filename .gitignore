@@ -37,7 +37,5 @@ release.sh
 # Node
 node_modules/
 package-lock.json
-package.json
-
-# Local build sources (optional, not committed)
-scripts/
+yarn.lock
+pnpm-lock.yaml

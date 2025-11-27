@@ -14,6 +14,8 @@ class IntegrationsController extends Controller
 
     public function actionIndex(): Response
     {
+        $this->registerTranslations();
+
         $integrationService = AiAssistant::getIntegrationService();
         $integrations = $integrationService->getAllIntegrations();
 
@@ -24,6 +26,8 @@ class IntegrationsController extends Controller
 
     public function actionEdit(?int $id = null): Response
     {
+        $this->registerTranslations();
+
         $integration = null;
         if ($id) {
             $integrationService = AiAssistant::getIntegrationService();
@@ -176,6 +180,16 @@ class IntegrationsController extends Controller
             'success' => true,
             'models' => $models,
         ]);
+    }
+
+    /**
+     * Register translations for CP pages.
+     */
+    private function registerTranslations(): void
+    {
+        $translations = include __DIR__.'/../translations/en/ai-assistant.php';
+        $translations = array_keys($translations);
+        $this->view->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
     }
 
     private function getClassForType(string $type): string

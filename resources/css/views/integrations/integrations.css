@@ -1,0 +1,151 @@
+/**
+ * Integrations View Styles
+ * Styles specific to the AI Assistant integrations page
+ */
+
+.ai-assistant-integration-card {
+    padding: 1.5rem;
+    border: 1px solid var(--hairline-color, #e5e7eb);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: var(--ui-bg, #ffffff);
+    transition: all 0.2s ease;
+}
+
+.ai-assistant-integration-card:hover {
+    border-color: var(--hairline-color-hover, #d1d5db);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.ai-assistant-integration-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ai-assistant-integration-name {
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+    font-size: 1.125rem;
+}
+
+.ai-assistant-integration-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.ai-assistant-integration-status.enabled {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.ai-assistant-integration-status.disabled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.ai-assistant-integration-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.ai-assistant-integration-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ai-assistant-integration-detail-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ai-assistant-integration-detail-value {
+    font-size: 0.875rem;
+    color: var(--text-primary, #1f2937);
+    font-weight: 500;
+}
+
+/* Integrations Index Page */
+.ai-assistant-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px;
+    align-items: center;
+}
+
+.ai-assistant-actions form {
+    display: inline-block !important;
+    margin: 0;
+}
+
+.ai-assistant-actions .btn [data-icon] {
+    margin-block-start: 0 !important;
+    margin-inline-end: 0 !important;
+    margin: 0 !important;
+}
+
+.ai-assistant-actions .btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    min-width: 32px !important;
+    height: 32px !important;
+}
+
+.ai-assistant-actions .btn span[data-icon] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.ai-assistant-actions .btn span[data-icon] svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+}
+
+/* Custom spinner for test button */
+.custom-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Test button styling */
+.ai-assistant-test-button {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* Integrations Edit Page */
+#temperature-field {
+    display: none;
+}
+
+#temperature-field.show {
+    display: block;
+}
+

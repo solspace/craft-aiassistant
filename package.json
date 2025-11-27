@@ -1,0 +1,14 @@
+{
+  "name": "aiassistant",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build tooling for the AI Assistant Craft plugin assets.",
+  "scripts": {
+    "build": "node resources/build.js",
+    "watch": "node resources/build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5"
+  }
+}
+

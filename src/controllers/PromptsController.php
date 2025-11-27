@@ -14,16 +14,20 @@ class PromptsController extends Controller
 
     public function actionIndex(): ?Response
     {
+        $this->registerTranslations();
+
         $promptService = AiAssistant::getPromptService();
         $prompts = $promptService->getAllPrompts();
 
-        return $this->renderTemplate('ai-assistant/prompts', [
+        return $this->renderTemplate('ai-assistant/prompts/index', [
             'prompts' => $prompts,
         ]);
     }
 
     public function actionEdit($id = null): ?Response
     {
+        $this->registerTranslations();
+
         // Accept both route param and query param for id (supports built-ins like builtin_*)
         $id ??= (string) $this->request->getQueryParam('id');
 
@@ -319,5 +323,15 @@ class PromptsController extends Controller
         }
 
         return $this->redirect('ai-assistant/prompts');
+    }
+
+    /**
+     * Register translations for CP pages.
+     */
+    private function registerTranslations(): void
+    {
+        $translations = include __DIR__.'/../translations/en/ai-assistant.php';
+        $translations = array_keys($translations);
+        $this->view->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
     }
 }

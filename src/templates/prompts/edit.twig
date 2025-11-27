@@ -3,18 +3,18 @@
 
 {% set prompt = prompt ?? { id: null, name: '', promptText: '', type: 'generate', integrationHandle: null, isActive: true, sortOrder: 0, isBuiltIn: false } %}
 {% set integrations = integrations ?? [] %}
-{% set title = prompt.id ? "Edit Prompt" : "New Prompt" %}
+{% set title = prompt.id ? ("Edit Prompt"|t('ai-assistant')) : ("New Prompt"|t('ai-assistant')) %}
 {% set selectedSubnavItem = 'prompts' %}
 {% set crumbs = [
-  { label: 'AI Assistant', url: url('ai-assistant') },
-  { label: 'Prompts', url: url('ai-assistant/prompts') },
-  { label: (prompt.id ? 'Edit' : 'New'), url: url('ai-assistant/prompts' ~ (prompt.id ? '/' ~ prompt.id : '/edit')) },
+  { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
+  { label: 'Prompts'|t('ai-assistant'), url: url('ai-assistant/prompts') },
+  { label: (prompt.id ? ("Edit"|t('ai-assistant')) : ("New"|t('ai-assistant'))), url: url('ai-assistant/prompts' ~ (prompt.id ? '/' ~ prompt.id : '/edit')) },
 ] %}
 
 {% block actionButton %}
   <div class="btngroup">
-    <a class="btn" href="{{ url('ai-assistant/prompts') }}">Back</a>
-    <button type="button" class="btn submit" onclick="document.getElementById('prompt-form').submit()">Save</button>
+    <a class="btn" href="{{ url('ai-assistant/prompts') }}">{{ "Back"|t('ai-assistant') }}</a>
+    <button type="button" class="btn submit" onclick="document.getElementById('prompt-form').submit()">{{ "Save"|t('ai-assistant') }}</button>
   </div>
 {% endblock %}
 
@@ -25,7 +25,7 @@
     {{ hiddenInput('id', prompt.id) }}
 
     {# Build integration options for the select field #}
-    {% set integrationOptions = [{ label: 'Use default (Any)', value: '' }] %}
+    {% set integrationOptions = [{ label: ("Use default (Any)"|t('ai-assistant')), value: '' }] %}
     {% for i in integrations %}
       {% set integrationOptions = integrationOptions|merge([{ label: i.name ~ ' (' ~ i.handle ~ ')', value: i.handle }]) %}
     {% endfor %}
@@ -60,42 +60,42 @@
         value: prompt.type,
         required: true,
         options: [
-          { label: 'Generate Text', value: 'generate' },
-          { label: 'Rephrase Text', value: 'rephrase' },
-          { label: 'Translate Text', value: 'translate' },
-          { label: 'Generate Image', value: 'image' },
+          { label: ("Generate Text"|t('ai-assistant')), value: 'generate' },
+          { label: ("Rephrase Text"|t('ai-assistant')), value: 'rephrase' },
+          { label: ("Translate Text"|t('ai-assistant')), value: 'translate' },
+          { label: ("Generate Image"|t('ai-assistant')), value: 'image' },
         ],
       }) }}
     </div>
 
-    <div id="image-options" class="field" style="display:none; margin-top:8px; padding:12px; border:1px solid #ffecb5; border-radius:6px;">
-      <div class="flex" style="gap:16px;">
-        <div class="field" style="flex:1;">
+    <div id="image-options" class="field aiassistant-hidden">
+      <div class="flex">
+        <div class="field">
           {{ forms.textField({
-            label: 'Size'|t('ai-assistant'),
+            label: ("Size"|t('ai-assistant')),
             id: 'imageSize',
             name: 'imageSize',
             value: prompt.imageSize ?? '',
             placeholder: '1024x1024',
-            instructions: 'Enter WidthxHeight. Common presets: square 1024x1024, landscape 1792x1024, portrait 1024x1792, mobile 768x1365.'|t('ai-assistant')
+            instructions: ("Enter WidthxHeight. Common presets: square 1024x1024, landscape 1792x1024, portrait 1024x1792, mobile 768x1365."|t('ai-assistant'))
           }) }}
         </div>
-        <div class="field" style="flex:1;">
+        <div class="field">
           {{ forms.textField({
-            label: 'Count'|t('ai-assistant'),
+            label: ("Count"|t('ai-assistant')),
             id: 'imageCount',
             name: 'imageCount',
             value: prompt.imageCount ?? 1,
             type: 'number',
-            instructions: 'Number of images to generate. Common: 1. Some providers limit to 1–4.'|t('ai-assistant')
+            instructions: ("Number of images to generate. Common: 1. Some providers limit to 1–4."|t('ai-assistant'))
           }) }}
         </div>
       </div>
-      <div class="flex" style="gap:16px; margin-top:14px;">
-        <div class="field" style="flex:1;">
+      <div class="flex">
+        <div class="field">
           {{ forms.selectField({
-            label: 'Asset Target (Volume or Folder)'|t('ai-assistant'),
-            instructions: 'Select a volume root or a specific folder. Stored as UID-based source.'|t('ai-assistant'),
+            label: ("Asset Target (Volume or Folder)"|t('ai-assistant')),
+            instructions: ("Select a volume root or a specific folder. Stored as UID-based source."|t('ai-assistant')),
             id: 'assetTarget',
             name: 'assetTarget',
             value: prompt.assetTarget ? prompt.assetTarget : (defaultAssetTargetValue ?? ''),
@@ -104,7 +104,7 @@
           }) }}
         </div>
       </div>
-      <p class="instructions">{{ 'These defaults are saved with the prompt and prefill the generation modal when this prompt is used.'|t('ai-assistant') }}</p>
+      <p class="instructions">{{ ("These defaults are saved with the prompt and prefill the generation modal when this prompt is used."|t('ai-assistant')) }}</p>
     </div>
 
     <div class="field">
@@ -144,20 +144,5 @@
     #}
   </form>
 {% endblock %}
-
-{% js %}
-(function() {
-  const type = document.getElementById('type');
-  const imageOptions = document.getElementById('image-options');
-  function toggle() {
-    if (!type || !imageOptions) return;
-    imageOptions.style.display = (type.value === 'image') ? 'block' : 'none';
-  }
-  if (type) {
-    type.addEventListener('change', toggle);
-    toggle();
-  }
-})();
-{% endjs %}
 
 

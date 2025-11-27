@@ -1,0 +1,529 @@
+/**
+ * Modal Styles
+ * Styles for AI Assistant modals (generate, generate-from-asset, prompt-edit)
+ */
+
+/* Modal Header Styles */
+.aiassistant-modal .header h2,
+.ai-assistant-prompt-modal .header h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aiassistant-modal .header h2 span,
+.ai-assistant-prompt-modal .header h2 span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.aiassistant-modal .header h2 #aiassistant-modal-text,
+.ai-assistant-prompt-modal .header #aiassistant-modal-text {
+  width: auto;
+  height: auto;
+}
+
+/* Modal Body Styles */
+.aiassistant-modal .body,
+.ai-assistant-prompt-modal .body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 20px 20px 60px 20px;
+}
+
+.ai-assistant-prompt-modal .body {
+  max-height: 70vh;
+  padding: 20px 20px 80px 20px;
+}
+
+/* Modal Footer Styles */
+.aiassistant-modal .footer,
+.ai-assistant-prompt-modal .footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 15px 20px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Layout Styles */
+.aiassistant-modal .flex-row,
+.ai-assistant-prompt-modal .flex-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.aiassistant-modal .flex-col,
+.ai-assistant-prompt-modal .flex-col {
+  flex: 1;
+}
+
+/* Prompt and Integration Selection Row */
+.aiassistant-prompt-select-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.aiassistant-prompt-select-col {
+  flex: 1;
+}
+
+/* Prompt Text and Image Options Row */
+.aiassistant-prompt-content-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.aiassistant-prompt-left {
+  flex: 1;
+}
+
+.aiassistant-image-col {
+  flex: 1;
+}
+
+/* Image Options Container */
+#aiassistant-image-options {
+  display: none;
+  padding: 15px;
+  border: 1px solid #ffecb5;
+  border-radius: 6px;
+}
+
+#aiassistant-image-options.show {
+  display: block;
+}
+
+.aiassistant-image-options-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.aiassistant-image-options-row > div {
+  flex: 1;
+}
+
+.aiassistant-image-options-row .size-field-wrap {
+  flex: 1;
+}
+
+.aiassistant-image-options-row .count-field {
+  width: 150px;
+}
+
+.aiassistant-image-options-row .asset-target-field {
+  flex: 1;
+}
+
+.aiassistant-image-options-row .lightswitch-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 24px;
+  max-width: 30px;
+}
+
+/* Image Preview */
+#aiassistant-image-preview {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* Comparison/Asset Layout */
+#aiassistant-asset-comparison,
+#aiassistant-text-comparison {
+  display: block;
+}
+
+.aiassistant-comparison-row {
+  display: flex;
+  gap: 20px;
+}
+
+.aiassistant-comparison-col {
+  flex: 1;
+}
+
+/* Field Styles */
+.aiassistant-modal .field,
+.ai-assistant-prompt-modal .field {
+  margin-bottom: 16px;
+}
+
+.aiassistant-modal .field .heading,
+.ai-assistant-prompt-modal .field .heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aiassistant-modal .field .heading .lightswitch-wrapper,
+.ai-assistant-prompt-modal .field .heading .lightswitch-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  min-width: 36px;
+}
+
+.aiassistant-modal .field .heading .heading-content,
+.ai-assistant-prompt-modal .field .heading .heading-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.aiassistant-modal .field .instructions,
+.ai-assistant-prompt-modal .field .instructions {
+  font-size: 12px;
+}
+
+.aiassistant-modal .field .instructions p.light,
+.ai-assistant-prompt-modal .field .instructions p.light {
+  font-size: 12px;
+}
+
+/* Input Context Field */
+.aiassistant-input-context-field {
+  margin-bottom: 16px;
+}
+
+/* Asset Preview */
+#aiassistant-asset-preview {
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 10px;
+  background: #f9fafb;
+  text-align: center;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+#aiassistant-asset-preview .loading-text {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Generated Result Styles */
+.aiassistant-generated-title {
+  font-weight: 600;
+}
+
+.aiassistant-generated-instructions {
+  font-size: 12px;
+}
+
+/* Rich Text Editor */
+.aiassistant-rich-editor {
+  min-height: 200px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/* Image Slider */
+.aiassistant-image-slider {
+  display: none;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 10px;
+  background: #f9fafb;
+  height: 260px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.aiassistant-image-slider.show {
+  display: flex;
+}
+
+.aiassistant-image-slider-button {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  z-index: 10;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  /* Prevent movement on hover */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.aiassistant-image-slider-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.7);
+  /* Remove transform to prevent movement */
+}
+
+.aiassistant-image-slider-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.aiassistant-image-slider-button.prev {
+  left: 12px;
+}
+
+.aiassistant-image-slider-button.next {
+  right: 12px;
+}
+
+.aiassistant-image-slider-viewport {
+  width: 100%;
+  height: 100%;
+  height: calc(100% - 20px); /* Account for padding */
+  max-height: 240px; /* 260px container - 20px padding */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.aiassistant-image-slider-img {
+  max-width: 100%;
+  max-height: 100%;
+  max-height: 240px; /* Fixed max height to fit in 260px container */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  display: none;
+  /* Ensure image fits within container */
+  box-sizing: border-box;
+}
+
+.aiassistant-image-slider-img.show {
+  display: block;
+}
+
+.aiassistant-image-slider-counter {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: none;
+}
+
+.aiassistant-image-slider-counter.show {
+  display: block;
+}
+
+/* Loading Spinner */
+#aiassistant-text-loading {
+  display: none;
+}
+
+#aiassistant-text-loading.show {
+  display: block;
+}
+
+/* Prompt Edit Modal Specific Styles */
+.ai-assistant-prompt-modal .prompt-select-mode {
+  margin-bottom: 20px;
+}
+
+.ai-assistant-prompt-modal .prompt-select-mode h3 {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.ai-assistant-prompt-modal .prompt-details-section {
+  display: none;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-section.show {
+  display: block;
+}
+
+.ai-assistant-prompt-modal .prompt-details-header {
+  margin-bottom: 12px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-type {
+  font-size: 10px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-integration {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-text-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.ai-assistant-prompt-modal .prompt-details-text-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.ai-assistant-prompt-modal .prompt-details-text {
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.ai-assistant-prompt-modal .prompt-create-mode {
+  display: none;
+}
+
+.ai-assistant-prompt-modal .prompt-create-mode.show {
+  display: block;
+}
+
+.ai-assistant-prompt-modal .prompt-create-mode h3 {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.ai-assistant-prompt-modal .prompt-create-mode .instructions {
+  margin: 4px 0 16px 0;
+}
+
+.ai-assistant-prompt-modal .prompt-create-mode .field {
+  margin-bottom: 20px;
+}
+
+.ai-assistant-prompt-modal .prompt-create-mode .field:last-child {
+  margin-bottom: 60px;
+}
+
+.ai-assistant-prompt-modal #image-extra-options {
+  display: none;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #fff8eb;
+  border: 1px solid #ffecb5;
+  border-radius: 6px;
+}
+
+.ai-assistant-prompt-modal #image-extra-options.show {
+  display: block;
+}
+
+.ai-assistant-prompt-modal #image-extra-options .field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.ai-assistant-prompt-modal #image-extra-options .field-row > div {
+  flex: 1;
+}
+
+.ai-assistant-prompt-modal #image-extra-options .instructions {
+  margin-top: 8px;
+}
+
+.ai-assistant-prompt-modal .prompt-mode-switch {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Badge styling for prompt details */
+.ai-assistant-prompt-modal .ai-assistant-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.ai-assistant-prompt-modal .ai-assistant-type-generate {
+  background: #e6f4ff;
+  color: #1a73e8;
+}
+
+.ai-assistant-prompt-modal .ai-assistant-type-rephrase {
+  background: #f3e8ff;
+  color: #7b1fa2;
+}
+
+.ai-assistant-prompt-modal .ai-assistant-type-translate {
+  background: #e6f7ee;
+  color: #2e7d32;
+}
+
+.ai-assistant-prompt-modal .ai-assistant-type-image {
+  background: #fff4e5;
+  color: #b26a00;
+}
+
+/* Hidden Elements */
+.aiassistant-hidden {
+  display: none !important;
+}
+
+/* Show class for toggling visibility */
+.show {
+  display: block !important;
+}
+
+.aiassistant-image-slider.show {
+  display: flex !important;
+}
+
+/* Fallback Elements */
+#aiassistant-text-input-fallback,
+#aiassistant-text-generated-fallback {
+  display: none;
+}
