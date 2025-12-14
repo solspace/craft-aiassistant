@@ -522,10 +522,20 @@ export async function openGenerateModal(field) {
                   $includeContext
                 );
                 // Reset right panel - hide image preview, show text
+                const $genTitle = $body.find('#aiassistant-generated-title');
+                const $genInstr = $body.find(
+                  '#aiassistant-generated-instructions'
+                );
                 const $genText = $body.find('#aiassistant-text-generated-rich');
                 const $imgPrevRight = $body.find(
                   '#aiassistant-image-preview-right'
                 );
+                // Reset title and instructions back to text mode
+                if ($genTitle.length) $genTitle.text('Generated Text');
+                if ($genInstr.length)
+                  $genInstr.text(
+                    'AI-generated content. Click Insert to replace the current content.'
+                  );
                 $genText.show();
                 if ($imgPrevRight.length) {
                   $imgPrevRight.addClass('aiassistant-hidden').hide();
