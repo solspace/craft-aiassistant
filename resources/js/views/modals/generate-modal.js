@@ -88,6 +88,30 @@ export async function openGenerateModal(field) {
         const $imagePreviewRight = $body.find(
           '#aiassistant-image-preview-right'
         );
+        const $skeletonLoader = $body.find('#aiassistant-skeleton-loader');
+        const $imageSkeletonLoader = $body.find('#aiassistant-image-skeleton-loader');
+
+        // Helper functions for skeleton loader display
+        const showTextSkeleton = () => {
+          if ($skeletonLoader.length) {
+            $skeletonLoader.removeClass('aiassistant-hidden').show();
+          }
+        };
+
+        const showImageSkeleton = () => {
+          if ($imageSkeletonLoader.length) {
+            $imageSkeletonLoader.removeClass('aiassistant-hidden').show();
+          }
+        };
+
+        const hideSkeleton = () => {
+          if ($skeletonLoader.length) {
+            $skeletonLoader.addClass('aiassistant-hidden').hide();
+          }
+          if ($imageSkeletonLoader.length) {
+            $imageSkeletonLoader.addClass('aiassistant-hidden').hide();
+          }
+        };
 
         // Always use comparison layout
         const inputObj = getFieldInput(field);
@@ -393,10 +417,13 @@ export async function openGenerateModal(field) {
                   if ($loading && $loading.length) {
                     $loading.removeClass('aiassistant-hidden').show();
                   }
+                  hideSkeleton();
+                  showImageSkeleton();
                   renderImageSlider($imgPrevRight, []);
                   try {
                     const result = await generateImage(payload);
                     if (!result.success) {
+                      hideSkeleton();
                       Craft.cp.displayError(
                         result.error || 'Failed to generate image'
                       );
@@ -407,6 +434,7 @@ export async function openGenerateModal(field) {
                       return;
                     }
                     const previews = result.previewUrls || [];
+                    hideSkeleton();
                     if (previews.length > 0) {
                       renderImageSlider($imgPrevRight, previews);
                       $btnInsert.data('previewUrls', previews);
@@ -481,6 +509,7 @@ export async function openGenerateModal(field) {
                       $btnInsert.data('previewUrls', []);
                     }
                   } catch (e) {
+                    hideSkeleton();
                     console.error('Image generation error:', e);
                     Craft.cp.displayError(
                       'Failed to generate image: ' +
@@ -796,9 +825,18 @@ function setupGenerateHandler(
       $loading.removeClass('aiassistant-hidden').show();
     }
 
+    // Show skeleton loader
+    const $skeletonLoader = $btn.closest('.modal').find('#aiassistant-skeleton-loader');
+    if ($skeletonLoader.length) {
+      $skeletonLoader.removeClass('aiassistant-hidden').show();
+    }
+
     try {
       const inputObj = getFieldInput(field);
       if (!inputObj || !inputObj.element) {
+        if ($skeletonLoader.length) {
+          $skeletonLoader.addClass('aiassistant-hidden').hide();
+        }
         Craft.cp.displayError('Could not detect field type');
         return;
       }
@@ -810,6 +848,10 @@ function setupGenerateHandler(
         integrationHandle,
         fieldType,
       });
+
+      if ($skeletonLoader.length) {
+        $skeletonLoader.addClass('aiassistant-hidden').hide();
+      }
 
       if (result.success) {
         const generatedText =
@@ -830,6 +872,9 @@ function setupGenerateHandler(
         );
       }
     } catch (error) {
+      if ($skeletonLoader.length) {
+        $skeletonLoader.addClass('aiassistant-hidden').hide();
+      }
       console.error('Generation error:', error);
       Craft.cp.displayError(
         'Failed to generate text: ' + (error.message || 'Unknown error')
@@ -1026,6 +1071,30 @@ export async function openFromAssetModal(assetId, assetUrl) {
           '#aiassistant-image-preview-right'
         );
         const $generatedText = $body.find('#aiassistant-text-generated-rich');
+        const $skeletonLoader = $body.find('#aiassistant-skeleton-loader');
+        const $imageSkeletonLoader = $body.find('#aiassistant-image-skeleton-loader');
+
+        // Helper functions for skeleton loader display
+        const showTextSkeleton = () => {
+          if ($skeletonLoader.length) {
+            $skeletonLoader.removeClass('aiassistant-hidden').show();
+          }
+        };
+
+        const showImageSkeleton = () => {
+          if ($imageSkeletonLoader.length) {
+            $imageSkeletonLoader.removeClass('aiassistant-hidden').show();
+          }
+        };
+
+        const hideSkeleton = () => {
+          if ($skeletonLoader.length) {
+            $skeletonLoader.addClass('aiassistant-hidden').hide();
+          }
+          if ($imageSkeletonLoader.length) {
+            $imageSkeletonLoader.addClass('aiassistant-hidden').hide();
+          }
+        };
 
         // Display the asset image
         if ($assetPreview.length) {
@@ -1377,6 +1446,8 @@ export async function openFromAssetModal(assetId, assetUrl) {
 
                 try {
                   if (isImageMode) {
+                    hideSkeleton();
+                    showImageSkeleton();
                     const assetTarget = $assetTarget.val() || '';
                     const payload = {
                       prompt: prompt,
@@ -1410,6 +1481,7 @@ export async function openFromAssetModal(assetId, assetUrl) {
                     renderImageSlider($imagePreviewRight, []);
 
                     const result = await generateImage(payload);
+                    hideSkeleton();
                     if (
                       result.success &&
                       Array.isArray(result.previewUrls) &&
@@ -1448,6 +1520,8 @@ export async function openFromAssetModal(assetId, assetUrl) {
                       );
                     }
                   } else {
+                    hideSkeleton();
+                    showTextSkeleton();
                     const result = await generateText({
                       promptText: prompt,
                       integrationHandle,
@@ -1455,6 +1529,7 @@ export async function openFromAssetModal(assetId, assetUrl) {
                       assetUrl,
                     });
 
+                    hideSkeleton();
                     if (result.success && result.text) {
                       $generatedText.html(result.text).show();
                       renderImageSlider($imagePreviewRight, []);
@@ -1467,6 +1542,7 @@ export async function openFromAssetModal(assetId, assetUrl) {
                     }
                   }
                 } catch (error) {
+                  hideSkeleton();
                   Craft.cp.displayError('Generation failed: ' + error.message);
                 } finally {
                   $btnGenerate.prop('disabled', false);
