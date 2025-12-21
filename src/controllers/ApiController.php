@@ -23,6 +23,11 @@ class ApiController extends Controller
         $fieldType = $this->request->getBodyParam('fieldType', 'input');
         $options = $this->request->getBodyParam('options', []);
 
+        // Extract naturalTone from options if present
+        if (isset($options['naturalTone'])) {
+            $options['naturalTone'] = (bool) $options['naturalTone'];
+        }
+
         if (!$prompt) {
             return $this->asJson(['success' => false, 'error' => 'Prompt is required']);
         }

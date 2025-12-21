@@ -545,7 +545,10 @@
                 body: JSON.stringify({
                     promptText: promptText,
                     integration: integrationHandle,
-                    fieldType: 'input'
+                    fieldType: 'input',
+                    options: {
+                        naturalTone: true
+                    }
                 })
             });
 

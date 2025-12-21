@@ -61,7 +61,7 @@ export async function loadPrompts(filterType = null) {
  * Generate text via API
  */
 export async function generateText(params) {
-    const { promptText, integrationHandle, fieldType, assetId, assetUrl } = params;
+    const { promptText, integrationHandle, fieldType, assetId, assetUrl, naturalTone } = params;
     
     try {
         const body = {
@@ -72,6 +72,10 @@ export async function generateText(params) {
         
         if (assetId) body.assetId = assetId;
         if (assetUrl) body.assetUrl = assetUrl;
+        if (naturalTone !== undefined) {
+            body.options = body.options || {};
+            body.options.naturalTone = naturalTone;
+        }
         
         const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-text'), {
             method: 'POST',

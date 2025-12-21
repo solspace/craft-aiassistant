@@ -76,6 +76,23 @@
                     </div>
                     <div id="aiassistant-image-preview"></div>
                 </div>
+                <div id="aiassistant-text-options" class="aiassistant-text-options aiassistant-hidden">
+                    <div class="field aiassistant-text-options-field">
+                        <div class="heading">
+                            <div class="lightswitch-wrapper">
+                                {{ forms.lightswitch({
+                                    id: 'aiassistant-natural-tone',
+                                    name: 'aiassistant-natural-tone',
+                                    on: true
+                                }) }}
+                            </div>
+                            <div class="heading-content">
+                                <span class="aiassistant-generated-title">{{ 'Natural, conversational tone'|t('ai-assistant') }}</span>
+                                <span class="light">{{ 'Make the text sound more natural and human-like'|t('ai-assistant') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

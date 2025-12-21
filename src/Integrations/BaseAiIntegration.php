@@ -104,17 +104,31 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
         }
     }
 
-    protected function getSystemInstructions(string $fieldType): ?string
+    protected function getSystemInstructions(string $fieldType, array $options = []): ?string
     {
+        $naturalTone = $options['naturalTone'] ?? true;
+
+        $baseInstructions = '';
+
         switch ($fieldType) {
             case 'ckeditor':
             case 'tinymce':
-                return 'You generate content for rich text editors. Respond only with the content value, without quotes, code blocks, explanations, or additional formatting. Use proper HTML tags for formatting (e.g., <h1>, <h2>, <h3> for headers, <p> for paragraphs, <strong> for bold, <em> for italic, <ul><li> for lists, <a href=""> for links). If the text contains HTML tags, preserve them exactly as provided.';
+                $baseInstructions = 'You generate content for rich text editors. Respond only with the content value, without quotes, code blocks, explanations, or additional formatting. Use proper HTML tags for formatting (e.g., <h1>, <h2>, <h3> for headers, <p> for paragraphs, <strong> for bold, <em> for italic, <ul><li> for lists, <a href=""> for links). If the text contains HTML tags, preserve them exactly as provided.';
+
+                break;
 
             case 'input':
             case 'textarea':
             default:
-                return 'You generate text values for content management fields. Respond only with the content value, without quotes, code blocks, explanations, or formatting. Return plain text only, no HTML tags.';
+                $baseInstructions = 'You generate text values for content management fields. Respond only with the content value, without quotes, code blocks, explanations, or formatting. Return plain text only, no HTML tags.';
+
+                break;
         }
+
+        if ($naturalTone) {
+            $baseInstructions .= ' Write in a natural, conversational, and human-sounding tone. Avoid overly formal or robotic language. Use varied sentence structures and natural phrasing.';
+        }
+
+        return $baseInstructions;
     }
 }

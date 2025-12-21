@@ -10,13 +10,13 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 - [x] Inline AI button on supported fields (Title, Plain Text, CKEditor, Redactor, TinyMCE)
 - [x] Two‑column modal (Input Context left, Generated Text right) with rich HTML rendering
 - [x] Lightswitch to include/exclude input context in the prompt
+- [x] Natural, conversational tone option for text generation and rephrasing (enabled by default)
 - [x] Correct HTML handling for CKEditor, TinyMCE, and Redactor when inserting back into the field
 - [x] Prompt management (built‑in and custom) with integration binding and sort order
 - [x] Field‑specific prompts per field with automatic modal preselection
 - [x] Integration management for OpenAI, Google Gemini, Antropic and xAI (enable/disable, API keys, model selection)
 - [x] Quick AI Actions dashboard widget (select prompt, editable prompt text, generate, copy)
 - [x] Craft-native UI components (lightswitch, notices), event-based widget registration
-- [x] Responsive, larger modal with dynamic body height
 - [x] Responsive, larger modal with dynamic body height
 - [x] Image generation for Assets fields
 - [x] Multi-language support
@@ -25,7 +25,6 @@ AI-powered content assistance for Craft CMS with prompt management, multiple pro
 
 - [ ] Per-site settings and field rules
 - [ ] Prompt variables and templating
-- [ ] Batch content processing
 - [ ] Analytics dashboard
 - [ ] SEO content assistant
 - [ ] Commerce integration
@@ -78,9 +77,10 @@ Notes:
 
 1. Open any entry with enabled fields; an inline AI button appears inside the input area
 2. Click the button to open the modal
-3. Pick a prompt, edit “Prompt Text” as needed
-4. Optionally enable “Include input context”
-5. Generate and review in the right column; Insert replaces the field’s content
+3. Pick a prompt, edit "Prompt Text" as needed
+4. Optionally enable "Include input context"
+5. For text generation and rephrasing, toggle "Natural, conversational tone" (enabled by default) to make the output sound more human-like and less robotic
+6. Generate and review in the right column; Insert replaces the field's content
 
 ### Quick AI Actions widget
 
@@ -92,7 +92,7 @@ Notes:
 - `GET /admin/ai-assistant/api/integrations`
 - `GET /admin/ai-assistant/api/prompts`
 - `POST /admin/ai-assistant/api/generate-text`
-- `POST /admin/ai-assistant/api/generate-image` (coming soon)
+- `POST /admin/ai-assistant/api/generate-image`
 
 ## Requirements
 

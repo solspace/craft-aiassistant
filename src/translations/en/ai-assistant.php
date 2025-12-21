@@ -143,4 +143,8 @@ return [
     'Asset Target (Volume or Folder)' => 'Asset Target (Volume or Folder)',
     'Select a volume root or a specific folder. Stored as UID-based source.' => 'Select a volume root or a specific folder. Stored as UID-based source.',
     'These defaults are saved with the prompt and prefill the generation modal when this prompt is used.' => 'These defaults are saved with the prompt and prefill the generation modal when this prompt is used.',
+
+    // Natural Tone Option
+    'Natural, conversational tone' => 'Natural, conversational tone',
+    'Make the text sound more natural and human-like' => 'Make the text sound more natural and human-like',
 ];

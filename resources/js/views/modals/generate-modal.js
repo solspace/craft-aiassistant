@@ -90,6 +90,8 @@ export async function openGenerateModal(field) {
         );
         const $skeletonLoader = $body.find('#aiassistant-skeleton-loader');
         const $imageSkeletonLoader = $body.find('#aiassistant-image-skeleton-loader');
+        const $textOptions = $body.find('#aiassistant-text-options');
+        const $naturalTone = $body.find('#aiassistant-natural-tone');
 
         // Helper functions for skeleton loader display
         const showTextSkeleton = () => {
@@ -220,6 +222,21 @@ export async function openGenerateModal(field) {
                 }
               }
             }
+            // Initialize natural tone lightswitch
+            if ($naturalTone && $naturalTone.length) {
+              const $lsContainer = $naturalTone.closest('.lightswitch');
+              if (
+                $lsContainer &&
+                $lsContainer.length &&
+                !$lsContainer.data('lightswitch')
+              ) {
+                try {
+                  new Garnish.LightSwitch($lsContainer);
+                } catch (e) {
+                  /* noop */
+                }
+              }
+            }
 
             // Select field-specific prompt if available
             if (
@@ -318,14 +335,24 @@ export async function openGenerateModal(field) {
             // Toggle image vs text mode, and wire handlers accordingly
             function toggleImageMode(type) {
               const showImageOptions = shouldShowImageOptions(type);
+              // Show natural tone checkbox for text-related prompts (generate, rephrase, translate)
+              const textPromptTypes = ['generate', 'rephrase', 'translate'];
+              const isTextPrompt = textPromptTypes.includes((type || '').toLowerCase());
+              
+              // Always show the right column for both image and text options
+              if ($imageCol.length) {
+                $imageCol.show();
+                $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
+              }
+              if ($promptLeft.length) {
+                $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
+              }
+              
               if (showImageOptions) {
-                if ($imageCol.length) {
-                  $imageCol.show();
-                  $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
-                }
+                // Show image options, hide text options
                 $imageOptions.show();
-                if ($promptLeft.length) {
-                  $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
+                if ($textOptions.length) {
+                  $textOptions.addClass('aiassistant-hidden').hide();
                 }
                 $comparisonSection.show();
                 // Switch right panel to image preview mode
@@ -525,13 +552,18 @@ export async function openGenerateModal(field) {
                   }
                 });
               } else {
+                // Hide image options, show text options
                 $imageOptions.hide();
+                if ($textOptions.length) {
+                  $textOptions.removeClass('aiassistant-hidden').show();
+                }
+                // Keep the right column visible for text options
                 if ($imageCol.length) {
-                  $imageCol.hide();
-                  $imageCol.css({ flex: '', maxWidth: '' });
+                  $imageCol.show();
+                  $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
                 }
                 if ($promptLeft.length) {
-                  $promptLeft.css({ flex: '0 0 100%', maxWidth: '100%' });
+                  $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
                 }
                 $comparisonSection.show();
                 // Rewire handlers back to text generation
@@ -633,6 +665,7 @@ export async function openGenerateModal(field) {
                 $integrationSelect.val(promptIntegration);
               }
 
+              // Set initial state for natural tone checkbox visibility
               toggleImageMode(type);
               if (shouldShowImageOptions(type)) {
                 const selId = String(selectedVal);
@@ -843,10 +876,23 @@ function setupGenerateHandler(
 
       const fieldType = getFieldType(inputObj.element);
 
+      // Read natural tone checkbox state
+      let naturalTone = true; // default to enabled
+      const $naturalToneEl = $btn.closest('.modal').find('#aiassistant-natural-tone');
+      if ($naturalToneEl && $naturalToneEl.length) {
+        const $ls = $naturalToneEl.closest('.lightswitch');
+        if ($ls && $ls.length) {
+          naturalTone = $ls.hasClass('on');
+        } else if ($naturalToneEl.is(':checkbox')) {
+          naturalTone = $naturalToneEl.is(':checked');
+        }
+      }
+
       const result = await generateText({
         promptText: fullPrompt,
         integrationHandle,
         fieldType,
+        naturalTone,
       });
 
       if ($skeletonLoader.length) {

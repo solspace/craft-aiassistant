@@ -87,10 +87,14 @@
 
 .aiassistant-prompt-left {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .aiassistant-image-col {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Image Options Container */
@@ -103,6 +107,32 @@
 
 #aiassistant-image-options.show {
   display: block;
+}
+
+/* Text Options Container */
+#aiassistant-text-options {
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.aiassistant-text-options-field {
+  margin-bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.aiassistant-text-options-field .heading {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .aiassistant-image-options-row {

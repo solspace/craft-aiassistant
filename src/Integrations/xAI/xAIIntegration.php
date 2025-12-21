@@ -45,7 +45,7 @@ class xAIIntegration extends BaseAiIntegration
 
             // Determine system instructions based on field type
             $fieldType = $options['fieldType'] ?? 'input';
-            $systemInstructions = $this->getSystemInstructions($fieldType);
+            $systemInstructions = $this->getSystemInstructions($fieldType, $options);
 
             $messages = [];
             if ($systemInstructions) {
