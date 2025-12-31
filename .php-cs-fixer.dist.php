@@ -21,6 +21,12 @@ return (new PhpCsFixer\Config())
         'ternary_to_null_coalescing' => true,
         'multiline_whitespace_before_semicolons' => ['strategy' => 'new_line_for_chained_calls'],
         'php_unit_internal_class' => false,
+        'no_unused_imports' => true,
+        'ordered_imports' => [
+            'imports_order' => ['class', 'function', 'const'],
+            'sort_algorithm' => 'alpha',
+        ],
+        'fully_qualified_strict_types' => false,
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
