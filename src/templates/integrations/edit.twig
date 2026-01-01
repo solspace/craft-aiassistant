@@ -20,7 +20,7 @@
 {% set crumbs = [
   { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
   { label: 'Integrations'|t('ai-assistant'), url: url('ai-assistant/integrations') },
-  { label: (integration.id ? 'Edit' : 'New'), url: url('ai-assistant/integrations' ~ (integration.id ? '/' ~ integration.id : '/edit')) },
+  { label: (integration.id ? 'Edit'|t('app') : 'New'|t('app')), url: url('ai-assistant/integrations' ~ (integration.id ? '/' ~ integration.id : '/edit')) },
 ] %}
 
 {% block actionButton %}
@@ -87,7 +87,7 @@
         <div class="field">
             {{ forms.autosuggestField({
                 label: "API Key"|t('ai-assistant'),
-                instructions: "Enter your API key for this AI provider. You can also reference an environment variable, e.g. `{env:MY_API_TOKEN}`."|t('ai-assistant'),
+                instructions: "Enter your API key for this AI provider. You can also reference an environment variable, e.g. `$MY_API_TOKEN`."|t('ai-assistant'),
                 id: 'apiKey',
                 name: 'apiKey',
                 value: integration.apiKey,
@@ -101,7 +101,7 @@
         <div class="field">
             {{ forms.autosuggestField({
                 label: "Model"|t('ai-assistant'),
-                instructions: "Enter the model identifier to use. A sensible default will be set when you change Type. You can also reference an environment variable, e.g. `{env:MY_MODEL}`."|t('ai-assistant'),
+                instructions: "Enter the model identifier to use. A sensible default will be set when you change Type. You can also reference an environment variable, e.g. `$MY_MODEL`."|t('ai-assistant'),
                 id: 'model',
                 name: 'model',
                 value: integration.model ?: (integration.type == 'openai' ? 'gpt-5-nano' : (integration.type == 'gemini' ? 'gemini-1.5-flash' : (integration.type == 'anthropic' ? 'claude-3-5-haiku-latest' : (integration.type == 'xai' ? 'grok-3-mini' : '')))),

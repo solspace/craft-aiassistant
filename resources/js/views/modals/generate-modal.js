@@ -367,7 +367,7 @@ export async function openGenerateModal(field) {
                 if ($genTitle.length) $genTitle.text('Generated Image');
                 if ($genInstr.length)
                   $genInstr.text(
-                    'Preview the generated image(s). Click Save to persist to Assets.'
+                    "Preview the generated images below. Click 'Save' to store them in Assets."
                   );
                 $genText.hide();
                 // Ensure image preview container is visible

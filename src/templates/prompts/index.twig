@@ -2,7 +2,7 @@
 
 {% import "_includes/forms" as forms %}
 
-{% set title = "AI Assistant Prompts"|t('ai-assistant') %}
+{% set title = "Prompts"|t('ai-assistant') %}
 {% set selectedSubnavItem = 'prompts' %}
 {% set crumbs = [
   { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
@@ -36,14 +36,14 @@
                     {% for prompt in prompts %}
                         <tr class="{% if prompt.isBuiltIn %}ai-assistant-builtin-prompt{% endif %}">
                             <td>
-                                <strong>{{ prompt.name }}</strong>
+                                <strong>{{ prompt.name|t('ai-assistant') }}</strong>
                                 {% if prompt.isBuiltIn %}
                                     <span class="ai-assistant-builtin-badge">{{ "Built-in"|t('ai-assistant') }}</span>
                                 {% endif %}
                                 <div class="ai-assistant-prompt-text">{{ prompt.promptText|length > 80 ? prompt.promptText|slice(0, 80) ~ '…' : prompt.promptText }}</div>
                             </td>
                             <td>
-                                <span class="ai-assistant-type-badge ai-assistant-type-{{ prompt.type }}">{{ prompt.type|title }}</span>
+                                <span class="ai-assistant-type-badge ai-assistant-type-{{ prompt.type }}">{{ prompt.type|title|t('ai-assistant') }}</span>
                             </td>
                             <td>
                                 {% if prompt.isBuiltIn %}

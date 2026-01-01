@@ -19,10 +19,11 @@
   justify-content: center;
   width: 20px;
   height: 20px;
+  color: black;
 }
 
-.aiassistant-modal .header h2 #aiassistant-modal-text,
-.ai-assistant-prompt-modal .header #aiassistant-modal-text {
+.aiassistant-modal .header h2 span#aiassistant-modal-text,
+.ai-assistant-prompt-modal .header h2 span#aiassistant-prompt-modal-text {
   width: auto;
   height: auto;
 }
