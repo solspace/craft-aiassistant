@@ -3,6 +3,7 @@
 namespace Solspace\AIAssistant\models;
 
 use craft\base\Model;
+use Solspace\AIAssistant\AiAssistant;
 
 class Prompt extends Model
 {
@@ -18,10 +19,10 @@ class Prompt extends Model
     public ?string $dateUpdated = null;
     public ?string $uid = null;
 
-    // Image-specific options (for type = image) — model comes from Integration
-    public ?string $imageSize = null;        // e.g., 1024x1024
-    public ?int $imageCount = null;          // e.g., 1
-    public ?string $assetTarget = null;      // "volume:{uid}" or "folder:{uid}"
+    // Image-specific options
+    public ?string $imageSize = null;
+    public ?int $imageCount = null;
+    public ?string $assetTarget = null;
 
     public function rules(): array
     {
@@ -65,5 +66,17 @@ class Prompt extends Model
             'gpt-4' => 'GPT-4',
             'gpt-4-turbo' => 'GPT-4 Turbo',
         ];
+    }
+
+    public function getIntegrationName(): ?string
+    {
+        if (!$this->integrationHandle) {
+            return null;
+        }
+
+        $integration = AiAssistant::getIntegrationService()
+            ->getIntegrationByHandle($this->integrationHandle);
+
+        return $integration?->name;
     }
 }

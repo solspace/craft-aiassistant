@@ -74,8 +74,8 @@
                             {{ forms.selectField({
                                 id: 'aiassistant-asset-target',
                                 name: 'aiassistant-asset-target',
-                                label: 'Asset Target (Volume or Folder)'|t('ai-assistant'),
-                                instructions: 'Where to save images.'|t('ai-assistant'),
+                                label: 'Asset Destination'|t('ai-assistant'),
+                                instructions: 'Select the volume or folder where generated images will be saved.'|t('ai-assistant'),
                                 options: assetTargetOptions ?? [],
                                 value: defaultAssetTargetValue ?? '',
                             }) }}

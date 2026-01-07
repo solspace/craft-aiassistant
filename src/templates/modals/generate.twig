@@ -45,6 +45,16 @@
             <div id="aiassistant-image-col" class="aiassistant-image-col">
                 <div id="aiassistant-image-options">
                     <div class="aiassistant-image-options-row">
+                        <div class="asset-target-field">
+                            {{ forms.selectField({
+                                id: 'aiassistant-asset-target',
+                                name: 'aiassistant-asset-target',
+                                label: 'Asset Destination'|t('ai-assistant'),
+                                instructions: 'Select the volume or folder where generated images will be saved.'|t('ai-assistant'),
+                                options: assetTargetOptions ?? [],
+                                value: defaultAssetTargetValue ?? '',
+                            }) }}
+                        </div>
                         <div class="size-field-wrap">
                             {{ forms.textField({
                                 id: 'aiassistant-image-size',
@@ -61,16 +71,6 @@
                                 label: 'Number of Images'|t('ai-assistant'),
                                 value: 1,
                                 instructions: 'Choose how many image variations to generate.'|t('ai-assistant')
-                            }) }}
-                        </div>
-                        <div class="asset-target-field">
-                            {{ forms.selectField({
-                                id: 'aiassistant-asset-target',
-                                name: 'aiassistant-asset-target',
-                                label: 'Asset Destination'|t('ai-assistant'),
-                                instructions: 'Select the volume or folder where generated images will be saved.'|t('ai-assistant'),
-                                options: assetTargetOptions ?? [],
-                                value: defaultAssetTargetValue ?? '',
                             }) }}
                         </div>
                     </div>

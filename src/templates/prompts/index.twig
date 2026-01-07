@@ -49,7 +49,7 @@
                                 {% if prompt.isBuiltIn %}
                                     {{ "Any"|t('ai-assistant') }}
                                 {% else %}
-                                    {{ prompt.integrationHandle ?: ("Default"|t('ai-assistant')) }}
+                                    {{ prompt.integrationName ?: ("Default"|t('ai-assistant')) }}
                                 {% endif %}
                             </td>
                             <td>

@@ -45,6 +45,7 @@
     <div class="field">
       {{ forms.textField({
         label: "Prompt Name"|t('ai-assistant'),
+        instructions: "Give your prompt a descriptive name."|t('ai-assistant'),
         id: 'name',
         name: 'name',
         value: prompt.name,
@@ -55,6 +56,7 @@
     <div class="field">
       {{ forms.selectField({
         label: "Type"|t('ai-assistant'),
+        instructions: "Select the type of prompt."|t('ai-assistant'),
         id: 'type',
         name: 'type',
         value: prompt.type,
@@ -71,13 +73,24 @@
     <div id="image-options" class="field aiassistant-hidden">
       <div class="flex">
         <div class="field">
+          {{ forms.selectField({
+            label: ("Asset Destination"|t('ai-assistant')),
+            instructions: ("Select the volume or folder where generated images will be saved."|t('ai-assistant')),
+            id: 'assetTarget',
+            name: 'assetTarget',
+            value: prompt.assetTarget ? prompt.assetTarget : (defaultAssetTargetValue ?? ''),
+            options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
+            required: true,
+          }) }}
+        </div>
+        <div class="field">
           {{ forms.textField({
-            label: ("Size"|t('ai-assistant')),
             id: 'imageSize',
             name: 'imageSize',
+            label: 'Image Size'|t('ai-assistant'),
             value: prompt.imageSize ?? '',
             placeholder: '1024x1024',
-            instructions: ("Enter WidthxHeight. Common presets: square 1024x1024, landscape 1792x1024, portrait 1024x1792, mobile 768x1365."|t('ai-assistant'))
+            instructions: ("Specify the image dimensions (width x height), for example `1024x1024`."|t('ai-assistant'))
           }) }}
         </div>
         <div class="field">
@@ -87,20 +100,7 @@
             name: 'imageCount',
             value: prompt.imageCount ?? 1,
             type: 'number',
-            instructions: ("Number of images to generate. Common: 1. Some providers limit to 1–4."|t('ai-assistant'))
-          }) }}
-        </div>
-      </div>
-      <div class="flex">
-        <div class="field">
-          {{ forms.selectField({
-            label: ("Asset Target (Volume or Folder)"|t('ai-assistant')),
-            instructions: ("Select a volume root or a specific folder. Stored as UID-based source."|t('ai-assistant')),
-            id: 'assetTarget',
-            name: 'assetTarget',
-            value: prompt.assetTarget ? prompt.assetTarget : (defaultAssetTargetValue ?? ''),
-            options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
-            required: true,
+            instructions: ("Number of images to generate, e.g. `1`. Some providers limit to `4`."|t('ai-assistant'))
           }) }}
         </div>
       </div>
@@ -110,6 +110,7 @@
     <div class="field">
       {{ forms.textareaField({
         label: "Prompt Text"|t('ai-assistant'),
+        instructions: "Enter the prompt text that will be sent to the AI. You can use variables and context placeholders."|t('ai-assistant'),
         id: 'promptText',
         name: 'promptText',
         value: prompt.promptText,

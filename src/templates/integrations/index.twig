@@ -23,6 +23,7 @@
                 <thead>
                     <tr>
                         <th>{{ "Name"|t('ai-assistant') }}</th>
+                        <th>{{ "Handle"|t('app') }}</th>
                         <th>{{ "Type"|t('ai-assistant') }}</th>
                         <th>{{ "Model"|t('ai-assistant') }}</th>
                         <th>{{ "Test Connection"|t('ai-assistant') }}</th>
@@ -37,6 +38,7 @@
                                     {{ integration.name }}
                                 </a>
                             </td>
+                            <td>{{ integration.handle }}</td>
                             <td>{{ integration.type|title }}</td>
                             <td>{{ integration.model }}</td>
                             <td>
