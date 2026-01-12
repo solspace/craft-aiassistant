@@ -60,6 +60,7 @@ class ApiController extends Controller
         $dryRun = (bool) $this->request->getBodyParam('dryRun', false);
         $assetUrl = $this->request->getBodyParam('assetUrl');
         $assetId = $this->request->getBodyParam('assetId');
+        $promptName = $this->request->getBodyParam('promptName', '');
 
         if (!$prompt) {
             return $this->asJson(['success' => false, 'error' => 'Prompt is required']);
@@ -109,10 +110,14 @@ class ApiController extends Controller
             if ($dryRun) {
                 $previews[] = $imageUrl;
             } else {
-                $asset = $imageService->createFromRemoteUrl($imageUrl, null, $folderId ? (int) $folderId : null, null, [
-                    'title' => mb_substr($revisedPrompt ?? $prompt, 0, 60),
-                ]);
-                if ($asset) {
+                // Create asset first
+                $asset = $imageService->createFromRemoteUrl($imageUrl, null, $folderId ? (int) $folderId : null, null, []);
+                if ($asset && $asset->id) {
+                    // Extract identifier from filename (e.g., "ai-image-1768226822-3b5b77db.png" -> "1768226822-3b5b77db")
+                    $title = $this->generateImageTitleFromFilename($asset->filename, $asset->id);
+                    $asset->title = $title;
+                    \Craft::$app->getElements()->saveElement($asset);
+
                     $assets[] = [
                         'id' => $asset->id,
                         'url' => $asset->getUrl(),
@@ -154,11 +159,16 @@ class ApiController extends Controller
         $assets = [];
         // Resolve folderId from assetTarget
         $folderId = $assetTarget ? $this->resolveFolderIdFromAssetTarget($assetTarget) : null;
-        foreach ($urls as $u) {
-            $asset = $imageService->createFromRemoteUrl((string) $u, null, $folderId ? (int) $folderId : null, null, [
-                'title' => mb_substr($title, 0, 60),
-            ]);
-            if ($asset) {
+        $urlCount = \count($urls);
+        foreach ($urls as $index => $u) {
+            // Create asset first
+            $asset = $imageService->createFromRemoteUrl((string) $u, null, $folderId ? (int) $folderId : null, null, []);
+            if ($asset && $asset->id) {
+                // Extract identifier from filename (e.g., "ai-image-1768226822-3b5b77db.png" -> "1768226822-3b5b77db")
+                $title = $this->generateImageTitleFromFilename($asset->filename, $asset->id);
+                $asset->title = $title;
+                \Craft::$app->getElements()->saveElement($asset);
+
                 $assets[] = ['id' => $asset->id, 'url' => $asset->getUrl()];
             }
         }
@@ -386,6 +396,26 @@ class ApiController extends Controller
         } catch (\Throwable $e) {
             return \Craft::$app->getResponse()->setStatusCode(500, 'Failed to stream asset');
         }
+    }
+
+    /**
+     * Generate image title from filename or fallback to asset ID.
+     *
+     * @param string $filename The asset filename (e.g., "ai-image-1768226822-3b5b77db.png")
+     * @param int    $assetId  The asset ID as fallback
+     *
+     * @return string The title (e.g., "AI Image 1768226822-3b5b77db" or "AI Image 123")
+     */
+    private function generateImageTitleFromFilename(string $filename, int $assetId): string
+    {
+        // Try to extract identifier from filename pattern: ai-image-{timestamp}-{hash}.{ext}
+        // Example: "ai-image-1768226822-3b5b77db.png" -> "1768226822-3b5b77db"
+        if (preg_match('/^ai-image-(\d+-[a-f0-9]+)\./', $filename, $matches)) {
+            return 'AI Image '.$matches[1];
+        }
+
+        // Fallback: use asset ID
+        return 'AI Image '.$assetId;
     }
 
     private function resolveFolderIdFromAssetTarget(?string $assetTarget): ?int

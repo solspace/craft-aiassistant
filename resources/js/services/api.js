@@ -103,7 +103,7 @@ export async function generateText(params) {
  * Generate image via API
  */
 export async function generateImage(params) {
-    const { prompt, integration, size, count, assetTarget, assetId, assetUrl, dryRun } = params;
+    const { prompt, integration, size, count, assetTarget, assetId, assetUrl, dryRun, promptName } = params;
     
     try {
         const body = {
@@ -118,6 +118,7 @@ export async function generateImage(params) {
         if (size) body.size = size;
         if (assetId) body.assetId = assetId;
         if (assetUrl) body.assetUrl = assetUrl;
+        if (promptName) body.promptName = promptName;
         
         const response = await fetch(Craft.getCpUrl('ai-assistant/api/generate-image'), {
             method: 'POST',
