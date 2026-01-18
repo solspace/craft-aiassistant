@@ -53,6 +53,8 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  z-index: 1001;
+  background: var(--ui-bg, #ffffff);
 }
 
 /* Layout Styles */
@@ -234,6 +236,7 @@
 .aiassistant-input-context-field .input {
   position: relative;
   min-height: 200px;
+  overflow: hidden;
 }
 
 /* Asset Preview */
@@ -297,27 +300,35 @@
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  background: #c6d0df;
+  color: #29323d;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   z-index: 10;
   transition: background-color 0.2s ease, opacity 0.2s ease;
   /* Prevent movement on hover */
   top: 50%;
   transform: translateY(-50%);
+  padding: 0;
+}
+
+.aiassistant-image-slider-button span[data-icon] {
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .aiassistant-image-slider-button:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.7);
-  /* Remove transform to prevent movement */
+  background: #b0bccd;
 }
 
 .aiassistant-image-slider-button:disabled {
-  opacity: 0.3;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -363,12 +374,15 @@
   position: absolute;
   bottom: 10px;
   right: 14px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.95);
+  color: #6b7280;
   font-size: 12px;
-  padding: 2px 8px;
+  font-weight: 500;
+  padding: 4px 10px;
   border-radius: 12px;
   display: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .aiassistant-image-slider-counter.show {
@@ -380,8 +394,8 @@
   display: none;
 }
 
-#aiassistant-text-loading.show {
-  display: block;
+#aiassistant-text-loading:not(.aiassistant-hidden) {
+  display: inline-flex;
 }
 
 /* Skeleton Loader */
@@ -394,11 +408,12 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  z-index: 100;
+  z-index: 10;
   border-radius: 4px;
   padding: 12px;
   box-sizing: border-box;
   border: 1px solid #e5e7eb;
+  overflow: hidden;
 }
 
 .aiassistant-skeleton-loader.aiassistant-hidden {
@@ -485,11 +500,6 @@
 
 /* Image Skeleton Loader */
 .aiassistant-image-skeleton-loader {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   background: #f9fafb !important;
   display: flex !important;
   align-items: center;

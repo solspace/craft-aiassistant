@@ -115,11 +115,15 @@
                         <div class="input">
                             <div id="aiassistant-text-generated-rich" class="aiassistant-rich-editor aiassistant-hidden" contenteditable="true" role="textbox" aria-multiline="true"></div>
                             <div id="aiassistant-image-preview-right" class="aiassistant-image-slider aiassistant-hidden">
-                                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('ai-assistant') }}">‹</button>
+                                <button type="button" class="aiassistant-image-slider-button prev" aria-label="{{ 'Previous image'|t('ai-assistant') }}">
+                                    <span data-icon="leftangle"></span>
+                                </button>
                                 <div class="aiassistant-image-slider-viewport">
                                     <img class="aiassistant-image-slider-img" src="" alt="{{ 'Generated image preview'|t('ai-assistant') }}" />
                                 </div>
-                                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('ai-assistant') }}">›</button>
+                                <button type="button" class="aiassistant-image-slider-button next" aria-label="{{ 'Next image'|t('ai-assistant') }}">
+                                    <span data-icon="rightangle"></span>
+                                </button>
                                 <div class="aiassistant-image-slider-counter aiassistant-hidden">0 / 0</div>
                             </div>
                             <!-- Skeleton Loader -->
