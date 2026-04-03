@@ -147,8 +147,8 @@
     width: 34px;
     height: 34px;
     border-radius: 17px;
-    border: 1px solid var(--hairline-color, #d1d5db);
-    background: var(--light-text-color, #6b7280);
+    border: 1px solid #d8d8d8;
+    background: #ddd;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -169,7 +169,6 @@
 
 .aiassistant-image-slider-counter {
     font-size: 12px;
-    color: var(--medium-text-color, #4b5563);
     text-align: center;
     flex: 1 1 100%;
 }

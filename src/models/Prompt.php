@@ -75,7 +75,8 @@ class Prompt extends Model
         }
 
         $integration = AiAssistant::getIntegrationService()
-            ->getIntegrationByHandle($this->integrationHandle);
+            ->getIntegrationByHandle($this->integrationHandle)
+        ;
 
         return $integration?->name;
     }
