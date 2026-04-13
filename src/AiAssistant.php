@@ -72,6 +72,7 @@ class AiAssistant extends Plugin
     public function init(): void
     {
         parent::init();
+        \Yii::setAlias('@ai-assistant', __DIR__);
         self::$plugin = $this;
 
         $this->initializeServices();

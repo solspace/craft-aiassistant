@@ -17,7 +17,7 @@ class QuickAiActionsWidget extends Widget
 
     public static function icon(): ?string
     {
-        return null; // Use Craft's fallback icon system
+        return '@ai-assistant/icon-mask.svg';
     }
 
     public static function maxColspan(): ?int
