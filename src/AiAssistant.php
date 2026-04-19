@@ -209,6 +209,7 @@ class AiAssistant extends Plugin
                 'ai-assistant/api/get-asset-url' => 'ai-assistant/api/get-asset-url',
                 'ai-assistant/api/stream-asset' => 'ai-assistant/api/stream-asset',
                 'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
+                'ai-assistant/integrations/connect-solspaceai' => 'ai-assistant/integrations/connect-solspaceai',
                 'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
 
                 // UI endpoints

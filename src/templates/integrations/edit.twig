@@ -12,7 +12,10 @@
     apiKey: '',
     model: '',
     maxTokens: 0,
-    temperature: 1.0
+    temperature: 1.0,
+    apiBaseUrl: 'https://ai.solspace.net/v1',
+    contactEmail: '',
+    siteUrl: '',
 } %}
 
 {% set title = integration.id ? "Edit Integration"|t('ai-assistant') : "New Integration"|t('ai-assistant') %}
@@ -24,7 +27,7 @@
 ] %}
 
 {% block actionButton %}
-    <button type="button" class="btn submit" onclick="document.getElementById('integration-form').submit()">{{ "Save"|t('app') }}</button>
+    <button type="button" class="btn submit" id="integration-save-btn" onclick="document.getElementById('integration-form').submit()">{{ "Save"|t('app') }}</button>
 {% endblock %}
 
 {% block content %}
@@ -66,80 +69,268 @@
             }) }}
         </div>
 
-        <div class="field">
-            {{ forms.selectField({
-                label: "Type"|t('app'),
-                instructions: "Choose the AI provider for this integration."|t('ai-assistant'),
-                id: 'type',
-                name: 'type',
-                value: integration.type,
-                options: [
-                    { label: 'OpenAI', value: 'openai' },
-                    { label: 'Google Gemini', value: 'gemini' },
-                    { label: 'Anthropic Claude', value: 'anthropic' },
-                    { label: 'xAI Grok', value: 'xai' },
-                    { label: 'Replicate', value: 'replicate' },
-                ],
-                required: true,
-            }) }}
-        </div>
+        {% set forceSolspaceAi = craft.app.request.getQueryParam('type') == 'solspaceai' %}
+        {% if integration.type == 'solspaceai' or forceSolspaceAi %}
+            {# Keep the normal "Type" UI, but lock it to SolspaceAI #}
+            <input type="hidden" name="type" value="solspaceai">
+            <div class="field">
+                {{ forms.selectField({
+                    label: "Type"|t('app'),
+                    instructions: "Select which AI provider this integration will use."|t('ai-assistant'),
+                    id: 'type',
+                    name: 'typeLocked',
+                    value: 'solspaceai',
+                    options: [
+                        { label: 'SolspaceAI', value: 'solspaceai' },
+                    ],
+                    required: true,
+                    disabled: true,
+                }) }}
+            </div>
+        {% else %}
+            <div class="field">
+                {{ forms.selectField({
+                    label: "Type"|t('app'),
+                    instructions: "Select which AI provider this integration will use."|t('ai-assistant'),
+                    id: 'type',
+                    name: 'type',
+                    value: integration.type,
+                    options: [
+                        { label: 'OpenAI', value: 'openai' },
+                        { label: 'Google Gemini', value: 'gemini' },
+                        { label: 'Anthropic Claude', value: 'anthropic' },
+                        { label: 'xAI Grok', value: 'xai' },
+                        { label: 'Replicate', value: 'replicate' },
+                    ],
+                    required: true,
+                }) }}
+            </div>
+        {% endif %}
 
-        <div class="field">
-            {{ forms.autosuggestField({
-                label: "API Key"|t('ai-assistant'),
-                instructions: "Enter your API key for this AI provider. You can also reference an environment variable, e.g. `{env:MY_API_TOKEN}`."|t('ai-assistant'),
-                id: 'apiKey',
-                name: 'apiKey',
-                value: integration.apiKey,
-                required: true,
-                suggestEnvVars: true,
-                suggestAliases: false,
-                class: 'text fullwidth',
-            }) }}
-        </div>
-
-        <div class="field">
-            {{ forms.autosuggestField({
-                label: "Model"|t('ai-assistant'),
-                instructions: "Enter the model identifier to use. A sensible default will be set when you change Type. You can also reference an environment variable, e.g. `{env:MY_MODEL}`."|t('ai-assistant'),
-                id: 'model',
-                name: 'model',
-                value: integration.model ?: (integration.type == 'openai' ? 'gpt-5-nano' : (integration.type == 'gemini' ? 'gemini-1.5-flash' : (integration.type == 'anthropic' ? 'claude-3-5-haiku-latest' : (integration.type == 'xai' ? 'grok-3-mini' : '')))),
-                required: true,
-                placeholder: 'e.g., gpt-5-nano',
-                suggestEnvVars: true,
-                suggestAliases: false,
-                class: 'text fullwidth',
-            }) }}
-        </div>
-
-        <div class="field">
+        <div class="field solspaceai-only" style="display: none;">
+            {{ hiddenInput('apiBaseUrl', 'https://ai.solspace.net/v1') }}
             {{ forms.textField({
-                label: "Max Tokens"|t('ai-assistant'),
-                instructions: "For supported models, this limits response length. Leave blank or `0` to use provider default. Some models (e.g., reasoning models) ignore Max Tokens."|t('ai-assistant'),
-                id: 'maxTokens',
-                name: 'maxTokens',
-                value: integration.maxTokens,
-                type: 'number',
-                min: 0,
-                max: 1048576,
-                required: false,
-                placeholder: '0 = provider default'
+                label: "SolspaceAI API base URL"|t('ai-assistant'),
+                instructions: "The SolspaceAI endpoint used for this integration."|t('ai-assistant'),
+                id: 'apiBaseUrlLocked',
+                name: 'apiBaseUrlLocked',
+                value: 'https://ai.solspace.net/v1',
+                readonly: true,
+                disabled: true,
             }) }}
         </div>
 
-        <div class="field" id="temperature-field">
+        <div class="field solspaceai-only" style="display: none;">
             {{ forms.textField({
-                label: "Temperature"|t('ai-assistant'),
-                instructions: "Controls randomness (`0.0` = deterministic, `2.0` = very random)."|t('ai-assistant'),
-                id: 'temperature',
-                name: 'temperature',
-                value: integration.temperature,
-                type: 'number',
-                min: 0.0,
-                max: 2.0,
-                step: 0.1,
+                label: "Contact email"|t('ai-assistant'),
+                instructions: "Used to connect your site to SolspaceAI."|t('ai-assistant'),
+                id: 'contactEmail',
+                name: 'contactEmail',
+                value: integration.contactEmail,
+                type: 'email',
             }) }}
+        </div>
+
+        <div class="field solspaceai-only" style="display: none;">
+            {{ forms.textField({
+                label: "Site URL"|t('ai-assistant'),
+                instructions: "Public site URL sent to SolspaceAI. Include `https://` (e.g. `https://yoursite.com`). Host-only values like `example.com` are upgraded automatically on connect."|t('ai-assistant'),
+                id: 'siteUrl',
+                name: 'siteUrl',
+                value: integration.siteUrl,
+                placeholder: 'https://example.com',
+            }) }}
+        </div>
+
+        {% if integration.type == 'solspaceai' %}
+            <div class="field solspaceai-only">
+                <p class="instructions">{{ "Saving will connect to SolspaceAI automatically."|t('ai-assistant') }}</p>
+                {% if integration.id %}
+                    <button type="button" class="btn" id="connect-solspaceai-btn">{{ "Reconnect to SolspaceAI"|t('ai-assistant') }}</button>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {# SolspaceAI: key + model + limits come from SolspaceAI / LiteLLM (like Freeform). #}
+        {% set isSolspaceAi = integration.type == 'solspaceai' %}
+        <div class="solspaceai-hidden-submit"{% if not isSolspaceAi %} style="display:none;"{% endif %}>
+            <input type="hidden" name="apiKey" value="{{ integration.apiKey }}" class="solspaceai-h-apiKey"{{ not isSolspaceAi ? ' disabled' }}>
+            <input type="hidden" name="model" value="" class="solspaceai-h-model"{{ not isSolspaceAi ? ' disabled' }}>
+            <input type="hidden" name="maxTokens" value="0" class="solspaceai-h-maxTokens"{{ not isSolspaceAi ? ' disabled' }}>
+            <input type="hidden" name="temperature" value="{{ integration.temperature ?: '0.7' }}" class="solspaceai-h-temperature"{{ not isSolspaceAi ? ' disabled' }}>
+        </div>
+
+        <div class="non-solspaceai-credentials"{% if isSolspaceAi %} style="display:none;"{% endif %}>
+            <div class="field" id="api-key-field">
+                {{ forms.autosuggestField({
+                    label: "API Key"|t('ai-assistant'),
+                    instructions: "Enter your API key for this AI provider. You can also reference an environment variable, e.g. `$MY_API_TOKEN`."|t('ai-assistant'),
+                    id: 'apiKey',
+                    name: 'apiKey',
+                    value: integration.apiKey,
+                    required: true,
+                    disabled: isSolspaceAi,
+                    suggestEnvVars: true,
+                    suggestAliases: false,
+                    class: 'text fullwidth',
+                }) }}
+            </div>
+
+            <div class="field">
+                {{ forms.autosuggestField({
+                    label: "Model"|t('ai-assistant'),
+                    instructions: "Specify the model to use. A default is set when you choose a provider. Environment variables are supported (e.g. `$MY_MODEL`)."|t('ai-assistant'),
+                    id: 'model',
+                    name: 'model',
+                    value: integration.model ?: (integration.type == 'openai' ? 'gpt-5-nano' : (integration.type == 'gemini' ? 'gemini-1.5-flash' : (integration.type == 'anthropic' ? 'claude-3-5-haiku-latest' : (integration.type == 'xai' ? 'grok-3-mini' : '')))),
+                    required: true,
+                    disabled: isSolspaceAi,
+                    placeholder: 'e.g., gpt-5-nano',
+                    suggestEnvVars: true,
+                    suggestAliases: false,
+                    class: 'text fullwidth',
+                }) }}
+            </div>
+
+            <div class="field">
+                {{ forms.textField({
+                    label: "Max Tokens"|t('ai-assistant'),
+                    instructions: "Limits response length for supported models. Leave blank or `0` to use the provider default. Some models may ignore this setting."|t('ai-assistant'),
+                    id: 'maxTokens',
+                    name: 'maxTokens',
+                    value: integration.maxTokens,
+                    type: 'number',
+                    min: 0,
+                    max: 1048576,
+                    required: false,
+                    disabled: isSolspaceAi,
+                    placeholder: '0 = provider default'
+                }) }}
+            </div>
+
+            <div class="field" id="temperature-field">
+                {{ forms.textField({
+                    label: "Temperature"|t('ai-assistant'),
+                    instructions: "Controls randomness (`0.0` = deterministic, `2.0` = very random)."|t('ai-assistant'),
+                    id: 'temperature',
+                    name: 'temperature',
+                    value: integration.temperature,
+                    type: 'number',
+                    min: 0.0,
+                    max: 2.0,
+                    step: 0.1,
+                    disabled: isSolspaceAi,
+                }) }}
+            </div>
         </div>
     </form>
+
+    {% js %}
+    (function() {
+        function aiAssistantIntegrationTypeUi() {
+            var typeEl = document.getElementById('type');
+            if (!typeEl) return;
+            var type = typeEl.value;
+            var sol = (type === 'solspaceai');
+            document.querySelectorAll('.solspaceai-only').forEach(function(el) {
+                el.style.display = sol ? '' : 'none';
+            });
+            var cred = document.querySelector('.non-solspaceai-credentials');
+            if (cred) {
+                cred.style.display = sol ? 'none' : '';
+                cred.querySelectorAll('input,select,textarea').forEach(function(inp) {
+                    inp.disabled = !!sol;
+                });
+            }
+            var solH = document.querySelector('.solspaceai-hidden-submit');
+            if (solH) {
+                solH.style.display = sol ? '' : 'none';
+                solH.querySelectorAll('input').forEach(function(inp) {
+                    inp.disabled = !sol;
+                });
+            }
+            var apiKeyInput = document.getElementById('apiKey');
+            if (apiKeyInput) {
+                apiKeyInput.required = !sol;
+            }
+            if (sol) {
+                var vk = document.getElementById('apiKey');
+                var hk = document.querySelector('.solspaceai-h-apiKey');
+                if (vk && hk && vk.value) {
+                    hk.value = vk.value;
+                }
+                var vm = document.getElementById('model');
+                var hm = document.querySelector('.solspaceai-h-model');
+                if (vm && hm) {
+                    hm.value = '';
+                }
+                var vmt = document.getElementById('maxTokens');
+                var hmt = document.querySelector('.solspaceai-h-maxTokens');
+                if (vmt && hmt) {
+                    hmt.value = vmt.value || '0';
+                }
+                var vt = document.getElementById('temperature');
+                var ht = document.querySelector('.solspaceai-h-temperature');
+                if (vt && ht) {
+                    ht.value = vt.value || '0.7';
+                }
+            } else {
+                var hk2 = document.querySelector('.solspaceai-h-apiKey');
+                var vk2 = document.getElementById('apiKey');
+                if (vk2 && hk2 && hk2.value) {
+                    vk2.value = hk2.value;
+                }
+            }
+        }
+        var typeSelect = document.getElementById('type');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', aiAssistantIntegrationTypeUi);
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', aiAssistantIntegrationTypeUi);
+        } else {
+            aiAssistantIntegrationTypeUi();
+        }
+
+        var connectBtn = document.getElementById('connect-solspaceai-btn');
+        if (connectBtn) {
+            connectBtn.addEventListener('click', function() {
+                if (!confirm({{ "Reconnect will re-authorize this site with SolspaceAI and may refresh your saved key/settings. Continue?"|t('ai-assistant')|json_encode|raw }})) {
+                    return;
+                }
+                var id = {{ integration.id|default(0) }};
+                if (!id) return;
+                connectBtn.disabled = true;
+                Craft.postActionRequest('ai-assistant/integrations/connect-solspaceai', { id: id }, function(response) {
+                    connectBtn.disabled = false;
+                    if (response && response.success) {
+                        Craft.cp.displayNotice(response.message || 'Connected.');
+                        window.location.reload();
+                    } else {
+                        Craft.cp.displayError((response && response.message) ? response.message : 'Connection failed.');
+                    }
+                }, function() {
+                    connectBtn.disabled = false;
+                    Craft.cp.displayError('Connection failed.');
+                });
+            });
+        }
+
+        var form = document.getElementById('integration-form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                var typeEl = document.getElementById('type');
+                var isSol = typeEl && typeEl.value === 'solspaceai';
+                if (!isSol) return;
+
+                var btn = document.getElementById('integration-save-btn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.classList.add('disabled');
+                    btn.innerHTML = '<span class="custom-spinner"></span> ' + {{ "Saving…"|t('ai-assistant')|json_encode|raw }};
+                }
+            });
+        }
+    })();
+    {% endjs %}
 {% endblock %}

@@ -19,8 +19,17 @@ class IntegrationsController extends Controller
         $integrationService = AiAssistant::getIntegrationService();
         $integrations = $integrationService->getAllIntegrations();
 
+        $hasSolspaceAi = false;
+        foreach ($integrations as $i) {
+            if ('solspaceai' === ($i->type ?? null)) {
+                $hasSolspaceAi = true;
+                break;
+            }
+        }
+
         return $this->renderTemplate('ai-assistant/integrations/index', [
             'integrations' => $integrations,
+            'hasSolspaceAi' => $hasSolspaceAi,
         ]);
     }
 
@@ -36,6 +45,12 @@ class IntegrationsController extends Controller
 
         if (!$integration) {
             $integration = new Integration();
+            $requestedType = (string) \Craft::$app->getRequest()->getQueryParam('type');
+            if ('solspaceai' === $requestedType) {
+                $integration->type = 'solspaceai';
+                $integration->name = 'SolspaceAI';
+                $integration->handle = 'solspaceai';
+            }
         }
 
         return $this->renderTemplate('ai-assistant/integrations/edit', [
@@ -48,10 +63,14 @@ class IntegrationsController extends Controller
         $this->requirePostRequest();
 
         $request = \Craft::$app->getRequest();
-        $integration = new Integration();
+        $integrationService = AiAssistant::getIntegrationService();
 
         $rawId = $request->getBodyParam('id');
-        $integration->id = null !== $rawId && '' !== $rawId ? (int) $rawId : null;
+        $id = null !== $rawId && '' !== $rawId ? (int) $rawId : null;
+
+        $existing = ($id ? $integrationService->getIntegrationById($id) : null) ?? new Integration();
+        $integration = $existing;
+        $integration->id = $id;
         $integration->enabled = (bool) $request->getBodyParam('enabled');
 
         $name = (string) $request->getBodyParam('name');
@@ -64,34 +83,76 @@ class IntegrationsController extends Controller
         $integration->name = $name;
         $integration->type = (string) $request->getBodyParam('type');
         $integration->class = $this->getClassForType($integration->type);
-        $integration->apiKey = (string) $request->getBodyParam('apiKey');
+        $postedKey = (string) $request->getBodyParam('apiKey');
+        if ('solspaceai' === $integration->type && '' === trim($postedKey) && $id && '' !== trim($existing->apiKey)) {
+            $integration->apiKey = $existing->apiKey;
+        } else {
+            $integration->apiKey = $postedKey;
+        }
         $integration->model = (string) $request->getBodyParam('model');
         $integration->maxTokens = (int) $request->getBodyParam('maxTokens');
         $integration->temperature = (string) $request->getBodyParam('temperature');
+        $integration->apiBaseUrl = (string) $request->getBodyParam('apiBaseUrl', $integration->apiBaseUrl);
+        $integration->contactEmail = (string) $request->getBodyParam('contactEmail', $integration->contactEmail);
+        $integration->siteUrl = (string) $request->getBodyParam('siteUrl', $integration->siteUrl);
 
-        // If model is empty, apply sensible defaults per provider
-        if ('' === $integration->model) {
+        if ('solspaceai' === $integration->type) {
+            $integration->apiBaseUrl = 'https://ai.solspace.net/v1';
+        }
+
+        if ('solspaceai' === $integration->type && '' === trim($integration->apiBaseUrl)) {
+            $integration->apiBaseUrl = 'https://ai.solspace.net/v1';
+        }
+
+        // If model is empty, apply sensible defaults per provider (SolspaceAI uses LiteLLM default — no stored model)
+        if ('' === $integration->model && 'solspaceai' !== $integration->type) {
             $defaults = [
                 'openai' => 'gpt-4o-mini',
                 'gemini' => 'gemini-1.5-flash',
             ];
             $integration->model = $defaults[$integration->type] ?? '';
         }
+        if ('solspaceai' === $integration->type) {
+            $integration->model = '';
+            if ($integration->maxTokens < 0) {
+                $integration->maxTokens = 0;
+            }
+            if ('' === trim($integration->temperature)) {
+                $integration->temperature = '0.7';
+            }
+        }
 
         if (!$integration->validate()) {
-            \Craft::$app->getSession()->setError('Couldn\'t save integration.');
+            $errors = $integration->getFirstErrors();
+            $msg = 'Couldn\'t save integration.';
+            if (!empty($errors)) {
+                $msg .= ' '.implode(' ', array_values($errors));
+            }
+            \Craft::$app->getSession()->setError($msg);
 
             return $this->redirectToPostedUrl();
         }
 
-        $integrationService = AiAssistant::getIntegrationService();
         if ($integrationService->saveIntegration($integration)) {
+            if ('solspaceai' === $integration->type) {
+                $result = $integrationService->connectSolspaceAi($integration);
+                if (!($result['success'] ?? false)) {
+                    \Craft::$app->getSession()->setError((string) ($result['message'] ?? 'Could not connect to SolspaceAI.'));
+
+                    return $this->redirectToPostedUrl();
+                }
+
+                \Craft::$app->getSession()->setNotice((string) ($result['message'] ?? 'Connected to SolspaceAI.'));
+
+                return $this->redirect('ai-assistant/integrations');
+            }
+
             \Craft::$app->getSession()->setNotice('Integration saved.');
 
             return $this->redirect('ai-assistant/integrations');
         }
 
-        \Craft::$app->getSession()->setError('Couldn\'t save integration.');
+        \Craft::$app->getSession()->setError('Couldn\'t save integration. Please ensure the handle is unique and all required fields are filled out.');
 
         return $this->redirectToPostedUrl();
     }
@@ -158,6 +219,26 @@ class IntegrationsController extends Controller
         return $this->asJson(['success' => true, 'message' => 'OK']);
     }
 
+    public function actionConnectSolspaceai(): Response
+    {
+        $this->requirePostRequest();
+
+        $id = (int) $this->request->getBodyParam('id');
+        if (!$id) {
+            return $this->asJson(['success' => false, 'message' => 'Integration ID is required.']);
+        }
+
+        $integrationService = AiAssistant::getIntegrationService();
+        $integration = $integrationService->getIntegrationById($id);
+        if (!$integration) {
+            return $this->asJson(['success' => false, 'message' => 'Integration not found.']);
+        }
+
+        $result = $integrationService->connectSolspaceAi($integration, true);
+
+        return $this->asJson($result);
+    }
+
     public function actionGetModels(): Response
     {
         $this->requireAcceptsJson();
@@ -200,6 +281,7 @@ class IntegrationsController extends Controller
             'anthropic' => 'Solspace\AIAssistant\Integrations\Anthropic\AnthropicIntegration',
             'xai' => 'Solspace\AIAssistant\Integrations\xAI\xAIIntegration',
             'replicate' => 'Solspace\AIAssistant\Integrations\Replicate\ReplicateIntegration',
+            'solspaceai' => 'Solspace\AIAssistant\Integrations\SolspaceAI\SolspaceAIIntegration',
         ];
 
         return $classes[$type] ?? '';

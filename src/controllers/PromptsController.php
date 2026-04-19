@@ -19,8 +19,19 @@ class PromptsController extends Controller
         $promptService = AiAssistant::getPromptService();
         $prompts = $promptService->getAllPrompts();
 
+        $integrationService = AiAssistant::getIntegrationService();
+        $integrations = $integrationService->getAllIntegrations();
+        $hasSolspaceAi = false;
+        foreach ($integrations as $i) {
+            if ('solspaceai' === ($i->type ?? null)) {
+                $hasSolspaceAi = true;
+                break;
+            }
+        }
+
         return $this->renderTemplate('ai-assistant/prompts/index', [
             'prompts' => $prompts,
+            'hasSolspaceAi' => $hasSolspaceAi,
         ]);
     }
 
