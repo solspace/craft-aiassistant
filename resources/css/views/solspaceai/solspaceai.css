@@ -1,0 +1,342 @@
+/**
+ * Solspace AI usage dashboard (Craft CP).
+ */
+
+.solspaceai-dash {
+  max-width: 1200px;
+}
+
+.solspaceai-hidden {
+  display: none !important;
+}
+
+.solspaceai-loading {
+  margin-bottom: 24px;
+}
+
+.solspaceai-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.solspaceai-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 20px;
+  background: var(--pane-bg, #fafafa);
+  border: 1px solid var(--hairline-color, #e3e5e8);
+  border-radius: 6px;
+}
+
+.solspaceai-credit-card {
+  grid-column: span 2;
+  text-align: center;
+  align-items: center;
+  background: #f4f7fc;
+  border-color: #dfe3e8;
+  border-radius: 8px;
+  padding: 28px 20px;
+}
+
+@media (max-width: 600px) {
+  .solspaceai-credit-card {
+    grid-column: span 1;
+  }
+}
+
+.solspaceai-card-label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #5c6672;
+}
+
+.solspaceai-card-value {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0 0 8px;
+}
+
+.solspaceai-status-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.solspaceai-status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #9ca3af;
+  flex-shrink: 0;
+}
+
+.solspaceai-status-value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.solspaceai-status-meta {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #5c6672;
+  font-style: italic;
+}
+
+.solspaceai-card-actions {
+  margin-top: 12px;
+}
+
+.solspaceai-section {
+  margin-bottom: 32px;
+}
+
+.solspaceai-section h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  padding: 0;
+}
+
+.solspaceai-section-desc {
+  font-size: 14px;
+  color: #5c6672;
+  margin: 0 0 14px;
+}
+
+.solspaceai-chart-box {
+  background: #fff;
+  border-radius: 6px;
+  padding: 12px 8px 8px;
+  border: 1px solid var(--hairline-color, #e3e5e8);
+  position: relative;
+  height: 280px;
+}
+
+.solspaceai-metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 12px;
+  border: 1px solid var(--hairline-color, #e3e5e8);
+}
+
+.solspaceai-metrics-table thead {
+  background: #cfd8e3;
+}
+
+.solspaceai-metrics-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.solspaceai-metrics-table td {
+  padding: 10px 12px;
+  white-space: nowrap;
+}
+
+.solspaceai-metrics-table tbody tr:nth-child(even) {
+  background: #f4f7fc;
+}
+
+.solspaceai-empty {
+  text-align: center;
+  padding: 48px 24px 56px;
+  color: #5c6672;
+}
+
+.solspaceai-empty h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #131519;
+}
+
+.solspaceai-skel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.solspaceai-skel-card {
+  height: 100px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #eceff3 25%, #f6f7f9 37%, #eceff3 63%);
+  background-size: 400% 100%;
+  animation: solspaceai-skel 1.2s ease-in-out infinite;
+}
+
+.solspaceai-skel-chart {
+  height: 240px;
+  border-radius: 6px;
+  background: #eceff3;
+  margin-bottom: 32px;
+}
+
+@keyframes solspaceai-skel {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/**
+ * Purchase modal: flex column + explicit height so the middle (.body) can shrink
+ * and scroll. Only max-height lets the box grow with content, so 1fr / flex-grow
+ * never gets a bounded track — no scroll and footer floats mid-dialog.
+ */
+.modal.fitted.solspaceai-plans-modal {
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: min(1320px, calc(100vw - 48px)) !important;
+  max-width: min(1320px, calc(100vw - 48px)) !important;
+  height: min(90vh, 880px);
+  max-height: min(90vh, 880px);
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.solspaceai-plans-modal .header {
+  flex: 0 0 auto;
+}
+
+.solspaceai-plans-modal .body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 28px 24px;
+  box-sizing: border-box;
+}
+
+.solspaceai-plans-modal .footer {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 12px 24px;
+  margin: 0;
+  border-top: 1px solid var(--hairline-color, #e3e5e8);
+  background: var(--pane-bg, #fafafa);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.solspaceai-plans-modal .footer .buttons {
+  margin: 0;
+}
+
+.solspaceai-plans-body {
+  padding: 0;
+}
+
+.solspaceai-pay-heading {
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.solspaceai-pay-desc {
+  margin-bottom: 12px !important;
+}
+
+.solspaceai-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 22px;
+}
+
+.solspaceai-plan-card {
+  border: 1px solid #dfe3e8;
+  border-radius: 6px;
+  padding: 28px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.solspaceai-plan-name {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid #cfd5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 17px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.solspaceai-plan-desc {
+  margin: 0;
+  min-height: 40px;
+  color: #5c6672;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 180px;
+}
+
+.solspaceai-plan-price {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.solspaceai-plan-credits {
+  font-size: 17px;
+  color: #5c6672;
+}
+
+.solspaceai-plan-credits strong {
+  font-size: 19px;
+  color: #131519;
+}
+
+.solspaceai-plan-buy {
+  width: 100%;
+  max-width: 160px;
+  margin: 8px auto 0;
+  padding: 8px 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: #0b69a3;
+  border: 1px solid #095a8c;
+  color: #fff;
+  cursor: pointer;
+}
+
+.solspaceai-plan-buy:hover:not(:disabled) {
+  background: #095a8c;
+}
+
+.solspaceai-plan-buy:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.solspaceai-pay-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #e3e5e8;
+}
+
+.solspaceai-muted {
+  color: #5c6672;
+  font-size: 14px;
+}

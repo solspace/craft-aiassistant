@@ -111,11 +111,31 @@ class AiAssistant extends Plugin
                 'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Integrations'),
                 'url' => 'ai-assistant/integrations',
             ],
+            'solspaceai' => [
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Solspace AI'),
+                'url' => 'ai-assistant/solspace-ai',
+            ],
             'settings' => [
                 'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Settings'),
                 'url' => 'ai-assistant/settings',
             ],
         ];
+
+        try {
+            $integrationService = self::getIntegrationService();
+            $has = false;
+            foreach ($integrationService->getAllIntegrations() as $i) {
+                if ('solspaceai' === ($i->type ?? null) && $i->enabled && '' !== trim((string) $i->apiKey)) {
+                    $has = true;
+                    break;
+                }
+            }
+            if (!$has) {
+                unset($nav['subnav']['solspaceai']);
+            }
+        } catch (\Throwable) {
+            unset($nav['subnav']['solspaceai']);
+        }
 
         return $nav;
     }
@@ -196,6 +216,8 @@ class AiAssistant extends Plugin
                 'ai-assistant/integrations' => 'ai-assistant/integrations/index',
                 'ai-assistant/integrations/new' => 'ai-assistant/integrations/edit',
                 'ai-assistant/integrations/<id:\d+>' => 'ai-assistant/integrations/edit',
+                // SolspaceAI usage
+                'ai-assistant/solspace-ai' => 'ai-assistant/solspace-ai/index',
                 'ai-assistant/settings' => 'ai-assistant/settings/index',
                 'ai-assistant/settings/save' => 'ai-assistant/settings/save',
                 'ai-assistant/settings/save-prompt' => 'ai-assistant/settings/save-prompt',
@@ -210,6 +232,9 @@ class AiAssistant extends Plugin
                 'ai-assistant/api/stream-asset' => 'ai-assistant/api/stream-asset',
                 'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
                 'ai-assistant/integrations/connect-solspaceai' => 'ai-assistant/integrations/connect-solspaceai',
+                'ai-assistant/solspace-ai/usage' => 'ai-assistant/solspace-ai/usage',
+                'ai-assistant/solspace-ai/plans' => 'ai-assistant/solspace-ai/plans',
+                'ai-assistant/solspace-ai/create-checkout-session' => 'ai-assistant/solspace-ai/create-checkout-session',
                 'ai-assistant/api/save-prompt' => 'ai-assistant/api/save-prompt',
 
                 // UI endpoints

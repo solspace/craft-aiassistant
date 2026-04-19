@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Build script for AI Assistant front-end assets.
- * - Bundles and minifies JS from resources/js → src/assets/js (single file)
- * - Bundles and minifies CSS from resources/css → src/assets/css (with view-specific files)
+ * - JS: resources/js → src/assets/js (ai-assistant + solspaceai bundles)
+ * - CSS: resources/css → src/assets/css
  */
 
 const esbuild = require('esbuild');
@@ -16,14 +16,14 @@ const sourceRoot = path.join(projectRoot, 'resources');
 const outputJsDir = path.join(projectRoot, 'src', 'assets', 'js');
 const outputCssDir = path.join(projectRoot, 'src', 'assets', 'css');
 
-// Single JS entry point - all functionality bundled into one file
 const jsEntries = {
   'ai-assistant': path.join(sourceRoot, 'js', 'main.js'),
+  'solspaceai': path.join(sourceRoot, 'js', 'views', 'solspaceai', 'index.js'),
 };
 
-// Single CSS entry point - all styles bundled into one file
 const cssEntries = {
   'ai-assistant': path.join(sourceRoot, 'css', 'ai-assistant.css'),
+  'solspaceai': path.join(sourceRoot, 'css', 'views', 'solspaceai', 'solspaceai.css'),
 };
 
 function ensureDirs() {
@@ -57,7 +57,7 @@ async function buildJs() {
   }
 
   await esbuild.build(options);
-  console.log('✓ JS assets built (single file: ai-assistant.min.js)');
+  console.log('✓ JS assets built (ai-assistant.min.js, solspaceai.min.js)');
   return null;
 }
 
@@ -86,7 +86,7 @@ async function buildCss() {
   }
 
   await esbuild.build(options);
-  console.log('✓ CSS assets built (single file: ai-assistant.min.css)');
+  console.log('✓ CSS assets built (ai-assistant.min.css, solspaceai.min.css)');
   return null;
 }
 

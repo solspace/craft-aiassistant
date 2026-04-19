@@ -1,0 +1,54 @@
+{% extends "_layouts/cp" %}
+
+{% set title = "Solspace AI"|t('ai-assistant') %}
+{% set selectedSubnavItem = 'solspaceai' %}
+{% set crumbs = [
+  { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
+  { label: 'Solspace AI'|t('ai-assistant'), url: url('ai-assistant/solspace-ai') },
+] %}
+
+{% block content %}
+  {% if not connected %}
+    <div class="pane">
+      <h2>{{ "SolspaceAI is not connected."|t('ai-assistant') }}</h2>
+      <p>{{ "Enable Solspace AI in Integrations to view usage."|t('ai-assistant') }}</p>
+      <p><a class="btn submit" href="{{ url('ai-assistant/integrations') }}">{{ "Go to Integrations"|t('ai-assistant') }}</a></p>
+    </div>
+  {% else %}
+    <div id="solspaceai-root" class="solspaceai-dash">
+      <div id="solspaceai-loading" class="solspaceai-loading">
+        <div class="solspaceai-skel">
+          <div class="solspaceai-skel-card"></div>
+          <div class="solspaceai-skel-card"></div>
+          <div class="solspaceai-skel-card"></div>
+        </div>
+        <div class="solspaceai-skel-chart"></div>
+      </div>
+
+      <div id="solspaceai-error" class="solspaceai-hidden pane error">
+        <p id="solspaceai-error-msg"></p>
+      </div>
+
+      <div id="solspaceai-main" class="solspaceai-hidden">
+        <div class="solspaceai-cards-grid" id="solspaceai-cards"></div>
+
+        <div class="solspaceai-section solspaceai-hidden" id="solspaceai-chart-section">
+          <h2>{{ "Recent AI Usage"|t('ai-assistant') }}</h2>
+          <p class="solspaceai-section-desc">{{ "Daily credits and total AI time for the last 30 days."|t('ai-assistant') }}</p>
+          <div id="solspaceai-chart" class="solspaceai-chart-box"></div>
+        </div>
+
+        <div class="solspaceai-section solspaceai-hidden" id="solspaceai-logs-section">
+          <h2>{{ "Request Log"|t('ai-assistant') }}</h2>
+          <p class="solspaceai-section-desc">{{ "A list of recent AI requests and their credit usage."|t('ai-assistant') }}</p>
+          <div id="solspaceai-logs"></div>
+        </div>
+
+        <div id="solspaceai-empty" class="solspaceai-empty solspaceai-hidden">
+          <h3>{{ "No usage data yet"|t('ai-assistant') }}</h3>
+          <p>{{ "Usage will appear here once you start using SolspaceAI."|t('ai-assistant') }}</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
