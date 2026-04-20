@@ -1,5 +1,13 @@
 # Solspace AI Assistant Changelog
 
+## 1.1.0 - Unreleased
+
+### Added
+- Added support for the **SolspaceAI** integration, including a free trial.
+
+### Fixed
+- Fixed an issue where the Dashboard widget icon was missing.
+
 ## 1.0.1 - 2026-04-03
 
 ### Fixed

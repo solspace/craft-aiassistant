@@ -7,6 +7,9 @@
     "build": "node resources/build.js",
     "watch": "node resources/build.js --watch"
   },
+  "dependencies": {
+    "chart.js": "^4.4.8"
+  },
   "devDependencies": {
     "esbuild": "^0.21.5"
   }

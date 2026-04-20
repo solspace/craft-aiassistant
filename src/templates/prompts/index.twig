@@ -10,12 +10,16 @@
 ] %}
 
 {% block actionButton %}
-    <div class="btngroup">
-        <a class="btn submit" href="{{ url('ai-assistant/prompts/edit') }}">
+    {% if not hasSolspaceAi %}
+        <a class="btn" href="{{ url('ai-assistant/integrations/edit', { type: 'solspaceai' }) }}">
             <span data-icon="plus"></span>
-            {{ "Add Prompt"|t('ai-assistant') }}
+            {{ "Enable SolspaceAI"|t('ai-assistant') }}
         </a>
-    </div>
+    {% endif %}
+    <a class="btn submit" href="{{ url('ai-assistant/prompts/edit') }}">
+        <span data-icon="plus"></span>
+        {{ "Add Prompt"|t('ai-assistant') }}
+    </a>
 {% endblock %}
 
 {% block content %}

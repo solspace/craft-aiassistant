@@ -1,7 +1,7 @@
 {
     "name": "solspace/craft-aiassistant",
     "description": "Generate smarter text and images with AI using custom prompts and support for multiple models.",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "type": "craft-plugin",
     "authors": [
         {

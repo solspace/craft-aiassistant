@@ -2,6 +2,7 @@
 
 namespace Solspace\AIAssistant\models;
 
+use Craft;
 use craft\base\Model;
 
 class Integration extends Model
@@ -23,6 +24,15 @@ class Integration extends Model
     public int $maxTokens = 0; // 0 = use provider default
     public string $temperature = '0.7';
 
+    /** SolspaceAI: LiteLLM base URL (e.g. https://ai.solspace.net/v1). */
+    public string $apiBaseUrl = '';
+
+    /** SolspaceAI: contact email sent to enable-ai. */
+    public string $contactEmail = '';
+
+    /** SolspaceAI: public site URL sent to enable-ai. */
+    public string $siteUrl = '';
+
     public function rules(): array
     {
         return [
@@ -32,7 +42,7 @@ class Integration extends Model
             [['maxTokens'], 'integer', 'min' => 0, 'max' => 4000000],
             [['temperature'], 'number', 'min' => 0.0, 'max' => 2.0],
             [['id'], 'integer'],
-            [['apiKey', 'model', 'metadata'], 'string'],
+            [['apiKey', 'model', 'metadata', 'apiBaseUrl', 'contactEmail', 'siteUrl'], 'string'],
         ];
     }
 
@@ -53,6 +63,9 @@ class Integration extends Model
             'model' => 'Model',
             'maxTokens' => 'Max Tokens',
             'temperature' => 'Temperature',
+            'apiBaseUrl' => 'API Base URL',
+            'contactEmail' => 'Contact Email',
+            'siteUrl' => 'Site URL',
         ];
     }
 
@@ -64,6 +77,7 @@ class Integration extends Model
             'anthropic' => 'Anthropic',
             'xai' => 'xAI',
             'replicate' => 'Replicate',
+            'solspaceai' => 'SolspaceAI',
         ];
     }
 
@@ -92,6 +106,9 @@ class Integration extends Model
             'xai' => [
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
+            ],
+            'solspaceai' => [
+                '' => Craft::t('ai-assistant', 'Server default (LiteLLM)'),
             ],
             'replicate' => [
                 'black-forest-labs/flux-kontext-pro' => 'FLUX Kontext Pro',
