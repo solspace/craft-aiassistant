@@ -6,7 +6,7 @@ use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * CP-only assets for the Solspace AI usage dashboard (Chart.js + page UI).
+ * CP-only assets for the SolspaceAI usage dashboard (Chart.js + page UI).
  */
 class SolspaceAiAssetBundle extends AssetBundle
 {

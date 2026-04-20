@@ -110,7 +110,7 @@ class AiAssistant extends Plugin
                 'url' => 'ai-assistant/integrations',
             ],
             'solspaceai' => [
-                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'Solspace AI'),
+                'label' => \Craft::t(self::TRANSLATION_CATEGORY, 'SolspaceAI'),
                 'url' => 'ai-assistant/solspace-ai',
             ],
             'settings' => [

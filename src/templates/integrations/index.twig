@@ -10,18 +10,16 @@
 ] %}
 
 {% block actionButton %}
-    <div class="btngroup">
-        {% if not hasSolspaceAi %}
-            <a href="{{ url('ai-assistant/integrations/edit', { type: 'solspaceai' }) }}" class="btn">
-                <span data-icon="sparkles"></span>
-                {{ "Enable Solspace AI"|t('ai-assistant') }}
-            </a>
-        {% endif %}
-        <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">
+    {% if not hasSolspaceAi %}
+        <a href="{{ url('ai-assistant/integrations/edit', { type: 'solspaceai' }) }}" class="btn">
             <span data-icon="plus"></span>
-            {{ "New Integration"|t('ai-assistant') }}
+            {{ "Enable SolspaceAI"|t('ai-assistant') }}
         </a>
-    </div>
+    {% endif %}
+    <a href="{{ url('ai-assistant/integrations/edit') }}" class="btn submit">
+        <span data-icon="plus"></span>
+        {{ "New Integration"|t('ai-assistant') }}
+    </a>
 {% endblock %}
 
 {% block content %}

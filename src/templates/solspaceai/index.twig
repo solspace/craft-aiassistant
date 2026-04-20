@@ -1,17 +1,17 @@
 {% extends "_layouts/cp" %}
 
-{% set title = "Solspace AI"|t('ai-assistant') %}
+{% set title = "SolspaceAI"|t('ai-assistant') %}
 {% set selectedSubnavItem = 'solspaceai' %}
 {% set crumbs = [
   { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
-  { label: 'Solspace AI'|t('ai-assistant'), url: url('ai-assistant/solspace-ai') },
+  { label: 'SolspaceAI'|t('ai-assistant'), url: url('ai-assistant/solspace-ai') },
 ] %}
 
 {% block content %}
   {% if not connected %}
     <div class="pane">
       <h2>{{ "SolspaceAI is not connected."|t('ai-assistant') }}</h2>
-      <p>{{ "Enable Solspace AI in Integrations to view usage."|t('ai-assistant') }}</p>
+      <p>{{ "Enable SolspaceAI in Integrations to view usage."|t('ai-assistant') }}</p>
       <p><a class="btn submit" href="{{ url('ai-assistant/integrations') }}">{{ "Go to Integrations"|t('ai-assistant') }}</a></p>
     </div>
   {% else %}

@@ -1,5 +1,5 @@
 /**
- * Solspace AI usage dashboard (Craft CP). Loaded only with SolspaceAiAssetBundle.
+ * SolspaceAI usage dashboard (Craft CP). Loaded only with SolspaceAiAssetBundle.
  */
 import {
     Chart,

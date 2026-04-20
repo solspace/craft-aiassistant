@@ -6,16 +6,16 @@
 {% set integration = integration is defined ? integration : {
     id: null,
     enabled: true,
-    name: '',
-    handle: '',
+    name: 'SolspaceAI',
+    handle: 'solspaceAi',
     type: 'openai',
     apiKey: '',
     model: '',
     maxTokens: 0,
     temperature: 1.0,
     apiBaseUrl: 'https://ai.solspace.net/v1',
-    contactEmail: '',
-    siteUrl: '',
+    contactEmail: parseEnv(craft.app.projectConfig.get('email').fromEmail) ?? '',
+    siteUrl: currentSite.baseUrl ?? alias('@web') ?? '',
 } %}
 
 {% set title = integration.id ? "Edit Integration"|t('ai-assistant') : "New Integration"|t('ai-assistant') %}
