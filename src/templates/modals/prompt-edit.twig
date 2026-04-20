@@ -3,8 +3,8 @@
 
 <div class="modal ai-assistant-prompt-modal">
     <div class="header">
-        <h2 style="margin:0; display:flex; align-items:center; gap:8px;">
-            <span id="aiassistant-prompt-modal-icon" style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px;"></span>
+        <h2 id="ai-assistant-prompt-modal-title">
+            <span id="aiassistant-prompt-modal-icon"></span>
             <span id="aiassistant-prompt-modal-text">{{ 'Manage Prompts'|t('ai-assistant') }}</span>
         </h2>
     </div>
@@ -17,7 +17,7 @@
                 
                 {% set promptOptions = [{ label: 'Any'|t('ai-assistant'), value: '' }] %}
                 {% for p in prompts %}
-                    {% set promptOptions = promptOptions|merge([{ label: p.name ~ ' (' ~ (p.type|title) ~ ')', value: p.id, data: { type: p.type } }]) %}
+                    {% set promptOptions = promptOptions|merge([{ label: p.name|t('ai-assistant') ~ ' (' ~ (p.type|title|t('ai-assistant')) ~ ')', value: p.id, data: { type: p.type } }]) %}
                 {% endfor %}
                 {{ forms.selectField({
                     id: 'prompt-existing-select',
@@ -75,9 +75,9 @@
                         name: 'type',
                         value: 'generate',
                         options: [
-                            { label: 'Generate'|t('ai-assistant'), value: 'generate' },
-                            { label: 'Rephrase'|t('ai-assistant'), value: 'rephrase' },
-                            { label: 'Translate'|t('ai-assistant'), value: 'translate' },
+                            { label: 'Generate Text'|t('ai-assistant'), value: 'generate' },
+                            { label: 'Rephrase Content'|t('ai-assistant'), value: 'rephrase' },
+                            { label: 'Translate Text'|t('ai-assistant'), value: 'translate' },
                             { label: 'Generate Image'|t('ai-assistant'), value: 'image' },
                         ],
                         instructions: 'Select the type of prompt.'|t('ai-assistant')
@@ -94,7 +94,7 @@
                     }) }}
                 </div>
                 
-                <div id="image-extra-options" style="display:none; margin-bottom:16px; padding:12px; background:#fff8eb; border:1px solid #ffecb5; border-radius:6px;">
+                <div id="image-extra-options" style="display:none; margin-bottom:16px; padding:5px;">
                     <div style="display:flex; gap:12px;">
                         <div style="flex:1">
                             {{ forms.selectField({
@@ -170,8 +170,8 @@
 
     <div class="footer" style="position:absolute; bottom:0; width:100%; padding:15px 20px; border-top:1px solid #e5e7eb; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
         <button type="button" class="btn cancel" data-close-modal>{{ 'Cancel'|t('app') }}</button>
-        <button type="button" id="save-selected-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
-        <button type="button" id="save-prompt-btn" class="btn submit" style="display:none;">{{ 'Save & Use'|t('app') }}</button>
+        <button type="button" id="save-selected-prompt-btn" class="btn submit" style="display:none;">{{ 'Save'|t('app') }}</button>
+        <button type="button" id="save-prompt-btn" class="btn submit" style="display:none;">{{ 'Save'|t('app') }}</button>
     </div>
 </div>
 

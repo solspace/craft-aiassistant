@@ -2,7 +2,7 @@
 
 {% import "_includes/forms" as forms %}
 
-{% set title = "AI Assistant Settings"|t('ai-assistant') %}
+{% set title = "Settings"|t('ai-assistant') %}
 {% set selectedSubnavItem = 'settings' %}
 {% set crumbs = [
   { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
@@ -21,7 +21,7 @@
     <div class="ai-assistant-settings-header">
         <div>
             <h2>{{ 'Field Settings'|t('ai-assistant') }}</h2>
-            <p class="instructions">{{ 'Select which fields will show the AI Assistant button.'|t('ai-assistant') }}</p>
+            <p class="instructions">{{ 'Choose which fields can use the AI Assistant.'|t('ai-assistant') }}</p>
         </div>
         <div class="ai-assistant-settings-header-actions">
             <button type="button" id="enable-all" class="btn">{{ 'Enable all'|t('ai-assistant') }}</button>
@@ -52,9 +52,9 @@
                         {% set selectedPrompt = (allPrompts|filter(p => p.id == selectedId)|first) %}
                         <div class="ai-prompts-chip">
                             {% if selectedPrompt %}
-                                <span class="ai-assistant-type-badge ai-assistant-type-{{ selectedPrompt.type }}">{{ selectedPrompt.name }}</span>
+                                <span class="ai-assistant-type-badge ai-assistant-type-{{ selectedPrompt.type }}">{{ selectedPrompt.name|t('ai-assistant') }}</span>
                             {% else %}
-                                <span class="ai-assistant-type-badge ai-assistant-type-any">{{ 'Any'|t('app') }}</span>
+                                <span class="ai-assistant-type-badge ai-assistant-type-any">{{ 'Any'|t('ai-assistant') }}</span>
                             {% endif %}
                             <button type="button" class="btn small" title="{{ 'Edit'|t('app') }}" onclick="window.AiAssistant && window.AiAssistant.openPromptPicker && window.AiAssistant.openPromptPicker('{{ f.handle }}')">
                                 <span data-icon="edit"></span>

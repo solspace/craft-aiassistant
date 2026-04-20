@@ -367,7 +367,7 @@ export async function openGenerateModal(field) {
                 if ($genTitle.length) $genTitle.text('Generated Image');
                 if ($genInstr.length)
                   $genInstr.text(
-                    'Preview the generated image(s). Click Save to persist to Assets.'
+                    "Preview the generated images below. Click 'Save' to store them in Assets."
                   );
                 $genText.hide();
                 // Ensure image preview container is visible
@@ -380,10 +380,16 @@ export async function openGenerateModal(field) {
                 $btnInsert.text('Save').prop('disabled', true);
                 // Rewire generate for image (dry-run)
                 $btnGenerate.off('click').on('click', async function () {
+                  const selId = String($promptSelect.val());
+                  const selectedPrompt = (prompts || []).find(
+                    (pp) => String(pp.id) === selId
+                  );
+                  const promptName = selectedPrompt ? selectedPrompt.name : '';
                   const payload = {
                     prompt: $promptText.val(),
                     integration: $integrationSelect.val(),
                     count: parseInt($imageCount.val() || '1', 10),
+                    promptName: promptName,
                     assetTarget: (function () {
                       if (
                         $assetTarget &&
@@ -392,11 +398,7 @@ export async function openGenerateModal(field) {
                       ) {
                         return $assetTarget.val();
                       }
-                      const selId = String($promptSelect.val());
-                      const p = (prompts || []).find(
-                        (pp) => String(pp.id) === selId
-                      );
-                      return p && p.assetTarget ? p.assetTarget : undefined;
+                      return selectedPrompt && selectedPrompt.assetTarget ? selectedPrompt.assetTarget : undefined;
                     })(),
                     options: {},
                     dryRun: true,
@@ -492,14 +494,14 @@ export async function openGenerateModal(field) {
                                 return $assetTarget.val();
                               }
                               const selId = String($promptSelect.val());
-                              const p = (prompts || []).find(
+                              const selectedPrompt = (prompts || []).find(
                                 (pp) => String(pp.id) === selId
                               );
-                              return p && p.assetTarget
-                                ? p.assetTarget
+                              return selectedPrompt && selectedPrompt.assetTarget
+                                ? selectedPrompt.assetTarget
                                 : undefined;
                             })(),
-                            ($promptText.val() || '').slice(0, 60)
+                            '' // Title will be generated server-side as "AI Image 1", "AI Image 2", etc.
                           );
                           if (!saveResult.success) {
                             Craft.cp.displayError(

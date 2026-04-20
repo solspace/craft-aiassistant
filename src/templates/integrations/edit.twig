@@ -23,7 +23,7 @@
 {% set crumbs = [
   { label: 'AI Assistant'|t('ai-assistant'), url: url('ai-assistant') },
   { label: 'Integrations'|t('ai-assistant'), url: url('ai-assistant/integrations') },
-  { label: (integration.id ? 'Edit' : 'New'), url: url('ai-assistant/integrations' ~ (integration.id ? '/' ~ integration.id : '/edit')) },
+  { label: (integration.id ? 'Edit'|t('app') : 'New'|t('app')), url: url('ai-assistant/integrations' ~ (integration.id ? '/' ~ integration.id : '/edit')) },
 ] %}
 
 {% block actionButton %}
@@ -49,7 +49,7 @@
         <div class="field">
             {{ forms.textField({
                 label: "Name"|t('app'),
-                instructions: "A friendly name for this integration."|t('ai-assistant'),
+                instructions: "A name to help identify this integration."|t('ai-assistant'),
                 id: 'name',
                 name: 'name',
                 value: integration.name,
@@ -61,7 +61,7 @@
         <div class="field">
             {{ forms.textField({
                 label: "Handle"|t('app'),
-                instructions: "Auto-generated from Name. Use letters and numbers only."|t('ai-assistant'),
+                instructions: "Automatically generated from the name. Use only letters and numbers."|t('ai-assistant'),
                 id: 'handle',
                 name: 'handle',
                 value: integration.handle,

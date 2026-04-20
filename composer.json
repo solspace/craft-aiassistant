@@ -1,7 +1,7 @@
 {
     "name": "solspace/craft-aiassistant",
-    "description": "Generate smarter text with AI using custom prompts and support for multiple models.",
-    "version": "1.0.0-beta.1",
+    "description": "Generate smarter text and images with AI using custom prompts and support for multiple models.",
+    "version": "1.0.1",
     "type": "craft-plugin",
     "authors": [
         {
@@ -12,8 +12,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "craftcms/cms": "^4.0.0 || ^5.0.0",
-        "php": "^8.0.2|^8.2.0",
+        "craftcms/cms": "^5.0.0",
+        "php": "^8.2.0",
         "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {
@@ -22,15 +22,16 @@
         }
     },
     "extra": {
-        "name": "AI Assistant",
+        "schemaVersion": "1.0.0",
         "handle": "ai-assistant",
         "class": "Solspace\\AIAssistant\\AiAssistant",
-        "hasCpSettings": true,
-        "hasCpSection": true,
+        "name": "AI Assistant",
         "developer": "Solspace",
         "developerUrl": "https://docs.solspace.com/",
         "documentationUrl": "https://docs.solspace.com/craft/ai-assistant/v1/",
-        "changelogUrl": "https://docs.solspace.com/craft/ai-assistant/v1/setup/changelog/"
+        "changelogUrl": "https://raw.githubusercontent.com/solspace/craft-aiassistant/v1/CHANGELOG.md",
+        "hasSettings": true,
+        "hasCpSection": true
     },
     "scripts": {
         "fix": "vendor/bin/php-cs-fixer fix --diff --config=./.php-cs-fixer.dist.php",

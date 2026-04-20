@@ -247,7 +247,7 @@ async function loadPromptDetails($modal, promptId) {
         $typeBadge.text(prettyType);
         $typeBadge.attr('class', `ai-assistant-type-badge ai-assistant-type-${prompt.type || 'any'}`);
 
-        const integrationText = prompt.integrationHandle ? prompt.integrationHandle : 'Default';
+        const integrationText = prompt.integrationName ? prompt.integrationName : 'Default';
         $modal.find('#prompt-details-integration').text(`Integration: ${integrationText}`);
 
         $modal.find('#prompt-details-text').text(prompt.promptText || '');
