@@ -1,6 +1,6 @@
 # Solspace AI Assistant Changelog
 
-## 1.1.0 - Unreleased
+## 1.1.0 - 2026-04-20
 
 ### Added
 - Added support for the **SolspaceAI** integration, including a free trial.
