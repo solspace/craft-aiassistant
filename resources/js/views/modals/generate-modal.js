@@ -338,14 +338,13 @@ export async function openGenerateModal(field) {
               // Show natural tone checkbox for text-related prompts (generate, rephrase, translate)
               const textPromptTypes = ['generate', 'rephrase', 'translate'];
               const isTextPrompt = textPromptTypes.includes((type || '').toLowerCase());
-              
-              // Always show the right column for both image and text options
-              if ($imageCol.length) {
-                $imageCol.show();
-                $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
-              }
+              // In the two-pane layout, all settings live on the left pane.
+              // Don't force a 50/50 split; let CSS handle sizing so "Prompt Text" gets more space.
               if ($promptLeft.length) {
-                $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
+                $promptLeft.css({ flex: '', maxWidth: '' });
+              }
+              if ($imageCol.length) {
+                $imageCol.css({ flex: '', maxWidth: '' });
               }
               
               if (showImageOptions) {
@@ -353,6 +352,9 @@ export async function openGenerateModal(field) {
                 $imageOptions.show();
                 if ($textOptions.length) {
                   $textOptions.addClass('aiassistant-hidden').hide();
+                }
+                if ($imageCol.length) {
+                  $imageCol.show();
                 }
                 $comparisonSection.show();
                 // Switch right panel to image preview mode
@@ -559,13 +561,10 @@ export async function openGenerateModal(field) {
                 if ($textOptions.length) {
                   $textOptions.removeClass('aiassistant-hidden').show();
                 }
-                // Keep the right column visible for text options
+                // Keep the options visible (they live in the left pane),
+                // but don't shrink the prompt text area.
                 if ($imageCol.length) {
                   $imageCol.show();
-                  $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
-                }
-                if ($promptLeft.length) {
-                  $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
                 }
                 $comparisonSection.show();
                 // Rewire handlers back to text generation
@@ -1443,10 +1442,10 @@ export async function openFromAssetModal(assetId, assetUrl) {
               if (showImageOptions) {
                 if ($imageCol.length) {
                   $imageCol.show();
-                  $imageCol.css({ flex: '0 0 49%', maxWidth: '49%' });
+                  $imageCol.css({ flex: '', maxWidth: '' });
                 }
                 if ($promptLeft.length) {
-                  $promptLeft.css({ flex: '0 0 49%', maxWidth: '49%' });
+                  $promptLeft.css({ flex: '', maxWidth: '' });
                 }
                 $imageOptions.show();
                 $btnSave.text('Save').prop('disabled', true);
@@ -1455,11 +1454,10 @@ export async function openFromAssetModal(assetId, assetUrl) {
               } else {
                 $imageOptions.hide();
                 if ($imageCol.length) {
-                  $imageCol.hide();
                   $imageCol.css({ flex: '', maxWidth: '' });
                 }
                 if ($promptLeft.length) {
-                  $promptLeft.css({ flex: '0 0 100%', maxWidth: '100%' });
+                  $promptLeft.css({ flex: '', maxWidth: '' });
                 }
                 $btnSave.text('Insert').prop('disabled', true);
                 $generatedText.show();

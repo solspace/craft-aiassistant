@@ -81,11 +81,56 @@
   flex: 1;
 }
 
+/* Ensure Prompt is left and Integration is right */
+.aiassistant-prompt-select-col--prompt {
+  order: 1;
+}
+
+.aiassistant-prompt-select-col--integration {
+  order: 2;
+}
+
+/* Main two-pane modal layout (left settings, right output) */
+.aiassistant-main-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.aiassistant-left-pane,
+.aiassistant-right-pane {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .aiassistant-main-row {
+    flex-direction: column;
+  }
+}
+
+/* Give Prompt Text more horizontal space by default */
+.aiassistant-left-pane .aiassistant-prompt-content-row {
+  flex-direction: column;
+}
+
+.aiassistant-left-pane #aiassistant-image-col {
+  margin-top: 12px;
+}
+
+/* Keep long setting titles on a single line */
+.aiassistant-input-context-field .heading-content .aiassistant-generated-title,
+.aiassistant-text-options-field .aiassistant-generated-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Prompt Text and Image Options Row */
 .aiassistant-prompt-content-row {
   display: flex;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 7px;
 }
 
 .aiassistant-prompt-left {
@@ -112,10 +157,10 @@
 
 /* Text Options Container */
 #aiassistant-text-options {
-  padding: 15px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  background-color: #f9fafb;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -231,6 +276,7 @@
 /* Input Context Field */
 .aiassistant-input-context-field {
   margin-bottom: 16px;
+  margin-top: 0;
 }
 
 .aiassistant-input-context-field .input {
