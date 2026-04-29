@@ -11,11 +11,11 @@
     // ============================================================================
 
     const PROVIDER_DEFAULT_MODELS = {
-        openai: 'gpt-5-nano',
-        gemini: 'gemini-1.5-flash',
-        anthropic: 'claude-3-5-haiku-latest',
-        xai: 'grok-3-mini',
-        replicate: 'black-forest-labs/flux-1.1-pro',
+        openai: 'gpt-5.4-mini',
+        gemini: 'gemini-3-flash',
+        anthropic: 'claude-sonnet-4.6',
+        xai: 'grok-4.1-fast',
+        replicate: 'black-forest-labs/flux-2-pro',
     };
 
     const PROVIDER_MAX_TOKENS = {
@@ -82,10 +82,36 @@
         const currentValue = (modelInput.value || '').trim();
         const defaultModel = PROVIDER_DEFAULT_MODELS[providerType] || '';
 
-        // Only update if empty or currently using a default value
+        // If the user has manually edited the model, don't override it on type changes
+        if (modelInput.dataset.aiassistantUserEdited === '1') {
+            return;
+        }
+
+        // Only update if empty or currently using a default value (i.e. auto-filled)
         if (!currentValue || Object.values(PROVIDER_DEFAULT_MODELS).includes(currentValue)) {
             modelInput.value = defaultModel;
+            modelInput.dataset.aiassistantUserEdited = '0';
         }
+    }
+
+    /**
+     * Initialize tracking so provider changes update the model until user edits it.
+     */
+    function initModelAutofillTracking() {
+        const modelInput = document.getElementById(SELECTORS.model);
+        if (!modelInput) {
+            return;
+        }
+
+        const initialValue = (modelInput.value || '').trim();
+        const isAutoFilled = !initialValue || Object.values(PROVIDER_DEFAULT_MODELS).includes(initialValue);
+        modelInput.dataset.aiassistantUserEdited = isAutoFilled ? '0' : '1';
+
+        // Mark as user-edited when typing; reset when cleared
+        modelInput.addEventListener('input', function() {
+            const v = (modelInput.value || '').trim();
+            modelInput.dataset.aiassistantUserEdited = v ? '1' : '0';
+        });
     }
 
     /**
@@ -243,6 +269,7 @@
      * Initialize form fields on page load
      */
     function initFields() {
+        initModelAutofillTracking();
         updateFieldsForProvider();
         initAutoHandle();
     }
