@@ -91,7 +91,6 @@ export async function openGenerateModal(field) {
         const $skeletonLoader = $body.find('#aiassistant-skeleton-loader');
         const $imageSkeletonLoader = $body.find('#aiassistant-image-skeleton-loader');
         const $textOptions = $body.find('#aiassistant-text-options');
-        const $naturalTone = $body.find('#aiassistant-natural-tone');
 
         // Helper functions for skeleton loader display
         const showTextSkeleton = () => {
@@ -210,21 +209,6 @@ export async function openGenerateModal(field) {
             // Ensure lightswitch is initialized
             if ($includeContext && $includeContext.length) {
               const $lsContainer = $includeContext.closest('.lightswitch');
-              if (
-                $lsContainer &&
-                $lsContainer.length &&
-                !$lsContainer.data('lightswitch')
-              ) {
-                try {
-                  new Garnish.LightSwitch($lsContainer);
-                } catch (e) {
-                  /* noop */
-                }
-              }
-            }
-            // Initialize natural tone lightswitch
-            if ($naturalTone && $naturalTone.length) {
-              const $lsContainer = $naturalTone.closest('.lightswitch');
               if (
                 $lsContainer &&
                 $lsContainer.length &&
@@ -596,7 +580,7 @@ export async function openGenerateModal(field) {
                 if ($genTitle.length) $genTitle.text('Generated Text');
                 if ($genInstr.length)
                   $genInstr.text(
-                    'AI-generated content. Click Insert to replace the current content.'
+                    "AI-generated content. Click the 'Insert' button to replace the current field's content."
                   );
                 $genText.show();
                 if ($imgPrevRight.length) {
@@ -877,23 +861,10 @@ function setupGenerateHandler(
 
       const fieldType = getFieldType(inputObj.element);
 
-      // Read natural tone checkbox state
-      let naturalTone = true; // default to enabled
-      const $naturalToneEl = $btn.closest('.modal').find('#aiassistant-natural-tone');
-      if ($naturalToneEl && $naturalToneEl.length) {
-        const $ls = $naturalToneEl.closest('.lightswitch');
-        if ($ls && $ls.length) {
-          naturalTone = $ls.hasClass('on');
-        } else if ($naturalToneEl.is(':checkbox')) {
-          naturalTone = $naturalToneEl.is(':checked');
-        }
-      }
-
       const result = await generateText({
         promptText: fullPrompt,
         integrationHandle,
         fieldType,
-        naturalTone,
       });
 
       if ($skeletonLoader.length) {

@@ -21,7 +21,6 @@
                                 name: 'aiassistant-text-prompt',
                                 label: 'Prompt'|t('ai-assistant'),
                                 options: [{ label: 'Loading...'|t('ai-assistant'), value: '' }],
-                                instructions: 'Choose a predefined prompt to guide how the AI generates content.'|t('ai-assistant')
                             }) }}
                         </div>
                         <div class="aiassistant-prompt-select-col aiassistant-prompt-select-col--integration">
@@ -30,7 +29,6 @@
                                 name: 'aiassistant-text-integration',
                                 label: 'Integration'|t('ai-assistant'),
                                 options: [{ label: 'Loading...'|t('ai-assistant'), value: '' }],
-                                instructions: 'This is set by the selected prompt, but you can override it if needed.'|t('ai-assistant')
                             }) }}
                         </div>
                     </div>
@@ -43,7 +41,6 @@
                                 name: 'aiassistant-text-prompt-text',
                                 label: 'Prompt Text'|t('ai-assistant'),
                                 rows: 2,
-                                instructions: 'Edit the prompt that will be sent to the AI. You can customize it to better fit your use case, or select `Custom...` to write your own prompt from scratch.'|t('ai-assistant')
                             }) }}
                         </div>
                         <div id="aiassistant-image-col" class="aiassistant-image-col">
@@ -54,7 +51,6 @@
                                             id: 'aiassistant-asset-target',
                                             name: 'aiassistant-asset-target',
                                             label: 'Asset Destination'|t('ai-assistant'),
-                                            instructions: 'Select the volume or folder where generated images will be saved.'|t('ai-assistant'),
                                             options: assetTargetOptions ?? [],
                                             value: defaultAssetTargetValue ?? '',
                                         }) }}
@@ -64,8 +60,7 @@
                                             id: 'aiassistant-image-size',
                                             name: 'aiassistant-image-size',
                                             label: 'Image Size'|t('ai-assistant'),
-                                            placeholder: '1024x1024',
-                                            instructions: 'Specify the image dimensions (width x height), for example `1024x1024`.'|t('ai-assistant')
+                                            placeholder: 'e.g. 1024x1024',
                                         }) }}
                                     </div>
                                     <div class="count-field">
@@ -74,27 +69,10 @@
                                             name: 'aiassistant-image-count',
                                             label: 'Number of Images'|t('ai-assistant'),
                                             value: 1,
-                                            instructions: 'Choose how many image variations to generate.'|t('ai-assistant')
                                         }) }}
                                     </div>
                                 </div>
                                 <div id="aiassistant-image-preview"></div>
-                            </div>
-                            <div id="aiassistant-text-options" class="aiassistant-text-options aiassistant-hidden">
-                                <div class="field aiassistant-text-options-field">
-                                    <div class="heading">
-                                        <div class="lightswitch-wrapper">
-                                            {{ forms.lightswitch({
-                                                id: 'aiassistant-natural-tone',
-                                                name: 'aiassistant-natural-tone',
-                                                on: true
-                                            }) }}
-                                        </div>
-                                        <div class="heading-content">
-                                            <span class="aiassistant-generated-title">{{ 'Adjust the output to sound more natural and human-like.'|t('ai-assistant') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -110,7 +88,7 @@
                                 }) }}
                             </div>
                             <div class="heading-content">
-                                <span class="aiassistant-generated-title">{{ 'Include the current field content as context when generating text'|t('ai-assistant') }}</span>
+                                <span class="aiassistant-generated-title">{{ 'Include current field content as context'|t('ai-assistant') }}</span>
                             </div>
                         </div>
                         <div class="input">

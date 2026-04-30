@@ -106,8 +106,6 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
 
     protected function getSystemInstructions(string $fieldType, array $options = []): ?string
     {
-        $naturalTone = $options['naturalTone'] ?? true;
-
         $baseInstructions = '';
 
         switch ($fieldType) {
@@ -123,10 +121,6 @@ abstract class BaseAiIntegration implements AiIntegrationInterface
                 $baseInstructions = 'You generate text values for content management fields. Respond only with the content value, without quotes, code blocks, explanations, or formatting. Return plain text only, no HTML tags.';
 
                 break;
-        }
-
-        if ($naturalTone) {
-            $baseInstructions .= ' Write in a natural, conversational, and human-sounding tone. Avoid overly formal or robotic language. Use varied sentence structures and natural phrasing.';
         }
 
         return $baseInstructions;
