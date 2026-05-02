@@ -546,9 +546,6 @@
                     promptText: promptText,
                     integration: integrationHandle,
                     fieldType: 'input',
-                    options: {
-                        naturalTone: true
-                    }
                 })
             });
 
