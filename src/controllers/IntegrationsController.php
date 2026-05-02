@@ -107,8 +107,11 @@ class IntegrationsController extends Controller
         // If model is empty, apply sensible defaults per provider (SolspaceAI uses LiteLLM default — no stored model)
         if ('' === $integration->model && 'solspaceai' !== $integration->type) {
             $defaults = [
-                'openai' => 'gpt-4o-mini',
-                'gemini' => 'gemini-1.5-flash',
+                'openai' => 'gpt-5.4-mini',
+                'anthropic' => 'claude-sonnet-4.6',
+                'gemini' => 'gemini-3-flash',
+                'xai' => 'grok-4.1-fast',
+                'replicate' => 'black-forest-labs/flux-2-pro',
             ];
             $integration->model = $defaults[$integration->type] ?? '';
         }

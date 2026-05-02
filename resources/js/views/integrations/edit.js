@@ -11,11 +11,11 @@
     // ============================================================================
 
     const PROVIDER_DEFAULT_MODELS = {
-        openai: 'gpt-5-nano',
-        gemini: 'gemini-1.5-flash',
-        anthropic: 'claude-3-5-haiku-latest',
-        xai: 'grok-3-mini',
-        replicate: 'black-forest-labs/flux-1.1-pro',
+        openai: 'gpt-5.4-mini',
+        gemini: 'gemini-3-flash',
+        anthropic: 'claude-sonnet-4.6',
+        xai: 'grok-4.1-fast',
+        replicate: 'black-forest-labs/flux-2-pro',
     };
 
     const PROVIDER_MAX_TOKENS = {
@@ -78,14 +78,70 @@
      * @param {HTMLInputElement} modelInput - The model input element
      * @param {string} providerType - The selected provider type
      */
-    function updateModelField(modelInput, providerType) {
-        const currentValue = (modelInput.value || '').trim();
+    function applyDefaultModel(modelInput, providerType) {
         const defaultModel = PROVIDER_DEFAULT_MODELS[providerType] || '';
 
-        // Only update if empty or currently using a default value
-        if (!currentValue || Object.values(PROVIDER_DEFAULT_MODELS).includes(currentValue)) {
-            modelInput.value = defaultModel;
+        modelInput.dataset.aiassistantProgrammatic = '1';
+        modelInput.value = defaultModel;
+        // Keep Craft autosuggest stable (it may restore from initialvalue on focus)
+        modelInput.setAttribute('initialvalue', modelInput.value);
+        modelInput.dispatchEvent(new Event('input', { bubbles: true }));
+        modelInput.dataset.aiassistantProgrammatic = '0';
+    }
+
+    function updateModelForProvider(modelInput, providerType, reason) {
+        const current = (modelInput.value || '').trim();
+        if ('type-change' === reason) {
+            applyDefaultModel(modelInput, providerType);
+            return;
         }
+
+        // init / first paint: only fill if empty (don’t wipe saved models on edit)
+        if (!current) {
+            applyDefaultModel(modelInput, providerType);
+        }
+    }
+
+    /**
+     * Initialize tracking so provider changes update the model until user types.
+     */
+    function initModelTracking() {
+        const modelInput = document.getElementById(SELECTORS.model);
+        if (!modelInput) {
+            return;
+        }
+
+        const initialValue = (modelInput.value || '').trim();
+        if (initialValue) {
+            modelInput.setAttribute('initialvalue', initialValue);
+        }
+
+        // Keep autosuggest initialvalue aligned as the user edits
+        modelInput.addEventListener('input', function() {
+            if (modelInput.dataset.aiassistantProgrammatic === '1') {
+                return;
+            }
+            const v = (modelInput.value || '').trim();
+            if (v) {
+                modelInput.setAttribute('initialvalue', v);
+            }
+        });
+
+        // Before autosuggest reacts to focus/click, sync initialvalue to current value.
+        // (Autosuggest widgets sometimes reset to initialvalue when activated.)
+        function syncInitialOnInteract(e) {
+            const t = e && e.target;
+            if (!t || t.id !== SELECTORS.model) {
+                return;
+            }
+            const v = (t.value || '').trim();
+            if (v) {
+                t.setAttribute('initialvalue', v);
+            }
+        }
+
+        document.addEventListener('mousedown', syncInitialOnInteract, true);
+        document.addEventListener('focusin', syncInitialOnInteract, true);
     }
 
     /**
@@ -126,15 +182,16 @@
     /**
      * Update form fields based on selected provider type
      */
-    function updateFieldsForProvider() {
+    function updateFieldsForProvider(evt) {
         const fields = getProviderFields();
         if (!fields) {
             return;
         }
 
         const providerType = fields.type.value;
+        const reason = evt && 'change' === evt.type ? 'type-change' : 'init';
 
-        updateModelField(fields.modelInput, providerType);
+        updateModelForProvider(fields.modelInput, providerType, reason);
         updateMaxTokensField(fields.maxTokensInput, providerType);
         updateTemperatureField(fields.temperatureField, fields.temperatureInput, providerType);
     }
@@ -243,6 +300,7 @@
      * Initialize form fields on page load
      */
     function initFields() {
+        initModelTracking();
         updateFieldsForProvider();
         initAutoHandle();
     }

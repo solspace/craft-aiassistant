@@ -90,27 +90,32 @@ class Integration extends Model
                 'gpt-4-turbo' => 'GPT-4 Turbo',
                 'gpt-4o' => 'GPT-4o',
                 'gpt-4o-mini' => 'GPT-4o Mini',
+                'gpt-5.4-mini' => 'GPT-5.4 Mini',
             ],
             'gemini' => [
                 'gemini-pro' => 'Gemini Pro',
                 'gemini-pro-vision' => 'Gemini Pro Vision',
                 'gemini-1.5-pro' => 'Gemini 1.5 Pro',
                 'gemini-1.5-flash' => 'Gemini 1.5 Flash',
+                'gemini-3-flash' => 'Gemini 3 Flash',
             ],
             'anthropic' => [
                 'claude-3-5-haiku-latest' => 'Claude 3.5 Haiku',
                 'claude-3-5-sonnet-latest' => 'Claude 3.5 Sonnet',
                 'claude-3-7-sonnet-latest' => 'Claude 3.7 Sonnet',
                 'claude-3-7-haiku-latest' => 'Claude 3.7 Haiku',
+                'claude-sonnet-4.6' => 'Claude Sonnet 4.6',
             ],
             'xai' => [
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
+                'grok-4.1-fast' => 'Grok 4.1 Fast',
             ],
             'solspaceai' => [
                 '' => Craft::t('ai-assistant', 'Server default (LiteLLM)'),
             ],
             'replicate' => [
+                'black-forest-labs/flux-2-pro' => 'FLUX 2 Pro',
                 'black-forest-labs/flux-kontext-pro' => 'FLUX Kontext Pro',
                 'black-forest-labs/flux-1.1-pro' => 'FLUX.1.1 Pro',
                 'black-forest-labs/flux-1.1-pro-ultra' => 'FLUX.1.1 Pro Ultra',
@@ -147,12 +152,15 @@ class Integration extends Model
                 'claude-3-5-sonnet-latest' => 'Claude 3.5 Sonnet',
                 'claude-3-7-sonnet-latest' => 'Claude 3.7 Sonnet',
                 'claude-3-7-haiku-latest' => 'Claude 3.7 Haiku',
+                'claude-sonnet-4.6' => 'Claude Sonnet 4.6',
             ],
             'xai' => [
                 'grok-3-mini' => 'Grok 3 Mini',
                 'grok-3-full' => 'Grok 3 Full',
+                'grok-4.1-fast' => 'Grok 4.1 Fast',
             ],
             'replicate' => [
+                'black-forest-labs/flux-2-pro' => 'FLUX 2 Pro',
                 'black-forest-labs/flux-kontext-pro' => 'FLUX Kontext Pro',
                 'black-forest-labs/flux-1.1-pro' => 'FLUX.1.1 Pro',
                 'black-forest-labs/flux-1.1-pro-ultra' => 'FLUX.1.1 Pro Ultra',

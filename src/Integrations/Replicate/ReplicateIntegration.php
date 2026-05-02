@@ -10,7 +10,7 @@ use Solspace\AIAssistant\Integrations\BaseAiIntegration;
 class ReplicateIntegration extends BaseAiIntegration
 {
     protected const LOG_CATEGORY = 'Replicate';
-    protected const DEFAULT_MODEL = 'black-forest-labs/flux-kontext-pro';
+    protected const DEFAULT_MODEL = 'black-forest-labs/flux-2-pro';
 
     protected string $siteUrl = '';
 
