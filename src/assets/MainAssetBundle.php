@@ -3,6 +3,7 @@
 namespace Solspace\AIAssistant\assets;
 
 use craft\web\AssetBundle;
+use craft\web\View;
 use craft\web\assets\cp\CpAsset;
 
 /**
@@ -23,5 +24,16 @@ class MainAssetBundle extends AssetBundle
         ];
 
         parent::init();
+    }
+
+    public function registerAssetFiles($view)
+    {
+        parent::registerAssetFiles($view);
+
+        $view->registerTranslations('ai-assistant', [
+            'Write your custom prompt here...',
+            'Describe the image you want to generate...',
+            'Edit the prompt text as needed...',
+        ]);
     }
 }

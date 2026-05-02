@@ -466,13 +466,13 @@
         if (elements.promptTextField) {
             if (data.value === 'custom-text') {
                 elements.promptTextField.value = '';
-                elements.promptTextField.placeholder = 'Write your custom prompt here...';
+                elements.promptTextField.placeholder = Craft.t('ai-assistant', 'Write your custom prompt here...');
             } else if (data.value === 'custom-image') {
                 elements.promptTextField.value = '';
-                elements.promptTextField.placeholder = 'Describe the image you want to generate...';
+                elements.promptTextField.placeholder = Craft.t('ai-assistant', 'Describe the image you want to generate...');
             } else {
                 elements.promptTextField.value = data.promptText || '';
-                elements.promptTextField.placeholder = 'Edit the prompt text as needed...';
+                elements.promptTextField.placeholder = Craft.t('ai-assistant', 'Edit the prompt text as needed...');
             }
         }
 

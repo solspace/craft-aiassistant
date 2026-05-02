@@ -24,8 +24,6 @@ return [
     'Select the type of prompt.' => 'Select the type of prompt.',
     'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.' => 'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.',
     'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.' => 'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.',
-    'Choose a prompt to generate content with' => 'Choose a prompt to generate content with',
-    'Edit the prompt text as needed. This is what will be sent to the AI.' => 'Edit the prompt text as needed. This is what will be sent to the AI.',
     'Custom text...' => 'Custom text...',
     'Custom image...' => 'Custom image...',
     'Any' => 'Any',
@@ -40,7 +38,6 @@ return [
     'Edit Integration' => 'Edit Integration',
     'Add Integration' => 'Add Integration',
     'Integration' => 'Integration',
-    'Select the AI service to use' => 'Select the AI service to use',
     'Select the AI integration to use.' => 'Select the AI integration to use.',
     'Choose which Integration to use for this prompt.' => 'Choose which Integration to use for this prompt.',
     'Enable or disable this integration.' => 'Enable or disable this integration.',
@@ -74,9 +71,8 @@ return [
     'Save contact email and site URL first, then click Connect to fetch your API key from SolspaceAI. Model and token limits are managed in SolspaceAI / LiteLLM (not here).' => 'Save contact email and site URL first, then click Connect to fetch your API key from SolspaceAI. Model and token limits are managed in SolspaceAI / LiteLLM (not here).',
 
     // Widget
-    'Generate content directly from the dashboard' => 'Generate content directly from the dashboard',
     'Generated Content' => 'Generated Content',
-    'AI-generated content will appear here' => 'AI-generated content will appear here',
+    'AI-generated content will appear here.' => 'AI-generated content will appear here.',
     'Image Size' => 'Image Size',
     'Specify the image dimensions (width x height), for example `1024x1024`.' => 'Specify the image dimensions (width x height), for example `1024x1024`.',
     'Number of Images' => 'Number of Images',
@@ -90,6 +86,9 @@ return [
     'Generated image preview' => 'Generated image preview',
     'Generate to preview images' => 'Generate to preview images',
     'or' => 'or',
+    'Write your custom prompt here...' => 'Write your custom prompt here...',
+    'Describe the image you want to generate...' => 'Describe the image you want to generate...',
+    'Edit the prompt text as needed...' => 'Edit the prompt text as needed...',
 
     // Image Generation Options
     'Default Size' => 'Default Size',

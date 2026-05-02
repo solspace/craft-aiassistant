@@ -24,8 +24,6 @@ return [
     'Select the type of prompt.' => 'Wählen Sie den Typ des Prompts aus.',
     'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.' => 'Geben Sie den Prompt-Text ein, der an die KI gesendet wird. Sie können Variablen und Kontext-Platzhalter verwenden.',
     'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.' => 'Wählen Sie einen vorhandenen Prompt für dieses Feld aus oder lassen Sie "Beliebig" stehen, um alle Prompts zu erlauben.',
-    'Choose a prompt to generate content with' => 'Wählen Sie einen Prompt zur Inhaltsgenerierung aus',
-    'Edit the prompt text as needed. This is what will be sent to the AI.' => 'Bearbeiten Sie den Prompt-Text nach Bedarf. Dies wird an die KI gesendet.',
     'Custom text...' => 'Benutzerdefinierter Text...',
     'Custom image...' => 'Benutzerdefiniertes Bild...',
     'Any' => 'Beliebig',
@@ -40,7 +38,6 @@ return [
     'Edit Integration' => 'Integration bearbeiten',
     'Add Integration' => 'Integration hinzufügen',
     'Integration' => 'Integration',
-    'Select the AI service to use' => 'Wählen Sie den zu verwendenden KI-Service aus',
     'Select the AI integration to use.' => 'Wählen Sie die zu verwendende KI-Integration aus.',
     'Choose which Integration to use for this prompt.' => 'Wählen Sie aus, welche Integration für diesen Prompt verwendet werden soll.',
     'Enable or disable this integration.' => 'Diese Integration aktivieren oder deaktivieren.',
@@ -74,9 +71,8 @@ return [
     'Save contact email and site URL first, then click Connect to fetch your API key from SolspaceAI. Model and token limits are managed in SolspaceAI / LiteLLM (not here).' => 'Speichern Sie zuerst die Kontakt-E-Mail und die Website-URL und klicken Sie dann auf Verbinden, um Ihren API-Schlüssel von SolspaceAI abzurufen. Modell- und Token-Limits werden in SolspaceAI / LiteLLM verwaltet (nicht hier).',
 
     // Widget
-    'Generate content directly from the dashboard' => 'Inhalte direkt vom Dashboard generieren',
     'Generated Content' => 'Generierter Inhalt',
-    'AI-generated content will appear here' => 'KI-generierter Inhalt wird hier angezeigt',
+    'AI-generated content will appear here.' => 'KI-generierter Inhalt wird hier angezeigt.',
     'Image Size' => 'Bildgröße',
     'Specify the image dimensions (width x height), for example `1024x1024`.' => 'Geben Sie die Bildabmessungen an (Breite x Höhe), z. B. `1024x1024`.',
     'Number of Images' => 'Anzahl der Bilder',
@@ -90,6 +86,9 @@ return [
     'Generated image preview' => 'Vorschau des generierten Bildes',
     'Generate to preview images' => 'Generieren, um Bilder in der Vorschau anzuzeigen',
     'or' => 'oder',
+    'Write your custom prompt here...' => 'Geben Sie hier Ihren eigenen Prompt ein...',
+    'Describe the image you want to generate...' => 'Beschreiben Sie das Bild, das Sie generieren möchten...',
+    'Edit the prompt text as needed...' => 'Bearbeiten Sie den Prompt-Text nach Bedarf...',
 
     // Image Generation Options
     'Default Size' => 'Standardgröße',

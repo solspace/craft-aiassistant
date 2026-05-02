@@ -1,9 +1,6 @@
 {% import "_includes/forms" as forms %}
 
 <div class="aiassistant-widget">
-    <div class="aiassistant-widget-header">
-        <p class="light">{{ "Generate content directly from the dashboard"|t('ai-assistant') }}</p>
-    </div>
 
     <div class="aiassistant-widget-content">
         <form id="aiassistant-quick-form">
@@ -48,8 +45,7 @@
                             assetTarget: prompt.assetTarget ?? '',
                             integration: prompt.integrationHandle ?? ''
                         }
-                    })),
-                    instructions: "Choose a prompt to generate content with"|t('ai-assistant')
+                    }))
                 }) }}
             </div>
 
@@ -59,46 +55,42 @@
                     id: 'aiassistant-widget-prompt-text',
                     name: 'promptText',
                     rows: 4,
-                    instructions: "Edit the prompt text as needed. This is what will be sent to the AI."|t('ai-assistant'),
-                    placeholder: "Select a prompt above or write your own custom prompt..."
+                    placeholder: "Select a prompt above or write your own custom prompt..."|t('ai-assistant')
                 }) }}
             </div>
 
             <div id="aiassistant-widget-image-options" class="field aiassistant-hidden">
+                <div class="field asset-target-field">
+                    {{ forms.selectField({
+                        label: "Asset Destination"|t('ai-assistant'),
+                        id: 'aiassistant-widget-asset-target',
+                        name: 'assetTarget',
+                        options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
+                        value: defaultAssetTargetValue ?? '',
+                        inputAttributes: {
+                            'data-default-value': defaultAssetTargetValue ?? ''
+                        }
+                    }) }}
+                </div>
                 <div class="aiassistant-widget-image-options-row">
                     <div class="field">
                         {{ forms.textField({
                             label: "Image Size"|t('ai-assistant'),
                             id: 'aiassistant-widget-image-size',
                             name: 'imageSize',
-                            placeholder: "1024x1024",
-                            instructions: "Optional. Use WidthxHeight (for example, 1024x1024)."|t('ai-assistant')
+                            placeholder: "e.g. 1024x1024",
                         }) }}
                     </div>
-                    <div class="field count-field">
+                    <div class="field">
                         {{ forms.textField({
-                            label: "Image Count"|t('ai-assistant'),
+                            label: "Number of Images"|t('ai-assistant'),
                             id: 'aiassistant-widget-image-count',
                             name: 'imageCount',
                             type: 'number',
                             min: 1,
                             value: 1,
-                            instructions: "Number of images to request (many providers allow 1-4)."|t('ai-assistant')
                         }) }}
                     </div>
-                </div>
-                <div class="field asset-target-field">
-                    {{ forms.selectField({
-                        label: "Save To"|t('ai-assistant'),
-                        id: 'aiassistant-widget-asset-target',
-                        name: 'assetTarget',
-                        options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
-                        value: defaultAssetTargetValue ?? '',
-                        instructions: "Choose where generated images should be saved."|t('ai-assistant'),
-                        inputAttributes: {
-                            'data-default-value': defaultAssetTargetValue ?? ''
-                        }
-                    }) }}
                 </div>
             </div>
 
@@ -113,8 +105,7 @@
                         data: {
                             type: integration.type ?? ''
                         }
-                    }),
-                    instructions: "Select the AI service to use"|t('ai-assistant')
+                    })
                 }) }}
             </div>
 
@@ -125,7 +116,7 @@
                     name: 'output',
                     rows: 4,
                     readonly: true,
-                    instructions: "AI-generated content will appear here"|t('ai-assistant')
+                    instructions: "AI-generated content will appear here."|t('ai-assistant')
                 }) }}
             </div>
 

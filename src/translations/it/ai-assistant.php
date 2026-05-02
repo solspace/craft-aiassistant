@@ -24,8 +24,6 @@ return [
     'Select the type of prompt.' => 'Seleziona il tipo di prompt.',
     'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.' => 'Inserisci il testo del prompt che verrà inviato all\'IA. Puoi utilizzare variabili e segnaposto di contesto.',
     'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.' => 'Scegli un prompt esistente da utilizzare per questo campo, oppure lascia "Qualsiasi" per consentire tutti i prompt.',
-    'Choose a prompt to generate content with' => 'Scegli un prompt per generare contenuti',
-    'Edit the prompt text as needed. This is what will be sent to the AI.' => 'Modifica il testo del prompt secondo necessità. Questo è ciò che verrà inviato all\'IA.',
     'Custom text...' => 'Testo personalizzato...',
     'Custom image...' => 'Immagine personalizzata...',
     'Any' => 'Qualsiasi',
@@ -40,7 +38,6 @@ return [
     'Edit Integration' => 'Modifica integrazione',
     'Add Integration' => 'Aggiungi integrazione',
     'Integration' => 'Integrazione',
-    'Select the AI service to use' => 'Seleziona il servizio IA da utilizzare',
     'Select the AI integration to use.' => 'Seleziona l\'integrazione IA da utilizzare.',
     'Choose which Integration to use for this prompt.' => 'Scegli quale integrazione utilizzare per questo prompt.',
     'Enable or disable this integration.' => 'Abilita o disabilita questa integrazione.',
@@ -74,12 +71,11 @@ return [
     'Save contact email and site URL first, then click Connect to fetch your API key from SolspaceAI. Model and token limits are managed in SolspaceAI / LiteLLM (not here).' => 'Salva prima l’email di contatto e l’URL del sito, quindi fai clic su Connetti per ottenere la chiave API da SolspaceAI. I limiti di modello e token sono gestiti in SolspaceAI / LiteLLM (non qui).',
 
     // Widget
-    'Generate content directly from the dashboard' => 'Genera contenuti direttamente dalla dashboard',
     'Generated Content' => 'Contenuto generato',
-    'AI-generated content will appear here' => 'Il contenuto generato dall\'IA apparirà qui',
-    'Image Size' => 'Dimensione immagine',
+    'AI-generated content will appear here.' => 'Il contenuto generato dall\'IA apparirà qui.',
+    'Image Size' => 'Dimensione img',
     'Specify the image dimensions (width x height), for example `1024x1024`.' => 'Specifica le dimensioni dell’immagine (larghezza x altezza), ad esempio `1024x1024`.',
-    'Number of Images' => 'Numero di immagini',
+    'Number of Images' => 'Numero immagini',
     'Asset Destination' => 'Destinazione asset',
     'Select the volume or folder where generated images will be saved.' => 'Seleziona il volume o la cartella in cui verranno salvate le immagini generate.',
     'Generate' => 'Genera',
@@ -90,6 +86,9 @@ return [
     'Generated image preview' => 'Anteprima immagine generata',
     'Generate to preview images' => 'Genera per visualizzare le immagini',
     'or' => 'o',
+    'Write your custom prompt here...' => 'Scrivi qui il tuo prompt personalizzato...',
+    'Describe the image you want to generate...' => 'Descrivi l’immagine che vuoi generare...',
+    'Edit the prompt text as needed...' => 'Modifica il testo del prompt secondo necessità...',
 
     // Image Generation Options
     'Default Size' => 'Dimensione predefinita',

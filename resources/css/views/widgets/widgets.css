@@ -4,7 +4,7 @@
  */
 
 .aiassistant-widget {
-    padding: 0;
+    padding: 10px 0 0 0;
 }
 
 .aiassistant-widget-header {
@@ -23,10 +23,6 @@
     margin: 0;
     font-size: 12px;
     color: var(--light-text-color, #6b7280);
-}
-
-.aiassistant-widget-content .field {
-    margin-bottom: 15px;
 }
 
 .aiassistant-widget-content .field:last-of-type {
@@ -63,10 +59,6 @@
 
 #aiassistant-widget-image-options {
     margin-top: 10px;
-    padding: 12px;
-    border: 1px solid var(--hairline-color, #e5e7eb);
-    border-radius: 6px;
-    background: var(--ui-control-bg, #f9fafb);
     display: none;
 }
 
@@ -81,11 +73,8 @@
 }
 
 .aiassistant-widget-image-options-row .field {
-    flex: 1 1 180px;
-}
-
-.aiassistant-widget-image-options-row .field.count-field {
-    flex: 1 1 140px;
+    flex: 1 1 90px;
+    margin: 0;
 }
 
 .aiassistant-widget-image-options-row .field.asset-target-field {

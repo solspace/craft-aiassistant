@@ -24,8 +24,6 @@ return [
     'Select the type of prompt.' => 'Selecteer het type prompt.',
     'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.' => 'Voer de prompttekst in die naar de AI wordt verzonden. U kunt variabelen en contextplaatshouders gebruiken.',
     'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.' => 'Kies een bestaande prompt om te gebruiken voor dit veld, of laat "Alle" staan om alle prompts toe te staan.',
-    'Choose a prompt to generate content with' => 'Kies een prompt om inhoud mee te genereren',
-    'Edit the prompt text as needed. This is what will be sent to the AI.' => 'Bewerk de prompttekst indien nodig. Dit is wat naar de AI wordt verzonden.',
     'Custom text...' => 'Aangepaste tekst...',
     'Custom image...' => 'Aangepaste afbeelding...',
     'Any' => 'Alle',
@@ -40,7 +38,6 @@ return [
     'Edit Integration' => 'Integratie bewerken',
     'Add Integration' => 'Integratie toevoegen',
     'Integration' => 'Integratie',
-    'Select the AI service to use' => 'Selecteer de te gebruiken AI-service',
     'Select the AI integration to use.' => 'Selecteer de te gebruiken AI-integratie.',
     'Choose which Integration to use for this prompt.' => 'Kies welke integratie u voor deze prompt wilt gebruiken.',
     'Enable or disable this integration.' => 'Deze integratie in- of uitschakelen.',
@@ -74,12 +71,11 @@ return [
     'Save contact email and site URL first, then click Connect to fetch your API key from SolspaceAI. Model and token limits are managed in SolspaceAI / LiteLLM (not here).' => 'Sla eerst het contact e-mailadres en de site-URL op en klik vervolgens op Verbinden om je API-sleutel van SolspaceAI op te halen. Model- en tokenlimieten worden beheerd in SolspaceAI / LiteLLM (niet hier).',
 
     // Widget
-    'Generate content directly from the dashboard' => 'Genereer inhoud rechtstreeks vanuit het dashboard',
     'Generated Content' => 'Gegenereerde inhoud',
-    'AI-generated content will appear here' => 'AI-gegenereerde inhoud verschijnt hier',
+    'AI-generated content will appear here.' => 'AI-gegenereerde inhoud verschijnt hier.',
     'Image Size' => 'Afbeeldingsgrootte',
     'Specify the image dimensions (width x height), for example `1024x1024`.' => 'Geef de afbeeldingsafmetingen op (breedte x hoogte), bijvoorbeeld `1024x1024`.',
-    'Number of Images' => 'Aantal afbeeldingen',
+    'Number of Images' => 'Aantal beelden',
     'Asset Destination' => 'Assetbestemming',
     'Select the volume or folder where generated images will be saved.' => 'Selecteer de volume of map waarin gegenereerde afbeeldingen worden opgeslagen.',
     'Generate' => 'Genereren',
@@ -90,6 +86,9 @@ return [
     'Generated image preview' => 'Voorvertoning gegenereerde afbeelding',
     'Generate to preview images' => 'Genereren om afbeeldingen te bekijken',
     'or' => 'of',
+    'Write your custom prompt here...' => 'Schrijf hier je aangepaste prompt...',
+    'Describe the image you want to generate...' => 'Beschrijf de afbeelding die je wilt genereren...',
+    'Edit the prompt text as needed...' => 'Bewerk de prompttekst indien nodig...',
 
     // Image Generation Options
     'Default Size' => 'Standaardgrootte',

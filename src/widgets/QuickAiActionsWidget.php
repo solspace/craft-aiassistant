@@ -12,7 +12,7 @@ class QuickAiActionsWidget extends Widget
 {
     public static function displayName(): string
     {
-        return \Craft::t('app', 'AI Assistant Quick Actions');
+        return \Craft::t('ai-assistant', 'AI Assistant');
     }
 
     public static function icon(): ?string
