@@ -21,71 +21,20 @@
    ========================================================================== */
 
 .aiassistant-modal {
-  width: 90vw !important;
+  width: 80vw !important;
   min-width: 800px !important;
-  max-width: 1400px !important;
-  height: 70vh !important;
-  max-height: 70vh !important;
+  max-width: 1200px !important;
+  height: 600px !important;
+  max-height: 95vh !important;
 }
 
 .aiassistant-modal .body {
-  max-height: 60vh !important;
+  height: 100%;
+  padding: 15px !important;
 }
 
-@media (min-width: 1200px) {
-  .aiassistant-modal {
-    width: 85vw !important;
-    min-width: 1200px !important;
-    max-width: 1400px !important;
-    height: 75vh !important;
-    max-height: 75vh !important;
-  }
-
-  .aiassistant-modal .body {
-    max-height: 65vh !important;
-  }
-}
-
-@media (min-width: 1600px) {
-  .aiassistant-modal {
-    width: 80vw !important;
-    min-width: 1400px !important;
-    max-width: 1600px !important;
-    height: 80vh !important;
-    max-height: 80vh !important;
-  }
-
-  .aiassistant-modal .body {
-    max-height: 70vh !important;
-  }
-}
-
-@media (max-width: 1199px) {
-  .aiassistant-modal {
-    width: 95vw !important;
-    min-width: 600px !important;
-    max-width: 95vw !important;
-    height: 65vh !important;
-    max-height: 65vh !important;
-  }
-
-  .aiassistant-modal .body {
-    max-height: 60vh !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .aiassistant-modal {
-    width: 95vw !important;
-    min-width: 95vw !important;
-    max-width: 95vw !important;
-    height: 60vh !important;
-    max-height: 60vh !important;
-  }
-
-  .aiassistant-modal .body {
-    max-height: 55vh !important;
-  }
+.aiassistant-modal .footer {
+  padding: 10px 15px !important;
 }
 
 /* ==========================================================================
@@ -170,7 +119,7 @@
 .ai-assistant-modal .modal-body {
   padding: 1.5rem;
   background: var(--ui-bg, #ffffff);
-  max-height: 60vh;
+  height: 100%;
   overflow-y: auto;
 }
 
@@ -342,27 +291,6 @@
 }
 
 /* ==========================================================================
-   Responsive Design
-   ========================================================================== */
-
-@media (max-width: 768px) {
-  .ai-assistant-modal .modal-body {
-    padding: 1rem;
-    max-height: 50vh;
-  }
-
-  .ai-assistant-modal .modal-footer {
-    padding: 0.75rem 1rem;
-    flex-direction: column;
-  }
-
-  .ai-assistant-modal .btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ==========================================================================
    Accessibility Enhancements
    ========================================================================== */
 
@@ -417,7 +345,7 @@
    ========================================================================== */
 
 .aiassistant-rich-editor {
-  min-height: 200px;
+  min-height: 150px;
   border-radius: 4px;
   padding: 12px;
   font-family: var(
@@ -449,7 +377,7 @@
   line-height: 1.6;
   color: var(--text-color, #1f2937);
   resize: vertical;
-  min-height: 200px;
+  min-height: 150px;
 }
 
 .aiassistant-rich-editor.aiassistant-html-display h1,
@@ -561,25 +489,7 @@
    Responsive Design
    ========================================================================== */
 
-@media (max-width: 1199px) {
-  .aiassistant-modal .body {
-    padding: 15px 15px 90px 15px !important;
-  }
-
-  .aiassistant-modal .footer {
-    padding: 10px 15px !important;
-  }
-}
-
 @media (max-width: 768px) {
-  .aiassistant-modal .body {
-    padding: 10px !important;
-  }
-
-  .aiassistant-modal .footer {
-    padding: 8px 10px !important;
-  }
-
   /* Stack rich text editors vertically on mobile */
   #aiassistant-text-comparison > div {
     flex-direction: column !important;
