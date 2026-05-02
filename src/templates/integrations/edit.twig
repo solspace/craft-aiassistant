@@ -182,7 +182,7 @@
                     instructions: "Specify the model to use. A default is set when you choose a provider. Environment variables are supported (e.g. `$MY_MODEL`)."|t('ai-assistant'),
                     id: 'model',
                     name: 'model',
-                    value: integration.model ?: (integration.type == 'openai' ? 'gpt-5.4-mini' : (integration.type == 'gemini' ? 'gemini-3-flash' : (integration.type == 'anthropic' ? 'claude-sonnet-4.6' : (integration.type == 'xai' ? 'grok-4.1-fast' : (integration.type == 'replicate' ? 'black-forest-labs/flux-2-pro' : ''))))),
+                    value: integration.model,
                     required: true,
                     disabled: isSolspaceAi,
                     placeholder: 'e.g., gpt-5.4-mini',
