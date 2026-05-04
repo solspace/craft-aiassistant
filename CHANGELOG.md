@@ -1,5 +1,12 @@
 # Solspace AI Assistant Changelog
 
+## 1.2.0 - 2026-05-02
+
+### Changed
+- Enhanced the **AI Assistant** modal layout.
+- Enhanced the **AI Assistant** widget design.
+- Refactored model field handling and improved autofill tracking logic.
+
 ## 1.1.0 - 2026-04-20
 
 ### Added
