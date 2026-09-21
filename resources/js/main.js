@@ -4,9 +4,8 @@
  */
 
 import { CONFIG } from './utils/config.js';
-import { qsa } from './utils/dom.js';
-import { getFieldHandle, isFieldEnabled, getFieldInput, getFieldType } from './utils/field.js';
-import { attachButtonToField } from './components/button.js';
+import { getFieldHandle, getFieldInput, getFieldType } from './utils/field.js';
+import { attachInlineButtons as attachButtons, initializeInlineButtons } from './components/inline-buttons.js';
 import { openGenerateModal, openFromAssetModal } from './views/modals/generate-modal.js';
 import { openPromptPicker, applyPromptSelection } from './views/modals/prompt-picker.js';
 import { fetchModalHtml } from './services/api.js';
@@ -24,37 +23,10 @@ import './views/widgets/quick-ai-actions.js';
  * Attach inline buttons to all eligible fields
  */
 function attachInlineButtons() {
-    const nodes = qsa(CONFIG.selectors.fields);
-    nodes.forEach((inputEl) => {
-        const field = inputEl.closest(CONFIG.selectors.field);
-        if (!field) return;
-        
-        const handle = getFieldHandle(field);
-        if (!isFieldEnabled(handle)) return;
-        
-        attachButtonToField(inputEl, (field) => {
-            openGenerateModal(field);
-        });
-    });
+    attachButtons(openGenerateModal);
 }
 
-/**
- * Initialize main functionality
- */
-function initialize() {
-    // Attach on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', attachInlineButtons);
-    } else {
-        attachInlineButtons();
-    }
-
-    // Re-attach when users click (covers some dynamic UI cases)
-    document.addEventListener('click', attachInlineButtons);
-}
-
-// Run init immediately
-initialize();
+initializeInlineButtons(openGenerateModal);
 
 /**
  * Public API (exposed on window.AiAssistant)
@@ -86,4 +58,3 @@ window.AiAssistantModal = {
     fetchModalHtml,
     createModal
 };
-

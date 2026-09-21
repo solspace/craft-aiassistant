@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Build tooling for the AI Assistant Craft plugin assets.",
   "scripts": {
+    "test": "node --test tests/*.test.cjs",
     "build": "node resources/build.js",
     "watch": "node resources/build.js --watch"
   },
@@ -11,7 +12,7 @@
     "chart.js": "^4.4.8"
   },
   "devDependencies": {
-    "esbuild": "^0.21.5"
+    "esbuild": "^0.21.5",
+    "jsdom": "^26.1.0"
   }
 }
-
