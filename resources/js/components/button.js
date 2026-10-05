@@ -6,6 +6,10 @@
 import { CONFIG } from '../utils/config.js';
 import { qs } from '../utils/dom.js';
 
+// DOM attributes and buttons may be copied when Craft duplicates a block.
+// Track live bindings separately so cloned buttons get their own click handler.
+const initializedWrappers = new WeakMap();
+
 /**
  * Create AI button element
  */
@@ -65,7 +69,7 @@ export function ensureInputPaddingForButton(inputEl) {
  * Attach button to field
  */
 export function attachButtonToField(inputEl, onClick) {
-    if (!inputEl || inputEl.dataset.aiassistantBtn) return;
+    if (!inputEl) return;
 
     const field = inputEl.closest(CONFIG.selectors.field);
     if (!field) return;
@@ -73,10 +77,9 @@ export function attachButtonToField(inputEl, onClick) {
     // Prevent duplicate button in the same input wrapper
     const inputWrapper = inputEl.closest(CONFIG.selectors.inputWrapper);
     if (!inputWrapper) return;
-    if (qs(`.${CONFIG.cssClass.inlineButton}`, inputWrapper)) return;
-
-    // mark as processed
-    inputEl.dataset.aiassistantBtn = '1';
+    const existingButton = qs(`.${CONFIG.cssClass.inlineButton}`, inputWrapper);
+    if (existingButton && initializedWrappers.get(inputWrapper) === existingButton) return;
+    existingButton?.remove();
 
     // ensure wrapper is positioned so absolute child positions correctly
     if (!inputWrapper.style.position) {
@@ -94,5 +97,5 @@ export function attachButtonToField(inputEl, onClick) {
     });
 
     inputWrapper.appendChild(btn);
+    initializedWrappers.set(inputWrapper, btn);
 }
-

@@ -6,6 +6,7 @@
 import {
   getFieldInput,
   getFieldHandle,
+  getFieldTag,
   getFieldType,
 } from '../../utils/field.js';
 import { createModal, injectModalIcon } from '../../components/modal.js';
@@ -24,7 +25,7 @@ import {
  */
 export async function openGenerateModal(field) {
   // Get field type from the injected AI Assistant field tag
-  const fieldTag = field.querySelector('.ai-assistant-field');
+  const fieldTag = getFieldTag(field);
   const fieldType = fieldTag
     ? fieldTag.dataset.fieldType
     : 'craft\\fields\\PlainText';
@@ -147,7 +148,7 @@ export async function openGenerateModal(field) {
         const fieldHandle = getFieldHandle(field);
         let fieldSpecificPromptId = '';
 
-        const fieldTag = field.querySelector('.ai-assistant-field');
+        const fieldTag = getFieldTag(field);
         if (fieldTag && fieldTag.dataset.fieldPrompt) {
           fieldSpecificPromptId = fieldTag.dataset.fieldPrompt;
         }

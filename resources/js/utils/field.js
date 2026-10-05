@@ -3,7 +3,15 @@
  * Common field detection and manipulation helpers
  */
 
-import { qs, isString } from './dom.js';
+import { qs, qsa, isString } from './dom.js';
+
+/**
+ * Find metadata belonging to this field, not a field nested inside it.
+ */
+export function getFieldTag(field) {
+    if (!field) return null;
+    return qsa('.ai-assistant-field', field).find((tag) => tag.closest('.field') === field) || null;
+}
 
 /**
  * Get field handle from a field element
@@ -11,16 +19,23 @@ import { qs, isString } from './dom.js';
 export function getFieldHandle(field) {
     if (!field) return '';
 
-    // Try name attribute on input/textarea
-    const nameInput = qs('input[name], textarea[name]', field);
+    // Server-rendered metadata is independent of Matrix/slideout namespaces.
+    const handle = getFieldTag(field)?.dataset.fieldHandle || field.dataset.handle;
+    if (isString(handle)) return handle;
+
+    // Only inspect inputs belonging to this field (not nested Matrix fields).
+    const nameInput = qsa('input[name], textarea[name]', field)
+        .find((input) => input.closest('.field') === field);
     if (nameInput && isString(nameInput.name)) {
-        if (nameInput.name === 'title') return 'title';
-        const match = nameInput.name.match(/fields\[(.*?)\]/);
-        if (match && match[1]) return match[1];
+        const parts = nameInput.name.match(/[^\[\]]+/g) || [];
+        // Title inputs do not receive a custom-field metadata tag.
+        if (parts[parts.length - 1] === 'title') return 'title';
+        // Use the innermost fields namespace, including [fields][handle].
+        const index = parts.lastIndexOf('fields');
+        if (index !== -1 && parts[index + 1]) return parts[index + 1];
     }
 
-    // Fallback to data attribute
-    return field.getAttribute('data-handle') || field.dataset.handle || '';
+    return '';
 }
 
 /**
@@ -226,4 +241,3 @@ export function getFieldType(el) {
     if (el.tagName === 'INPUT') return 'input';
     return 'input';
 }
-
