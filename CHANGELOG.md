@@ -1,9 +1,9 @@
 # Solspace AI Assistant Changelog
 
-## Unreleased
+## 1.2.1 - 2026-10-05
 
 ### Fixed
-- Fixed an issue where AI Assistant buttons could be missing from supported fields inside Matrix entries, including newly added entries and slideout editors.
+- Fixed an issue where AI Assistant buttons could be missing or unresponsive in Matrix fields, including newly added or duplicated entries and slideout editors.
 
 ## 1.2.0 - 2026-05-02
 
