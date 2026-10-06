@@ -22,7 +22,7 @@ return [
     'Create a new custom prompt for AI text generation.' => 'Erstellen Sie einen neuen benutzerdefinierten Prompt für die KI-Textgenerierung.',
     'Give your prompt a descriptive name.' => 'Geben Sie Ihrem Prompt einen beschreibenden Namen.',
     'Select the type of prompt.' => 'Wählen Sie den Typ des Prompts aus.',
-    'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.' => 'Geben Sie den Prompt-Text ein, der an die KI gesendet wird. Sie können Variablen und Kontext-Platzhalter verwenden.',
+    'Enter the instructions that will be sent to the AI. Entry-field variables and Twig expressions are not automatically substituted.' => 'Geben Sie die Anweisungen ein, die an die KI gesendet werden. Variablen aus Eintragsfeldern und Twig-Ausdrücke werden nicht automatisch ersetzt.',
     'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.' => 'Wählen Sie einen vorhandenen Prompt für dieses Feld aus oder lassen Sie "Beliebig" stehen, um alle Prompts zu erlauben.',
     'Custom text...' => 'Benutzerdefinierter Text...',
     'Custom image...' => 'Benutzerdefiniertes Bild...',

@@ -125,6 +125,7 @@ class AiAssistant extends Plugin
             foreach ($integrationService->getAllIntegrations() as $i) {
                 if ('solspaceai' === ($i->type ?? null) && $i->enabled && '' !== trim((string) $i->apiKey)) {
                     $has = true;
+
                     break;
                 }
             }
@@ -232,6 +233,7 @@ class AiAssistant extends Plugin
             'ai-assistant/api/get-asset-url' => 'ai-assistant/api/get-asset-url',
             'ai-assistant/api/stream-asset' => 'ai-assistant/api/stream-asset',
             'ai-assistant/integrations/test' => 'ai-assistant/integrations/test',
+            'ai-assistant/integrations/models' => 'ai-assistant/integrations/models',
             'ai-assistant/integrations/connect-solspaceai' => 'ai-assistant/integrations/connect-solspaceai',
             'ai-assistant/solspace-ai/usage' => 'ai-assistant/solspace-ai/usage',
             'ai-assistant/solspace-ai/plans' => 'ai-assistant/solspace-ai/plans',
@@ -358,7 +360,7 @@ class AiAssistant extends Plugin
         Event::on(
             Asset::class,
             Asset::EVENT_DEFINE_ACTION_MENU_ITEMS,
-            function (DefineMenuItemsEvent $event) {
+            static function (DefineMenuItemsEvent $event) {
                 /** @var Asset $asset */
                 $asset = $event->sender;
 
@@ -389,7 +391,7 @@ class AiAssistant extends Plugin
                 ];
 
                 // Register JavaScript to open AI Assistant modal from asset
-                $view->registerJsWithVars(fn ($id, $assetId, $assetUrl) => <<<JS
+                $view->registerJsWithVars(static fn ($id, $assetId, $assetUrl) => <<<JS
                     $('#' + {$id}).on('activate', () => {
                       if (window.AiAssistantModal && window.AiAssistantModal.openFromAssetModal) {
                         window.AiAssistantModal.openFromAssetModal({$assetId}, {$assetUrl});
@@ -416,7 +418,7 @@ class AiAssistant extends Plugin
         Event::on(
             Dashboard::class,
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+            static function (RegisterComponentTypesEvent $event) {
                 $event->types[] = QuickAiActionsWidget::class;
             }
         );

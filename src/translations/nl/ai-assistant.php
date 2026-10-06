@@ -22,7 +22,7 @@ return [
     'Create a new custom prompt for AI text generation.' => 'Maak een nieuwe aangepaste prompt voor AI-tekstgeneratie.',
     'Give your prompt a descriptive name.' => 'Geef uw prompt een beschrijvende naam.',
     'Select the type of prompt.' => 'Selecteer het type prompt.',
-    'Enter the prompt text that will be sent to the AI. You can use variables and context placeholders.' => 'Voer de prompttekst in die naar de AI wordt verzonden. U kunt variabelen en contextplaatshouders gebruiken.',
+    'Enter the instructions that will be sent to the AI. Entry-field variables and Twig expressions are not automatically substituted.' => 'Voer de instructies in die naar de AI worden verzonden. Variabelen van invoervelden en Twig-expressies worden niet automatisch vervangen.',
     'Choose an existing prompt to use for this field, or leave as "Any" to allow all prompts.' => 'Kies een bestaande prompt om te gebruiken voor dit veld, of laat "Alle" staan om alle prompts toe te staan.',
     'Custom text...' => 'Aangepaste tekst...',
     'Custom image...' => 'Aangepaste afbeelding...',

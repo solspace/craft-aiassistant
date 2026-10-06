@@ -34,6 +34,7 @@
         "hasCpSection": true
     },
     "scripts": {
+        "test:integrations": "php tests/gemini-integration.test.php",
         "fix": "vendor/bin/php-cs-fixer fix --diff --config=./.php-cs-fixer.dist.php",
         "fix:dry-run": "vendor/bin/php-cs-fixer fix --dry-run --diff --config=./.php-cs-fixer.dist.php"
     },
