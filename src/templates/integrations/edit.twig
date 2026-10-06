@@ -176,10 +176,27 @@
                 }) }}
             </div>
 
-            <div class="field">
+            <div class="field" id="aiassistant-model-field">
+                <div class="heading"><label for="aiassistant-model-picker">{{ 'Model'|t('ai-assistant') }}</label></div>
+                <div class="instructions"><p>{{ 'Choose a model available to your API key, or enter a custom model ID. Models load automatically after you enter a key.'|t('ai-assistant') }}</p></div>
+                <div class="flex flex-nowrap">
+                    <div class="flex-grow">
+                        {{ forms.selectize({
+                            id: 'aiassistant-model-picker',
+                            options: [{ value: '__custom__', label: 'Other / Custom model ID'|t('ai-assistant') }],
+                            value: '__custom__',
+                            disabled: isSolspaceAi,
+                        }) }}
+                    </div>
+                    <button type="button" class="btn" id="aiassistant-refresh-models">{{ 'Refresh models'|t('ai-assistant') }}</button>
+                </div>
+                <p class="instructions" id="aiassistant-model-status" role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="field" id="aiassistant-custom-model-field">
                 {{ forms.autosuggestField({
-                    label: "Model"|t('ai-assistant'),
-                    instructions: "Specify the model to use. A default is set when you choose a provider. Environment variables are supported (e.g. `$MY_MODEL`)."|t('ai-assistant'),
+                    label: "Custom model ID"|t('ai-assistant'),
+                    instructions: "Enter the exact model ID supported by this provider. Environment variables are supported (e.g. `$MY_MODEL`)."|t('ai-assistant'),
                     id: 'model',
                     name: 'model',
                     value: integration.model,

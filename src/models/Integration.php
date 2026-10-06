@@ -2,7 +2,6 @@
 
 namespace Solspace\AIAssistant\models;
 
-use Craft;
 use craft\base\Model;
 
 class Integration extends Model
@@ -93,11 +92,11 @@ class Integration extends Model
                 'gpt-5.4-mini' => 'GPT-5.4 Mini',
             ],
             'gemini' => [
-                'gemini-pro' => 'Gemini Pro',
-                'gemini-pro-vision' => 'Gemini Pro Vision',
-                'gemini-1.5-pro' => 'Gemini 1.5 Pro',
-                'gemini-1.5-flash' => 'Gemini 1.5 Flash',
-                'gemini-3-flash' => 'Gemini 3 Flash',
+                'gemini-3.5-flash-lite' => 'Gemini 3.5 Flash-Lite',
+                'gemini-3.8-flash' => 'Gemini 3.8 Flash',
+                'gemini-3.5-flash' => 'Gemini 3.5 Flash',
+                'gemini-3-flash-preview' => 'Gemini 3 Flash Preview',
+                'gemini-3.1-pro-preview' => 'Gemini 3.1 Pro Preview',
             ],
             'anthropic' => [
                 'claude-3-5-haiku-latest' => 'Claude 3.5 Haiku',
@@ -112,7 +111,7 @@ class Integration extends Model
                 'grok-4.1-fast' => 'Grok 4.1 Fast',
             ],
             'solspaceai' => [
-                '' => Craft::t('ai-assistant', 'Server default (LiteLLM)'),
+                '' => \Craft::t('ai-assistant', 'Server default (LiteLLM)'),
             ],
             'replicate' => [
                 'black-forest-labs/flux-2-pro' => 'FLUX 2 Pro',

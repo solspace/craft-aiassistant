@@ -6,6 +6,7 @@ use craft\helpers\StringHelper;
 use craft\web\Controller;
 use Solspace\AIAssistant\AiAssistant;
 use Solspace\AIAssistant\models\Integration;
+use Solspace\AIAssistant\services\AiModelCatalog;
 use yii\web\Response;
 
 class IntegrationsController extends Controller
@@ -23,6 +24,7 @@ class IntegrationsController extends Controller
         foreach ($integrations as $i) {
             if ('solspaceai' === ($i->type ?? null)) {
                 $hasSolspaceAi = true;
+
                 break;
             }
         }
@@ -109,7 +111,7 @@ class IntegrationsController extends Controller
             $defaults = [
                 'openai' => 'gpt-5.4-mini',
                 'anthropic' => 'claude-sonnet-4.6',
-                'gemini' => 'gemini-3-flash',
+                'gemini' => 'gemini-3.5-flash-lite',
                 'xai' => 'grok-4.1-fast',
                 'replicate' => 'black-forest-labs/flux-2-pro',
             ];
@@ -158,6 +160,29 @@ class IntegrationsController extends Controller
         \Craft::$app->getSession()->setError('Couldn\'t save integration. Please ensure the handle is unique and all required fields are filled out.');
 
         return $this->redirectToPostedUrl();
+    }
+
+    public function actionModels(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+        $this->requirePermission('accessPlugin-ai-assistant');
+
+        $provider = (string) $this->request->getBodyParam('provider');
+        $apiKey = (string) $this->request->getBodyParam('apiKey');
+        if (!\in_array($provider, AiModelCatalog::PROVIDERS, true)) {
+            return $this->asJson(['models' => [], 'available' => false]);
+        }
+
+        try {
+            $models = (new AiModelCatalog())->fetch($provider, $apiKey);
+            usort($models, static fn ($a, $b) => strnatcasecmp($a['label'], $b['label']));
+
+            return $this->asJson(['models' => $models, 'available' => true]);
+        } catch (\Throwable) {
+            // Do not expose provider exceptions, which may contain credentials.
+            return $this->asJson(['models' => [], 'available' => false]);
+        }
     }
 
     public function actionTest(): Response
