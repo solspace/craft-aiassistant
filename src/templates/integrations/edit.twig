@@ -6,8 +6,8 @@
 {% set integration = integration is defined ? integration : {
     id: null,
     enabled: true,
-    name: 'SolspaceAI',
-    handle: 'solspaceAi',
+    name: '',
+    handle: '',
     type: 'openai',
     apiKey: '',
     model: '',
@@ -53,6 +53,7 @@
                 id: 'name',
                 name: 'name',
                 value: integration.name,
+                placeholder: "e.g. Content assistant"|t('ai-assistant'),
                 required: true,
             }) }}
         </div>

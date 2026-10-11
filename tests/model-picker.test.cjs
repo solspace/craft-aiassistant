@@ -36,7 +36,10 @@ function mount({ model = '', key = 'test-key', provider = 'gemini', id = '', sel
     if (selectize) {
         window.eval(readFileSync(require.resolve('jquery/dist/jquery.js'), 'utf8'));
         window.eval(readFileSync(require.resolve('@selectize/selectize'), 'utf8'));
-        window.jQuery('#aiassistant-model-picker').selectize({ searchField: ['text', 'value'] });
+        window.jQuery('#aiassistant-model-picker').selectize({
+            searchField: ['text', 'value'],
+            plugins: selectize === 'craft' ? ['select_on_focus'] : [],
+        });
     }
     callbacks = new Map();
     global.setTimeout = (callback) => { const id = Symbol(); callbacks.set(id, callback); return id; };
@@ -204,4 +207,39 @@ test('Craft-style Selectize searches models and saves selections from jQuery cha
     picker.setValue('__custom__');
     assert.equal(get('aiassistant-custom-model-field').hidden, false);
     assert.equal(get('model').value, 'gemini-3.8-flash');
+});
+
+test('focusing and clicking Craft model options preserves the selection without rebuilding the dropdown', async () => {
+    const get = mount({ id: '12', model: 'gemini-3.5-flash-lite', selectize: 'craft' });
+    global.fetch = async () => ({ ok: true, json: async () => ({
+        available: true, models: [
+            { id: 'gemini-3.5-flash-lite', label: 'Gemini Flash Lite' },
+            { id: 'gemini-3.8-flash', label: 'Gemini Flash' },
+        ],
+    }) });
+    await flush();
+    const picker = get('aiassistant-model-picker').selectize;
+    let rebuilds = 0;
+    picker.on('option_clear', () => rebuilds++);
+    picker.onFocus();
+    assert.equal(get('model').value, 'gemini-3.5-flash-lite');
+    assert.equal(get('aiassistant-custom-model-field').hidden, true);
+    assert.equal(rebuilds, 0);
+    picker.setTextboxValue('Gemini Flash');
+    picker.refreshOptions(false);
+    picker.onOptionSelect({ currentTarget: picker.getOption('gemini-3.8-flash'), type: 'mouseup' });
+    assert.equal(get('model').value, 'gemini-3.8-flash');
+    assert.equal(picker.getValue(), 'gemini-3.8-flash');
+    picker.blur();
+    assert.equal(picker.getItem('gemini-3.8-flash').text(), 'Gemini Flash');
+    assert.equal(rebuilds, 0);
+    picker.onFocus();
+    assert.equal(get('model').value, 'gemini-3.8-flash');
+    picker.setTextboxValue('Other');
+    picker.refreshOptions(false);
+    picker.onOptionSelect({ currentTarget: picker.getOption('__custom__'), type: 'mouseup' });
+    assert.equal(get('aiassistant-custom-model-field').hidden, false);
+    assert.equal(get('model').value, 'gemini-3.8-flash');
+    assert.equal(picker.getValue(), '__custom__');
+    assert.equal(rebuilds, 0);
 });

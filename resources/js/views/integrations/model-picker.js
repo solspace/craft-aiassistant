@@ -44,6 +44,11 @@ export function initializeModelPicker() {
         modelInput.dataset.aiassistantProgrammatic = '0';
     }
 
+    function updateCustomField(custom) {
+        customField.hidden = !custom;
+        modelInput.required = custom;
+    }
+
     function render() {
         const value = modelInput.value.trim();
         const listed = models.some((model) => model.id === value);
@@ -53,7 +58,7 @@ export function initializeModelPicker() {
         const selectize = picker.selectize;
         if (selectize) {
             selectize.clear(true);
-            selectize.clearOptions();
+            selectize.clearOptions(true);
             selectize.addOption(options);
             selectize.setValue(custom ? OTHER : value, true);
             selectize.refreshOptions(false);
@@ -66,8 +71,7 @@ export function initializeModelPicker() {
             }));
             picker.value = custom ? OTHER : value;
         }
-        customField.hidden = !custom;
-        modelInput.required = custom;
+        updateCustomField(custom);
     }
 
     function cancel() {
@@ -129,10 +133,14 @@ export function initializeModelPicker() {
     }
 
     const selectModel = () => {
+        // Craft's select_on_focus plugin clears the selection while searching.
+        // Keep the stored model until an actual option is selected.
+        const value = picker.value;
+        if (!value) return;
         userSelected = true;
-        showOther = picker.value === OTHER;
-        if (!showOther) setModel(picker.value);
-        render();
+        showOther = value === OTHER;
+        if (!showOther) setModel(value);
+        updateCustomField(showOther);
     };
     // Craft's Selectize control emits jQuery change events.
     if (window.jQuery) {

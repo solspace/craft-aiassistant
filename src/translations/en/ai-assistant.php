@@ -52,6 +52,7 @@ return [
     'Choose which Integration to use for this prompt.' => 'Choose which Integration to use for this prompt.',
     'Enable or disable this integration.' => 'Enable or disable this integration.',
     'A name to help identify this integration.' => 'A name to help identify this integration.',
+    'e.g. Content assistant' => 'e.g. Content assistant',
     'Automatically generated from the name. Use only letters and numbers.' => 'Automatically generated from the name. Use only letters and numbers.',
     'Select which AI provider this integration will use.' => 'Select which AI provider this integration will use.',
     'API Key' => 'API Key',

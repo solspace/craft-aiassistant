@@ -42,6 +42,7 @@ return [
     'Choose which Integration to use for this prompt.' => 'Choisissez quelle intégration utiliser pour ce prompt.',
     'Enable or disable this integration.' => 'Activer ou désactiver cette intégration.',
     'A name to help identify this integration.' => 'Un nom pour aider à identifier cette intégration.',
+    'e.g. Content assistant' => 'p. ex. Assistant de contenu',
     'Automatically generated from the name. Use only letters and numbers.' => 'Généré automatiquement à partir du nom. Utilisez uniquement des lettres et des chiffres.',
     'Select which AI provider this integration will use.' => 'Sélectionnez le fournisseur d’IA que cette intégration utilisera.',
     'API Key' => 'Clé API',

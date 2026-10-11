@@ -50,8 +50,6 @@ class IntegrationsController extends Controller
             $requestedType = (string) \Craft::$app->getRequest()->getQueryParam('type');
             if ('solspaceai' === $requestedType) {
                 $integration->type = 'solspaceai';
-                $integration->name = 'SolspaceAI';
-                $integration->handle = 'solspaceai';
             }
         }
 

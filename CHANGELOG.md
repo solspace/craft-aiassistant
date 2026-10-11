@@ -6,6 +6,8 @@
 - Added searchable model pickers for OpenAI, Google Gemini, Anthropic, and xAI, with automatic model discovery, verified aliases, refresh controls, and custom model IDs.
 
 ### Fixed
+- Fixed new integrations being prefilled with the SolspaceAI name and handle.
+- Fixed model selections being cleared when searching the model picker.
 - Fixed Gemini requests failing when Max Tokens was blank or set to zero.
 - Fixed truncated Gemini error messages and removed API credentials from error output and logs.
 - Fixed the suggested Gemini model ID and added compatibility for integrations using the previously suggested ID.
