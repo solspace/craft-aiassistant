@@ -1,6 +1,6 @@
 # Solspace AI Assistant Changelog
 
-## 1.3.0 - Unreleased
+## 1.3.0 - 2026-10-11
 
 ### Added
 - Added searchable model pickers for OpenAI, Google Gemini, Anthropic, and xAI, with automatic model discovery, verified aliases, refresh controls, and custom model IDs.
