@@ -3,7 +3,9 @@
 namespace Solspace\AIAssistant\Integrations\Gemini;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 use Solspace\AIAssistant\Integrations\BaseAiIntegration;
 
 class GeminiIntegration extends BaseAiIntegration
@@ -19,15 +21,13 @@ class GeminiIntegration extends BaseAiIntegration
     {
         try {
             $response = $client->get($this->getEndpoint('/models'), [
-                'query' => [
-                    'key' => $this->getApiKey(),
-                ],
+                'headers' => ['x-goog-api-key' => $this->getApiKey()],
             ]);
             $data = json_decode((string) $response->getBody(), true);
 
             return isset($data['models']) && \is_array($data['models']);
         } catch (\Exception $e) {
-            $this->log('Connection check failed: '.$e->getMessage());
+            $this->log('Connection check failed: '.$this->getErrorMessage($e));
 
             return false;
         }
@@ -36,7 +36,7 @@ class GeminiIntegration extends BaseAiIntegration
     public function processTextRequest(string $prompt, array $options = []): array
     {
         try {
-            $client = new Client();
+            $client = $this->createClient();
 
             // Determine system instructions based on field type
             $fieldType = $options['fieldType'] ?? 'input';
@@ -72,18 +72,10 @@ class GeminiIntegration extends BaseAiIntegration
 
             $payload = [
                 'contents' => $contents,
-                'generationConfig' => [
-                    'maxOutputTokens' => $options['max_tokens'] ?? $this->getMaxTokens(),
-                    'temperature' => $options['temperature'] ?? $this->getTemperature(),
-                ],
+                'generationConfig' => $this->getGenerationConfig($options),
             ];
 
-            $response = $client->post($this->getEndpoint('/models/'.($options['model'] ?? $this->getModel()).':generateContent'), [
-                'query' => [
-                    'key' => $this->getApiKey(),
-                ],
-                'json' => $payload,
-            ]);
+            $response = $this->generateContent($client, $options['model'] ?? $this->getModel(), $payload);
 
             $data = json_decode((string) $response->getBody(), true);
 
@@ -93,12 +85,13 @@ class GeminiIntegration extends BaseAiIntegration
                 'usage' => $data['usageMetadata'] ?? null,
                 'model' => $data['model'] ?? $this->getModel(),
             ];
-        } catch (RequestException $e) {
-            $this->log('Gemini API Error: '.$e->getMessage());
+        } catch (GuzzleException $e) {
+            $message = 'Gemini API Error: '.$this->getErrorMessage($e);
+            $this->log($message);
 
             return [
                 'success' => false,
-                'error' => 'Gemini API Error: '.$e->getMessage(),
+                'error' => $message,
             ];
         }
     }
@@ -106,7 +99,7 @@ class GeminiIntegration extends BaseAiIntegration
     public function processImageRequest(string $prompt, array $options = []): array
     {
         try {
-            $client = new Client();
+            $client = $this->createClient();
 
             $payload = [
                 'contents' => [
@@ -118,18 +111,10 @@ class GeminiIntegration extends BaseAiIntegration
                         ],
                     ],
                 ],
-                'generationConfig' => [
-                    'maxOutputTokens' => $options['max_tokens'] ?? $this->getMaxTokens(),
-                    'temperature' => $options['temperature'] ?? $this->getTemperature(),
-                ],
+                'generationConfig' => $this->getGenerationConfig($options),
             ];
 
-            $response = $client->post($this->getEndpoint('/models/'.($options['model'] ?? 'gemini-pro-vision').':generateContent'), [
-                'query' => [
-                    'key' => $this->getApiKey(),
-                ],
-                'json' => $payload,
-            ]);
+            $response = $this->generateContent($client, $options['model'] ?? 'gemini-pro-vision', $payload);
 
             $data = json_decode((string) $response->getBody(), true);
 
@@ -139,12 +124,13 @@ class GeminiIntegration extends BaseAiIntegration
                 'usage' => $data['usageMetadata'] ?? null,
                 'model' => $data['model'] ?? 'gemini-pro-vision',
             ];
-        } catch (RequestException $e) {
-            $this->log('Gemini API Error: '.$e->getMessage());
+        } catch (GuzzleException $e) {
+            $message = 'Gemini API Error: '.$this->getErrorMessage($e);
+            $this->log($message);
 
             return [
                 'success' => false,
-                'error' => 'Gemini API Error: '.$e->getMessage(),
+                'error' => $message,
             ];
         }
     }
@@ -169,5 +155,73 @@ class GeminiIntegration extends BaseAiIntegration
         $prompt = "Translate the following text to {$targetLanguage}:\n\n{$text}";
 
         return $this->processTextRequest($prompt, $options);
+    }
+
+    protected function createClient(): Client
+    {
+        return \Craft::createGuzzleClient(['connect_timeout' => 5, 'timeout' => 30]);
+    }
+
+    protected function waitBeforeRetry(int $attempt): void
+    {
+        usleep((2 ** $attempt) * 1000000 + random_int(0, 250000));
+    }
+
+    private function getGenerationConfig(array $options): array
+    {
+        $config = ['temperature' => $options['temperature'] ?? $this->getTemperature()];
+        $maxTokens = (int) ($options['max_tokens'] ?? $this->getMaxTokens());
+        if ($maxTokens > 0) {
+            $config['maxOutputTokens'] = $maxTokens;
+        }
+
+        return $config;
+    }
+
+    private function generateContent(Client $client, string $model, array $payload): ResponseInterface
+    {
+        // Older versions offered this ID without the required preview suffix.
+        if ('gemini-3-flash' === $model) {
+            $model = 'gemini-3-flash-preview';
+        }
+
+        for ($attempt = 0;; ++$attempt) {
+            try {
+                return $client->post($this->getEndpoint('/models/'.rawurlencode($model).':generateContent'), [
+                    'headers' => ['x-goog-api-key' => $this->getApiKey()],
+                    'json' => $payload,
+                ]);
+            } catch (RequestException $e) {
+                $status = $e->getResponse()?->getStatusCode();
+                if ($attempt >= 2 || !\in_array($status, [429, 500, 502, 503, 504], true)) {
+                    throw $e;
+                }
+
+                $this->waitBeforeRetry($attempt);
+            }
+        }
+    }
+
+    private function getErrorMessage(\Throwable $exception): string
+    {
+        $response = $exception instanceof RequestException ? $exception->getResponse() : null;
+        if ($response) {
+            $data = json_decode((string) $response->getBody(), true);
+            $message = $data['error']['message'] ?? null;
+            if (!\is_string($message) || '' === trim($message)) {
+                $message = $response->getReasonPhrase() ?: 'The provider could not process the request.';
+            }
+            $message = 'HTTP '.$response->getStatusCode().': '.$message;
+        } else {
+            // Exception strings may include request URLs, headers, or credentials.
+            $message = 'Could not connect to Gemini. Please try again.';
+        }
+
+        $apiKey = $this->getApiKey();
+        if ('' !== $apiKey) {
+            $message = str_replace([$apiKey, rawurlencode($apiKey)], '[redacted]', $message);
+        }
+
+        return preg_replace('/([?&]key=)[^\s&"\x27<>]+/i', '$1[redacted]', $message) ?? $message;
     }
 }

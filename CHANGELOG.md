@@ -1,5 +1,16 @@
 # Solspace AI Assistant Changelog
 
+## 1.3.0 - Unreleased
+
+### Added
+- Added searchable model pickers for OpenAI, Google Gemini, Anthropic, and xAI, with automatic model discovery, verified aliases, refresh controls, and custom model IDs.
+
+### Fixed
+- Fixed Gemini requests failing when Max Tokens was blank or set to zero.
+- Fixed truncated Gemini error messages and removed API credentials from error output and logs.
+- Added bounded retries for temporary Gemini service and rate-limit failures.
+- Corrected prompt editor instructions that incorrectly claimed support for variable and context placeholders.
+
 ## 1.2.1 - 2026-10-05
 
 ### Fixed

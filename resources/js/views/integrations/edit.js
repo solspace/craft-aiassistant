@@ -1,3 +1,5 @@
+import { initializeModelPicker } from './model-picker.js';
+
 /**
  * Integration Edit Form
  * Handles form behavior for creating/editing integrations
@@ -12,7 +14,7 @@
 
     const PROVIDER_DEFAULT_MODELS = {
         openai: 'gpt-5.4-mini',
-        gemini: 'gemini-3-flash',
+        gemini: 'gemini-3.5-flash-lite',
         anthropic: 'claude-sonnet-4.6',
         xai: 'grok-4.1-fast',
         replicate: 'black-forest-labs/flux-2-pro',
@@ -303,6 +305,7 @@
         initModelTracking();
         updateFieldsForProvider();
         initAutoHandle();
+        initializeModelPicker();
     }
 
     /**

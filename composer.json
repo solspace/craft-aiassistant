@@ -1,7 +1,7 @@
 {
     "name": "solspace/craft-aiassistant",
     "description": "Generate smarter text and images with AI using custom prompts and support for multiple models.",
-    "version": "1.2.1",
+    "version": "1.3.0",
     "type": "craft-plugin",
     "authors": [
         {
@@ -34,6 +34,7 @@
         "hasCpSection": true
     },
     "scripts": {
+        "test:integrations": "php tests/gemini-integration.test.php",
         "fix": "vendor/bin/php-cs-fixer fix --diff --config=./.php-cs-fixer.dist.php",
         "fix:dry-run": "vendor/bin/php-cs-fixer fix --dry-run --diff --config=./.php-cs-fixer.dist.php"
     },
