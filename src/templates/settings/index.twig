@@ -42,13 +42,15 @@
             <tbody>
             {% set enabledSet = (settings.enabledFieldHandles is defined and settings.enabledFieldHandles is iterable) ? settings.enabledFieldHandles : [] %}
             {% for f in allFields %}
-                {% set checked = (enabledSet ? (enabledSet[f.handle] ?? (f.handle in enabledSet)) : false) %}
+                {% set fieldHandle = f.handle %}
+                {% set checked = fieldHandle in enabledSet %}
                 <tr>
                     <td>{{ f.name }}</td>
-                    <td><code>{{ f.handle }}</code></td>
+                    <td><code>{{ fieldHandle }}</code></td>
                     <td><code>{{ f.type }}</code></td>
                     <td>
-                        {% set selectedId = settings.fieldPrompts[f.handle] ?? '' %}
+                        {% set fieldPrompts = settings.fieldPrompts|default({}) %}
+                        {% set selectedId = attribute(fieldPrompts, fieldHandle)|default('') %}
                         {% set selectedPrompt = (allPrompts|filter(p => p.id == selectedId)|first) %}
                         <div class="ai-prompts-chip">
                             {% if selectedPrompt %}
@@ -56,17 +58,17 @@
                             {% else %}
                                 <span class="ai-assistant-type-badge ai-assistant-type-any">{{ 'Any'|t('ai-assistant') }}</span>
                             {% endif %}
-                            <button type="button" class="btn small" title="{{ 'Edit'|t('app') }}" onclick="window.AiAssistant && window.AiAssistant.openPromptPicker && window.AiAssistant.openPromptPicker('{{ f.handle }}')">
+                            <button type="button" class="btn small" title="{{ 'Edit'|t('app') }}" onclick="window.AiAssistant && window.AiAssistant.openPromptPicker && window.AiAssistant.openPromptPicker('{{ fieldHandle }}')">
                                 <span data-icon="edit"></span>
                             </button>
                         </div>
-                        <input type="hidden" name="settings[fieldPrompts][{{ f.handle }}]" value="{{ selectedId }}" data-prompt-value="{{ f.handle }}" />
+                        <input type="hidden" name="settings[fieldPrompts][{{ fieldHandle }}]" value="{{ selectedId }}" data-prompt-value="{{ fieldHandle }}" />
                     </td>
                     <td class="ai-assistant-settings-lightswitch-cell">
                         <div>
                             {{ forms.lightswitchField({
-                                id: 'enabled-' ~ f.handle,
-                                name: 'settings[enabledFieldHandles][' ~ f.handle ~ ']',
+                                id: 'enabled-' ~ fieldHandle,
+                                name: 'settings[enabledFieldHandles][' ~ fieldHandle ~ ']',
                                 on: checked,
                                 small: true,
                                 label: null,

@@ -77,8 +77,8 @@
                                             id: 'aiassistant-asset-target',
                                             name: 'aiassistant-asset-target',
                                             label: 'Asset Destination'|t('ai-assistant'),
-                                            options: assetTargetOptions ?? [],
-                                            value: defaultAssetTargetValue ?? '',
+                                            options: assetTargetOptions|default([]),
+                                            value: defaultAssetTargetValue|default(''),
                                         }) }}
                                     </div>
                                 </div>

@@ -1,5 +1,16 @@
 # Solspace AI Assistant Changelog
 
+## Unreleased
+
+### Added
+- Added Craft CMS 4.x compatibility (`craftcms/cms` ^4.0|^5.0).
+- Registered the missing `generate-from-asset-modal` CP route.
+- Included Assets fields in Settings field enablement.
+
+### Fixed
+- Fixed Craft 4 Twig crashes from `??` on complex expressions (Integrations edit and related templates).
+- Hardened Craft 5-only asset action menu registration so Craft 4 does not reference missing classes.
+
 ## 1.3.0 - 2026-10-11
 
 ### Added

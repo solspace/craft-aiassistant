@@ -1,5 +1,5 @@
 {% import "_includes/forms" as forms %}
-{% set prompts = prompts ?? [] %}
+{% set prompts = prompts|default([]) %}
 
 <div class="modal ai-assistant-prompt-modal">
     <div class="header">

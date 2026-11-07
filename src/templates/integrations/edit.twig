@@ -2,7 +2,10 @@
 
 {% import "_includes/forms" as forms %}
 
-{# Ensure integration variable exists to avoid runtime errors #}
+{# Ensure integration variable exists to avoid runtime errors.
+   Use |default() instead of ?? for Craft 4 Twig (?? only allows simple variables). #}
+{% set defaultContactEmail = parseEnv(craft.app.projectConfig.get('email').fromEmail)|default('') %}
+{% set defaultSiteUrl = currentSite.baseUrl|default(alias('@web'))|default('') %}
 {% set integration = integration is defined ? integration : {
     id: null,
     enabled: true,
@@ -14,8 +17,8 @@
     maxTokens: 0,
     temperature: 1.0,
     apiBaseUrl: 'https://ai.solspace.net/v1',
-    contactEmail: parseEnv(craft.app.projectConfig.get('email').fromEmail) ?? '',
-    siteUrl: currentSite.baseUrl ?? alias('@web') ?? '',
+    contactEmail: defaultContactEmail,
+    siteUrl: defaultSiteUrl,
 } %}
 
 {% set title = integration.id ? "Edit Integration"|t('ai-assistant') : "New Integration"|t('ai-assistant') %}

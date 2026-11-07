@@ -2,7 +2,6 @@
 
 namespace Solspace\AIAssistant\widgets;
 
-use Craft;
 use craft\base\Widget;
 use craft\records\VolumeFolder;
 use craft\web\View;
