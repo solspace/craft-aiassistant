@@ -1,8 +1,10 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
-{% set prompt = prompt ?? { id: null, name: '', promptText: '', type: 'generate', integrationHandle: null, isActive: true, sortOrder: 0, isBuiltIn: false } %}
-{% set integrations = integrations ?? [] %}
+{% set prompt = prompt|default({ id: null, name: '', promptText: '', type: 'generate', integrationHandle: null, isActive: true, sortOrder: 0, isBuiltIn: false }) %}
+{% set integrations = integrations|default([]) %}
+{% set assetTargetOptions = assetTargetOptions|default([{ label: '— None —', value: '' }]) %}
+{% set defaultAssetTargetValue = defaultAssetTargetValue|default('') %}
 {% set title = prompt.id ? ("Edit Prompt"|t('ai-assistant')) : ("New Prompt"|t('ai-assistant')) %}
 {% set selectedSubnavItem = 'prompts' %}
 {% set crumbs = [
@@ -36,7 +38,7 @@
         instructions: "Choose which Integration to use for this prompt."|t('ai-assistant'),
         id: 'integrationHandle',
         name: 'integrationHandle',
-        value: prompt.integrationHandle ?? '',
+        value: prompt.integrationHandle|default(''),
         options: integrationOptions,
         required: false,
       }) }}
@@ -78,8 +80,8 @@
             instructions: ("Select the volume or folder where generated images will be saved."|t('ai-assistant')),
             id: 'assetTarget',
             name: 'assetTarget',
-            value: prompt.assetTarget ? prompt.assetTarget : (defaultAssetTargetValue ?? ''),
-            options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
+            value: prompt.assetTarget|default(defaultAssetTargetValue),
+            options: assetTargetOptions,
             required: true,
           }) }}
         </div>
@@ -88,7 +90,7 @@
             id: 'imageSize',
             name: 'imageSize',
             label: 'Image Size'|t('ai-assistant'),
-            value: prompt.imageSize ?? '',
+            value: prompt.imageSize|default(''),
             placeholder: '1024x1024',
             instructions: ("Specify the image dimensions (width x height), for example `1024x1024`."|t('ai-assistant'))
           }) }}
@@ -98,7 +100,7 @@
             label: ("Count"|t('ai-assistant')),
             id: 'imageCount',
             name: 'imageCount',
-            value: prompt.imageCount ?? 1,
+            value: prompt.imageCount|default(1),
             type: 'number',
             instructions: ("Number of images to generate, e.g. `1`. Some providers limit to `4`."|t('ai-assistant'))
           }) }}
@@ -138,7 +140,7 @@
           id: 'sortOrder',
           name: 'sortOrder',
           type: 'number',
-          value: prompt.sortOrder ?? 0,
+          value: prompt.sortOrder|default(0),
         }) }}
       </div>
     </div>

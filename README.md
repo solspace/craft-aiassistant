@@ -1,4 +1,4 @@
-# Solspace AI Assistant plugin for Craft CMS 5.x
+# Solspace AI Assistant plugin for Craft CMS 4.x / 5.x
 
 Generate smarter text and images with AI using custom prompts and support for multiple models.
 

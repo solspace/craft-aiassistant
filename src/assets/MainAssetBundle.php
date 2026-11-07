@@ -3,7 +3,6 @@
 namespace Solspace\AIAssistant\assets;
 
 use craft\web\AssetBundle;
-use craft\web\View;
 use craft\web\assets\cp\CpAsset;
 
 /**
