@@ -30,7 +30,7 @@
                                 promptText: '',
                                 imageSize: '',
                                 imageCount: '1',
-                                assetTarget: defaultAssetTargetValue ?? '',
+                                assetTarget: defaultAssetTargetValue|default(''),
                                 integration: ''
                             }
                         },
@@ -39,11 +39,11 @@
                         value: prompt.id,
                         data: {
                             promptText: prompt.promptText|e('html_attr'),
-                            type: prompt.type ?? 'generate',
-                            imageSize: prompt.imageSize ?? '',
-                            imageCount: prompt.imageCount ?? '',
-                            assetTarget: prompt.assetTarget ?? '',
-                            integration: prompt.integrationHandle ?? ''
+                            type: prompt.type|default('generate'),
+                            imageSize: prompt.imageSize|default(''),
+                            imageCount: prompt.imageCount|default(''),
+                            assetTarget: prompt.assetTarget|default(''),
+                            integration: prompt.integrationHandle|default('')
                         }
                     }))
                 }) }}
@@ -65,10 +65,10 @@
                         label: "Asset Destination"|t('ai-assistant'),
                         id: 'aiassistant-widget-asset-target',
                         name: 'assetTarget',
-                        options: assetTargetOptions ?? [{ label: '— None —', value: '' }],
-                        value: defaultAssetTargetValue ?? '',
+                        options: assetTargetOptions|default([{ label: '— None —', value: '' }]),
+                        value: defaultAssetTargetValue|default(''),
                         inputAttributes: {
-                            'data-default-value': defaultAssetTargetValue ?? ''
+                            'data-default-value': defaultAssetTargetValue|default('')
                         }
                     }) }}
                 </div>
@@ -103,7 +103,7 @@
                         label: integration.name, 
                         value: integration.handle,
                         data: {
-                            type: integration.type ?? ''
+                            type: integration.type|default('')
                         }
                     })
                 }) }}

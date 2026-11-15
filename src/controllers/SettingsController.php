@@ -13,6 +13,7 @@ class SettingsController extends Controller
 {
     private const SUPPORTED_FIELD_TYPES = [
         'craft\fields\PlainText',
+        'craft\fields\Assets',
         'craft\ckeditor\Field',
         'craft\redactor\Field',
         'spicyweb\tinymce\fields\TinyMCE',

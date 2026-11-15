@@ -32,9 +32,7 @@ class SolspaceAIIntegration extends BaseAiIntegration
 
     public function getApiRootUrl(): string
     {
-        $base = rtrim($this->getProcessedValue($this->apiBaseUrl), '/');
-
-        return $base;
+        return rtrim($this->getProcessedValue($this->apiBaseUrl), '/');
     }
 
     public function checkConnection(Client $client): bool

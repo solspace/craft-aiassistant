@@ -137,7 +137,7 @@ class IntegrationService extends Component
             if ($isConnected) {
                 return [
                     'success' => true,
-                    'message' => Craft::t('ai-assistant', 'Connection successful!'),
+                    'message' => \Craft::t('ai-assistant', 'Connection successful!'),
                 ];
             }
 
@@ -150,63 +150,13 @@ class IntegrationService extends Component
 
             return [
                 'success' => false,
-                'message' => Craft::t('ai-assistant', 'Connection failed. Please check your API key and settings.'),
+                'message' => \Craft::t('ai-assistant', 'Connection failed. Please check your API key and settings.'),
             ];
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => Craft::t('ai-assistant', 'Test failed: {msg}', ['msg' => $e->getMessage()]),
+                'message' => \Craft::t('ai-assistant', 'Test failed: {msg}', ['msg' => $e->getMessage()]),
             ];
-        }
-    }
-
-    private function diagnoseSolspaceAiConnection(SolspaceAIIntegration $sol): string
-    {
-        $key = trim($sol->getApiKey());
-        if ('' === $key) {
-            return Craft::t(
-                'ai-assistant',
-                'SolspaceAI has no API key yet. Save contact email and site URL, then click “Connect to SolspaceAI”.'
-            );
-        }
-
-        $url = rtrim($sol->getApiRootUrl(), '/').'/models';
-
-        try {
-            $client = new Client(['timeout' => 20, 'http_errors' => false]);
-            $response = $client->get($url, [
-                'headers' => [
-                    'Authorization' => 'Bearer '.$key,
-                ],
-            ]);
-            $status = $response->getStatusCode();
-            if (200 !== $status) {
-                return Craft::t(
-                    'ai-assistant',
-                    'SolspaceAI returned HTTP {code} from {url}. If this site runs in DDEV or Docker, set the API base URL to an address PHP can reach (host “localhost” often does not reach LiteLLM on your machine).',
-                    ['code' => (string) $status, 'url' => $url]
-                );
-            }
-
-            $data = json_decode((string) $response->getBody(), true);
-            if (!\is_array($data) || !isset($data['data']) || !\is_array($data['data'])) {
-                return Craft::t(
-                    'ai-assistant',
-                    'SolspaceAI responded from {url} but the models list was not in the expected format. Check LiteLLM and your reverse proxy.',
-                    ['url' => $url]
-                );
-            }
-
-            return Craft::t(
-                'ai-assistant',
-                'SolspaceAI returned a models list but the integration check still failed. Try reconnecting from the edit screen.'
-            );
-        } catch (\Throwable $e) {
-            return Craft::t(
-                'ai-assistant',
-                'Could not reach SolspaceAI at {url}: {msg}',
-                ['url' => $url, 'msg' => $e->getMessage()]
-            );
         }
     }
 
@@ -276,7 +226,7 @@ class IntegrationService extends Component
         }
 
         if (!$force && '' !== trim((string) $integration->apiKey)) {
-            return ['success' => true, 'message' => Craft::t('ai-assistant', 'Already connected to SolspaceAI.')];
+            return ['success' => true, 'message' => \Craft::t('ai-assistant', 'Already connected to SolspaceAI.')];
         }
 
         $contact = trim((string) $integration->contactEmail);
@@ -287,22 +237,22 @@ class IntegrationService extends Component
                 'message' => 'Contact email and site URL are required before connecting to SolspaceAI.',
             ];
         }
-        if (!filter_var($site, FILTER_VALIDATE_URL)) {
+        if (!filter_var($site, \FILTER_VALIDATE_URL)) {
             return [
                 'success' => false,
-                'message' => Craft::t(
+                'message' => \Craft::t(
                     'ai-assistant',
                     'Enter a valid public site URL with a scheme, e.g. `https://yoursite.com` (not just `yoursite.com`).'
                 ),
             ];
         }
 
-        $plugin = Craft::$app->plugins->getPlugin('ai-assistant');
+        $plugin = \Craft::$app->plugins->getPlugin('ai-assistant');
         if (!$plugin) {
             return ['success' => false, 'message' => 'AI Assistant plugin is not available.'];
         }
 
-        $licenseKey = Craft::$app->plugins->getPluginLicenseKey($plugin->id);
+        $licenseKey = \Craft::$app->plugins->getPluginLicenseKey($plugin->id);
         if (empty($licenseKey)) {
             return ['success' => false, 'message' => 'Add your AI Assistant license key in Craft → Settings → Plugins first.'];
         }
@@ -336,7 +286,7 @@ class IntegrationService extends Component
                 if (\is_string($d)) {
                     $detail = $d;
                 } elseif (\is_array($d)) {
-                    $detail = json_encode($d, JSON_UNESCAPED_UNICODE) ?: $body;
+                    $detail = json_encode($d, \JSON_UNESCAPED_UNICODE) ?: $body;
                 } else {
                     $detail = (string) $d;
                 }
@@ -381,6 +331,56 @@ class IntegrationService extends Component
         }
 
         return $models;
+    }
+
+    private function diagnoseSolspaceAiConnection(SolspaceAIIntegration $sol): string
+    {
+        $key = trim($sol->getApiKey());
+        if ('' === $key) {
+            return \Craft::t(
+                'ai-assistant',
+                'SolspaceAI has no API key yet. Save contact email and site URL, then click “Connect to SolspaceAI”.'
+            );
+        }
+
+        $url = rtrim($sol->getApiRootUrl(), '/').'/models';
+
+        try {
+            $client = new Client(['timeout' => 20, 'http_errors' => false]);
+            $response = $client->get($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$key,
+                ],
+            ]);
+            $status = $response->getStatusCode();
+            if (200 !== $status) {
+                return \Craft::t(
+                    'ai-assistant',
+                    'SolspaceAI returned HTTP {code} from {url}. If this site runs in DDEV or Docker, set the API base URL to an address PHP can reach (host “localhost” often does not reach LiteLLM on your machine).',
+                    ['code' => (string) $status, 'url' => $url]
+                );
+            }
+
+            $data = json_decode((string) $response->getBody(), true);
+            if (!\is_array($data) || !isset($data['data']) || !\is_array($data['data'])) {
+                return \Craft::t(
+                    'ai-assistant',
+                    'SolspaceAI responded from {url} but the models list was not in the expected format. Check LiteLLM and your reverse proxy.',
+                    ['url' => $url]
+                );
+            }
+
+            return \Craft::t(
+                'ai-assistant',
+                'SolspaceAI returned a models list but the integration check still failed. Try reconnecting from the edit screen.'
+            );
+        } catch (\Throwable $e) {
+            return \Craft::t(
+                'ai-assistant',
+                'Could not reach SolspaceAI at {url}: {msg}',
+                ['url' => $url, 'msg' => $e->getMessage()]
+            );
+        }
     }
 
     private function recordToModel(IntegrationRecord $record): Integration

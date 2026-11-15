@@ -88,14 +88,8 @@ class UiController extends Controller
 
     public function actionGenerateImageModal(): Response
     {
-        $this->requireCpRequest();
-
-        $settings = AiAssistant::$plugin->getSettings();
-        $html = \Craft::$app->getView()->renderTemplate('ai-assistant/modals/generate-image', [
-            'settings' => $settings,
-        ]);
-
-        return $this->asRaw($html);
+        // Image generation uses the shared generate modal template.
+        return $this->actionGenerateTextModal();
     }
 
     public function actionGenerateFromAssetModal(): Response

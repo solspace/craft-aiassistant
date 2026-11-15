@@ -2,7 +2,6 @@
 
 namespace Solspace\AIAssistant\controllers;
 
-use Craft;
 use craft\web\Controller;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -25,6 +24,7 @@ class SolspaceAiController extends Controller
         foreach ($integrations as $i) {
             if ('solspaceai' === ($i->type ?? null)) {
                 $sol = $i;
+
                 break;
             }
         }
@@ -32,7 +32,7 @@ class SolspaceAiController extends Controller
         $connected = $sol && $sol->enabled && '' !== trim((string) $sol->apiKey);
 
         if ($connected) {
-            Craft::$app->getView()->registerAssetBundle(SolspaceAiAssetBundle::class);
+            \Craft::$app->getView()->registerAssetBundle(SolspaceAiAssetBundle::class);
         }
 
         return $this->renderTemplate('ai-assistant/solspaceai/index', [
@@ -49,7 +49,7 @@ class SolspaceAiController extends Controller
         if (!$sol) {
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'SolspaceAI is not connected.'),
+                'error' => \Craft::t('ai-assistant', 'SolspaceAI is not connected.'),
             ]);
         }
 
@@ -57,14 +57,14 @@ class SolspaceAiController extends Controller
         if ('' === $licenseKey) {
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'AI Assistant license key is missing in Craft.'),
+                'error' => \Craft::t('ai-assistant', 'AI Assistant license key is missing in Craft.'),
             ]);
         }
 
         $base = rtrim((string) ($sol->apiBaseUrl ?: 'https://ai.solspace.net/v1'), '/');
         $url = $base.'/ai-assistant/usage?user_id='.rawurlencode($licenseKey);
 
-        return $this->proxyJsonGet($url, Craft::t('ai-assistant', 'Failed to reach SolspaceAI usage service.'));
+        return $this->proxyJsonGet($url, \Craft::t('ai-assistant', 'Failed to reach SolspaceAI usage service.'));
     }
 
     public function actionPlans(): Response
@@ -75,13 +75,13 @@ class SolspaceAiController extends Controller
         if (!$sol) {
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'SolspaceAI is not connected.'),
+                'error' => \Craft::t('ai-assistant', 'SolspaceAI is not connected.'),
             ]);
         }
 
-        $request = Craft::$app->getRequest();
+        $request = \Craft::$app->getRequest();
         $currency = $request->getQueryParam('currency');
-        $locale = Craft::$app->locale->id;
+        $locale = \Craft::$app->locale->id;
 
         $params = ['locale' => $locale];
         if (\is_string($currency) && \in_array(strtolower($currency), ['eur', 'usd'], true)) {
@@ -91,7 +91,7 @@ class SolspaceAiController extends Controller
         $base = rtrim((string) ($sol->apiBaseUrl ?: 'https://ai.solspace.net/v1'), '/');
         $url = $base.'/ai-assistant/plans?'.http_build_query($params);
 
-        return $this->proxyJsonGet($url, Craft::t('ai-assistant', 'Failed to reach SolspaceAI plans service.'));
+        return $this->proxyJsonGet($url, \Craft::t('ai-assistant', 'Failed to reach SolspaceAI plans service.'));
     }
 
     public function actionCreateCheckoutSession(): Response
@@ -103,7 +103,7 @@ class SolspaceAiController extends Controller
         if (!$sol) {
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'SolspaceAI is not connected.'),
+                'error' => \Craft::t('ai-assistant', 'SolspaceAI is not connected.'),
             ]);
         }
 
@@ -111,11 +111,11 @@ class SolspaceAiController extends Controller
         if ('' === $licenseKey) {
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'AI Assistant license key is missing in Craft.'),
+                'error' => \Craft::t('ai-assistant', 'AI Assistant license key is missing in Craft.'),
             ]);
         }
 
-        $request = Craft::$app->getRequest();
+        $request = \Craft::$app->getRequest();
         $rawBody = $request->getIsPost() ? json_decode($request->getRawBody(), true) : null;
         $body = \is_array($rawBody) ? $rawBody : [];
 
@@ -126,7 +126,7 @@ class SolspaceAiController extends Controller
 
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'success_url and cancel_url are required.'),
+                'error' => \Craft::t('ai-assistant', 'success_url and cancel_url are required.'),
             ]);
         }
 
@@ -140,7 +140,7 @@ class SolspaceAiController extends Controller
             'bundle_key' => $body['bundle_key'] ?? null,
             'currency' => $body['currency'] ?? null,
             'plugin_handle' => 'ai-assistant',
-        ], static fn ($v) => $v !== null && $v !== '');
+        ], static fn ($v) => null !== $v && '' !== $v);
 
         try {
             $client = new Client(['timeout' => 20]);
@@ -152,7 +152,7 @@ class SolspaceAiController extends Controller
         } catch (GuzzleException $e) {
             return $this->asJson([
                 'success' => false,
-                'error' => Craft::t('ai-assistant', 'Failed to reach SolspaceAI.'),
+                'error' => \Craft::t('ai-assistant', 'Failed to reach SolspaceAI.'),
                 'message' => $e->getMessage(),
             ]);
         }
@@ -174,6 +174,7 @@ class SolspaceAiController extends Controller
         foreach ($integrations as $i) {
             if ('solspaceai' === ($i->type ?? null)) {
                 $sol = $i;
+
                 break;
             }
         }
@@ -187,8 +188,8 @@ class SolspaceAiController extends Controller
 
     private function getAiAssistantLicenseKey(): string
     {
-        $plugin = Craft::$app->plugins->getPlugin('ai-assistant');
-        $licenseKey = $plugin ? (string) Craft::$app->plugins->getPluginLicenseKey($plugin->id) : '';
+        $plugin = \Craft::$app->plugins->getPlugin('ai-assistant');
+        $licenseKey = $plugin ? (string) \Craft::$app->plugins->getPluginLicenseKey($plugin->id) : '';
 
         return trim($licenseKey);
     }
@@ -221,7 +222,6 @@ class SolspaceAiController extends Controller
     {
         $translations = include __DIR__.'/../translations/en/ai-assistant.php';
         $translations = array_keys($translations);
-        Craft::$app->getView()->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
+        \Craft::$app->getView()->registerTranslations(AiAssistant::TRANSLATION_CATEGORY, $translations);
     }
 }
-

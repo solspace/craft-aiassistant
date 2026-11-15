@@ -78,6 +78,7 @@ class AiAssistant extends Plugin
         $this->initializeServices();
         $this->registerRoutes();
         $this->attachEventListeners();
+        $this->attachAssetMenuListener();
         $this->registerAssetBundles();
         $this->registerWidgets();
     }
@@ -243,6 +244,7 @@ class AiAssistant extends Plugin
             // UI endpoints
             'ai-assistant/ui/generate-text-modal' => 'ai-assistant/ui/generate-text-modal',
             'ai-assistant/ui/prompt-edit-modal' => 'ai-assistant/ui/prompt-edit-modal',
+            'ai-assistant/ui/generate-from-asset-modal' => 'ai-assistant/ui/generate-from-asset-modal',
         ];
 
         \Craft::$app->getUrlManager()->addRules($routes);
@@ -357,15 +359,23 @@ class AiAssistant extends Plugin
      */
     private function attachAssetMenuListener(): void
     {
+        // Craft 5+ action menus only (DefineMenuItemsEvent / MenuItemType).
+        if (!class_exists(\craft\events\DefineMenuItemsEvent::class)
+            || !class_exists(\craft\elements\Asset::class)
+            || !\defined(\craft\elements\Asset::class.'::EVENT_DEFINE_ACTION_MENU_ITEMS')
+        ) {
+            return;
+        }
+
         Event::on(
-            Asset::class,
-            Asset::EVENT_DEFINE_ACTION_MENU_ITEMS,
-            static function (DefineMenuItemsEvent $event) {
-                /** @var Asset $asset */
+            \craft\elements\Asset::class,
+            \craft\elements\Asset::EVENT_DEFINE_ACTION_MENU_ITEMS,
+            static function (\craft\events\DefineMenuItemsEvent $event) {
+                /** @var \craft\elements\Asset $asset */
                 $asset = $event->sender;
 
                 // Only show for image assets
-                if (Asset::KIND_IMAGE !== $asset->kind) {
+                if (\craft\elements\Asset::KIND_IMAGE !== $asset->kind) {
                     return;
                 }
 
@@ -380,9 +390,10 @@ class AiAssistant extends Plugin
                 $items = $event->items;
                 // Craft 4 uses string 'button', Craft 5 uses MenuItemType::Button enum
                 $isCraft5 = version_compare(\Craft::$app->getInfo()->version, '5.0', '>=');
-                $menuItemType = $isCraft5
-                    ? (class_exists(MenuItemType::class) ? MenuItemType::Button->value : 'button')
-                    : 'button';
+                $menuItemType = 'button';
+                if ($isCraft5 && class_exists(\craft\enums\MenuItemType::class)) {
+                    $menuItemType = \craft\enums\MenuItemType::Button->value;
+                }
                 $items[] = [
                     'type' => $menuItemType,
                     'id' => $aiAssistantId,

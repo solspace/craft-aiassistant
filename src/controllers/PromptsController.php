@@ -25,6 +25,7 @@ class PromptsController extends Controller
         foreach ($integrations as $i) {
             if ('solspaceai' === ($i->type ?? null)) {
                 $hasSolspaceAi = true;
+
                 break;
             }
         }
